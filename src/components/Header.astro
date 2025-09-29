@@ -1,0 +1,177 @@
+<header class="fixed inset-x-0 top-0 z-50 bg-white/90 backdrop-blur border-b">
+  <div class="container">
+    <div class="flex h-16 items-center justify-between gap-4">
+      <!-- Logo -->
+      <a href="/" class="shrink-0 flex items-center gap-3">
+        <img src="/images/logo.svg" alt="La Nonna" class="h-9 w-auto" />
+        <span class="sr-only">Inicio</span>
+      </a>
+
+      <!-- Nav desktop -->
+      <nav aria-label="Principal" class="hidden md:block">
+        <ul class="flex items-center gap-6 text-sm">
+          <li>
+            <a href="/" class="text-secondary hover:text-primary transition"
+              >Inicio</a
+            >
+          </li>
+          <li>
+            <a href="/menu" class="text-secondary hover:text-primary transition"
+              >Menú</a
+            >
+          </li>
+          <li>
+            <a
+              href="/contacto"
+              class="text-secondary hover:text-primary transition">Contacto</a
+            >
+          </li>
+          <li>
+            <a
+              href="/contacto"
+              class="text-secondary hover:text-primary transition"
+              >Sobre Nosotros</a
+            >
+          </li>
+        </ul>
+      </nav>
+      <!-- Button -->
+      <button
+        class="hidden md:inline-flex btn btn-outline btn-sm rounded-full px-6 py-2 uppercase
+        border-2 border-accent text-secondary hover:bg-accent/10"
+        id="cuenta-btn"
+      >
+        Cuenta
+      </button>
+
+      <!-- Botón Cerrar Sesión (oculto inicialmente) -->
+      <button
+        id="logout-btn"
+        class="bg-red-500 text-white px-4 py-2 rounded hidden"
+      >
+        Cerrar sesión
+      </button>
+      <!-- mobile nav (sidebar) -->
+      <nav
+        class="mnav bg-white fixed w-[300px] top-0 h-screen -left-[300px]
+                  shadow-2xl md:hidden transition-all ease-out duration-300 z-20"
+      >
+        <!-- toggle button (pega al borde izq) -->
+        <button
+          type="button"
+          class="mnav__toggle bg-primary w-8 h-8 relative -right-full top-8
+                 flex justify-center items-center rounded-tr-lg rounded-br-lg
+                 cursor-pointer transition-all"
+        >
+          <i class="mnav__icon ri-menu-line text-2xl text-white"></i>
+        </button>
+
+        <!-- logo, list -->
+        <div class="px-12 flex flex-col gap-y-12 h-full pt-8">
+          <a href="#"><img src="/images/logo.svg" alt="La Nonna Logo" /></a>
+
+          <ul class="flex flex-col gap-y-5">
+            <li>
+              <a
+                href="#"
+                class="text-secondary hover:text-accent transition-all duration-300"
+                >Inicio</a
+              >
+            </li>
+            <li>
+              <a
+                href="#"
+                class="text-secondary hover:text-accent transition-all duration-300"
+                >Menú</a
+              >
+            </li>
+            <li>
+              <a
+                href="#"
+                class="text-secondary hover:text-accent transition-all duration-300"
+                >Contacto</a
+              >
+            </li>
+            <li>
+              <a
+                href="#"
+                class="text-secondary hover:text-accent transition-all duration-300"
+                >Sobre Nosotros</a
+              >
+            </li>
+            <div class="mt-auto pb-8">
+              <a href="/cuenta" class="btn btn-accent w-full">Cuenta</a>
+            </div>
+          </ul>
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<script>
+  const mobileNav = document.querySelector(".mnav");
+  const toggleBtn = document.querySelector(".mnav__toggle");
+  const icon = document.querySelector(".mnav__icon");
+
+  const OPEN_CLASS = "left-0";
+  const CLOSED_CLASS = "-left-[300px]";
+
+  // íconos: menú ⇄ flecha
+  const ICON_MENU = "ri-menu-line";
+  const ICON_ARROW = "ri-arrow-left-s-line";
+
+  toggleBtn?.addEventListener("click", () => {
+    if (!mobileNav || !icon) return;
+
+    const isClosed = mobileNav.classList.contains(CLOSED_CLASS);
+
+    if (isClosed) {
+      mobileNav.classList.remove(CLOSED_CLASS);
+      mobileNav.classList.add(OPEN_CLASS);
+      icon.classList.remove(ICON_MENU);
+      icon.classList.add(ICON_ARROW);
+    } else {
+      mobileNav.classList.remove(OPEN_CLASS);
+      mobileNav.classList.add(CLOSED_CLASS);
+      icon.classList.remove(ICON_ARROW);
+      icon.classList.add(ICON_MENU);
+    }
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const cuentaBtn = document.getElementById('cuenta-btn');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    // Mostrar u ocultar el botón de logout según rol
+    const rol = sessionStorage.getItem('rol');
+    if (rol) {
+      logoutBtn?.classList.remove('hidden');
+    } else {
+      logoutBtn?.classList.add('hidden');
+    }
+
+    // Redirigir según rol al presionar Cuenta
+    cuentaBtn?.addEventListener('click', () => {
+      const rol = sessionStorage.getItem('rol');
+      if (rol === 'admin') {
+        window.location.href = '/admin/Panel';
+      } else if (rol === 'cliente') {
+        window.location.href = '/cliente/Perfil'; // o '/' si es la tienda  
+      } else if (rol == 'despacho') {
+        window.location.href = '/despacho/Panel'
+      } else if (rol == 'dueno') {
+        window.location.href = '/dueno/SeguridadBoss'
+      } else {
+        window.location.href = 'Auth';
+      }
+    });
+
+    // Cerrar sesión
+    logoutBtn?.addEventListener('click', () => {
+      sessionStorage.removeItem('rol'); // eliminar rol
+      logoutBtn.classList.add('hidden'); // ocultar botón logout
+      window.location.href = 'Auth'; // volver al login
+    });
+  });
+</script>

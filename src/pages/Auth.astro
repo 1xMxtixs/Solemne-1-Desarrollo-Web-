@@ -1,0 +1,208 @@
+---
+import Layout from "../layouts/Layout.astro"
+---
+
+<Layout>
+  <section class="section min-h-screen bg-gray-50 py-10">
+    <div class="max-w-md mx-auto bg-white rounded-xl p-6 shadow space-y-6">
+      <!-- ====== Bloque Login  ====== -->
+      <div id="login-admin">
+        <h2 class="text-xl font-semibold mb-4">Login</h2>
+        <form id="login-form" class="space-y-4">
+          <div>
+            <label class="block mb-1 text-sm">Email</label>
+            <input
+              type="email"
+              id="email"
+              class="w-full border p-2 rounded"
+              placeholder="admin@demo.com"
+            />
+          </div>
+          <div>
+            <label class="block mb-1 text-sm">Contraseña</label>
+            <input
+              type="password"
+              id="password"
+              class="w-full border p-2 rounded"
+              placeholder="1234"
+            />
+          </div>
+          <button
+            type="submit"
+            class="w-full bg-blue-500 text-white p-2 rounded"
+            >Iniciar Sesión</button
+          >
+        </form>
+        <!-- Links pequeños -->
+        <div class="flex justify-between mt-2 text-sm">
+          <button id="link-reset" class="text-blue-600 hover:underline"
+            >Olvidé mi contraseña</button
+          >
+          <button id="link-2fa" class="text-blue-600 hover:underline"
+            >Configurar 2FA</button
+          >
+          <button id="link-registro" class="text-blue-600 hover:underline"
+            >Registrarme
+          </button>
+        </div>
+      </div>
+
+      <!-- ====== Bloque Registro Cliente ====== -->
+      <div id="registro-cliente" class="hidden">
+        <h2 class="text-lg font-semibold mb-4">Registrarse</h2>
+        <form id="registro-form" class="space-y-4">
+          <div>
+            <label class="block mb-1 text-sm">Nombre</label>
+            <input
+              type="text"
+              id="reg-nombre"
+              class="w-full border p-2 rounded"
+              placeholder="Tu nombre"
+            />
+          </div>
+          <div>
+            <label class="block mb-1 text-sm">Email</label>
+            <input
+              type="email"
+              id="reg-email"
+              class="w-full border p-2 rounded"
+              placeholder="correo@ejemplo.com"
+            />
+          </div>
+          <div>
+            <label class="block mb-1 text-sm">Contraseña</label>
+            <input
+              type="password"
+              id="reg-password"
+              class="w-full border p-2 rounded"
+              placeholder="********"
+            />
+          </div>
+          <button
+            type="submit"
+            class="w-full bg-green-500 text-white p-2 rounded"
+            >Crear Cuenta</button
+          >
+        </form>
+      </div>
+
+      <!-- ====== Bloque Restablecer Contraseña (oculto inicialmente) ====== -->
+      <div id="reset-password" class="hidden">
+        <h2 class="text-lg font-semibold mb-4">Restablecer Contraseña</h2>
+        <form class="space-y-4">
+          <div>
+            <label class="block mb-1 text-sm">Email registrado</label>
+            <input
+              type="email"
+              class="w-full border p-2 rounded"
+              placeholder="correo@ejemplo.com"
+            />
+          </div>
+          <button class="w-full bg-blue-500 text-white p-2 rounded"
+            >Enviar enlace de restablecimiento</button
+          >
+        </form>
+      </div>
+
+      <!-- ====== Bloque Configurar 2FA (oculto inicialmente) ====== -->
+      <div id="configurar-2fa" class="hidden">
+        <h2 class="text-lg font-semibold mb-4">Configurar 2FA</h2>
+        <form class="space-y-4">
+          <div>
+            <label class="block mb-1 text-sm">Número de teléfono</label>
+            <input
+              type="tel"
+              class="w-full border p-2 rounded"
+              placeholder="+56 9 1234 5678"
+            />
+          </div>
+          <button class="w-full bg-blue-500 text-white p-2 rounded"
+            >Enviar código</button
+          >
+          <div>
+            <label class="block mb-1 text-sm">Código de verificación</label>
+            <input
+              type="text"
+              class="w-full border p-2 rounded"
+              placeholder="123456"
+            />
+          </div>
+          <button class="w-full bg-blue-500 text-white p-2 rounded"
+            >Activar 2FA</button
+          >
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Script para login y mostrar/ocultar formularios -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const resetLink = document.getElementById("link-reset");
+      const twoFALink = document.getElementById("link-2fa");
+      const registroLink = document.getElementById("link-registro");
+      const resetBlock = document.getElementById("reset-password");
+      const twoFABlock = document.getElementById("configurar-2fa");
+      const registroBlock = document.getElementById("registro-cliente");
+
+      // mostrar/ocultar reset y 2FA
+      resetLink?.addEventListener("click", () => {
+        resetBlock?.classList.toggle("hidden");
+        twoFABlock?.classList.add("hidden");
+        registroBlock?.classList.add("hidden");
+      });
+
+      twoFALink?.addEventListener("click", () => {
+        twoFABlock?.classList.toggle("hidden");
+        resetBlock?.classList.add("hidden");
+        registroBlock?.classList.add("hidden");
+      });
+
+      registroLink?.addEventListener("click", () => {
+        registroBlock?.classList.toggle("hidden");
+      });
+
+      // Simulacion de registro
+      const registroForm = document.getElementById("registro-form");
+      registroForm?.addEventListener("submit", (e) => {
+        e.preventDefault();
+        alert("Usuario registrado (simulación). Ahora puedes iniciar sesión.");
+      });
+
+      // Login con roles
+      const loginForm = document.getElementById("login-form");
+      loginForm?.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const emailInput = document.getElementById("email") as HTMLInputElement;
+        const passwordInput = document.getElementById("password") as HTMLInputElement;
+
+        if (!emailInput || !passwordInput) return;
+
+        const email = emailInput.value.trim();
+        const password = passwordInput.value.trim();
+
+        // Simulación de credenciales
+        if (email === "admin@demo.com" && password === "1234") {
+          sessionStorage.setItem("rol", "admin");
+          window.location.href = "/admin/Panel";
+        } else if (email === "cliente@demo.com" && password === "1234") {
+          sessionStorage.setItem("rol", "cliente");
+          window.location.href = "/";
+        } else if (email === "despacho@demo.com" && password === "1234") {
+          sessionStorage.setItem("rol", "despacho");
+          window.location.href = "/despacho/Panel";
+        } else if(email === "dueno@demo.com" && password === "1234") {
+          sessionStorage.setItem("rol", "dueno");
+          window.location.href = "/dueno/PanelBoss"
+        }  else if(email === "bodega@demo.com" && password === "1234") {
+          sessionStorage.setItem("rol", "bodega");
+          window.location.href = "/bodega/Picking"
+        } else {
+          alert(
+            "Credenciales inválidas. Usa admin@demo.com o cliente@demo.com o despacho@demo.com o dueno@demo.com / 1234"
+          );
+        }
+      });
+    });
+  </script>
+</Layout>

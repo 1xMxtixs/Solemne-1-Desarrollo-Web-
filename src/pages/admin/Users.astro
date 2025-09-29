@@ -1,0 +1,75 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout>
+  <section class="section min-h-screen bg-gray-50 py-10">
+    <div class="max-w-6xl mx-auto bg-white rounded-xl p-6 shadow space-y-10">
+
+      <!-- ====== Bloque 1: Administrar Cuentas ====== -->
+      <div id="administrar-cuentas">
+        <h2 class="text-xl font-semibold mb-4">Administrar Cuentas</h2>
+        <div class="flex justify-end mb-4">
+          <button class="bg-blue-500 text-white px-3 py-2 rounded">+ Nueva Cuenta</button>
+        </div>
+
+        <!-- Tabla de cuentas -->
+        <div class="overflow-x-auto">
+          <table class="min-w-full border border-gray-200">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="px-4 py-2 text-left text-sm">Nombre</th>
+                <th class="px-4 py-2 text-left text-sm">Email</th>
+                <th class="px-4 py-2 text-left text-sm">Rol</th>
+                <th class="px-4 py-2 text-left text-sm">Estado</th>
+                <th class="px-4 py-2 text-center text-sm">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Filas de ejemplo -->
+              <tr class="border-t">
+                <td class="px-4 py-2">Usuario 1</td>
+                <td class="px-4 py-2">user1@ejemplo.com</td>
+                <td class="px-4 py-2">Administrador</td>
+                <td class="px-4 py-2">Activo</td>
+                <td class="px-4 py-2 text-center space-x-2">
+                  <button class="bg-blue-500 text-white px-2 py-1 rounded">Editar</button>
+                  <button class="bg-red-500 text-white px-2 py-1 rounded">Desactivar</button>
+                </td>
+              </tr>
+              <tr class="border-t">
+                <td class="px-4 py-2">Usuario 2</td>
+                <td class="px-4 py-2">user2@ejemplo.com</td>
+                <td class="px-4 py-2">Soporte</td>
+                <td class="px-4 py-2">Inactivo</td>
+                <td class="px-4 py-2 text-center space-x-2">
+                  <button class="bg-blue-500 text-white px-2 py-1 rounded">Editar</button>
+                  <button class="bg-green-500 text-white px-2 py-1 rounded">Activar</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ====== Bloque 2: Validaciones y Mensajes ====== -->
+      <div id="validaciones-mensajes">
+        <h2 class="text-xl font-semibold mb-4">Validaciones y Mensajes</h2>
+
+        <!-- Mensajes de ejemplo -->
+        <div class="space-y-4">
+          <div class="bg-green-100 text-green-800 px-4 py-2 rounded">
+            Operación realizada con éxito
+          </div>
+          <div class="bg-red-100 text-red-800 px-4 py-2 rounded">
+            Error al realizar la operación
+          </div>
+          <div class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded">
+            Advertencia: Verifique los datos ingresados
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</Layout>

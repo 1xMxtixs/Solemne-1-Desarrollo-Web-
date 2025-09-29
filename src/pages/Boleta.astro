@@ -1,0 +1,59 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+// Leer query params (opcional)
+const orden = Astro.url.searchParams.get("orden") || "#LN-2025-09-0101";
+const boleta = Astro.url.searchParams.get("boleta") || "#B-LN-00023";
+---
+
+<Layout>
+  <section class="section min-h-screen bg-gray-50 py-10">
+    <div class="max-w-2xl mx-auto bg-white rounded-xl p-6 shadow space-y-6">
+      <h2 class="text-2xl font-semibold mb-4">Boleta Digital {boleta}</h2>
+
+      <div class="space-y-2 text-sm">
+        <p><strong>Orden:</strong> {orden}</p>
+        <p><strong>Cliente:</strong> Juan Pérez</p>
+        <p><strong>Email:</strong> juan@ejemplo.com</p>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full border text-sm">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="px-4 py-2 text-left">Ítem</th>
+              <th class="px-4 py-2 text-left">Cantidad</th>
+              <th class="px-4 py-2 text-left">Precio</th>
+              <th class="px-4 py-2 text-left">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-t">
+              <td class="px-4 py-2">Rigatoni 500g</td>
+              <td class="px-4 py-2">2</td>
+              <td class="px-4 py-2">$2.990</td>
+              <td class="px-4 py-2">$5.980</td>
+            </tr>
+            <tr class="border-t">
+              <td class="px-4 py-2">Lasagna</td>
+              <td class="px-4 py-2">1</td>
+              <td class="px-4 py-2">$5.990</td>
+              <td class="px-4 py-2">$5.990</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="text-right space-y-1">
+        <p>Subtotal: $11.970</p>
+        <p>IVA (19%): $2.274</p>
+        <p class="font-bold text-lg">Total: $14.244</p>
+      </div>
+
+      <div class="flex gap-4 justify-end">
+        <button class="bg-green-500 text-white px-4 py-2 rounded">Descargar PDF</button>
+        <a href="/" class="bg-blue-500 text-white px-4 py-2 rounded">Volver al Inicio</a>
+      </div>
+    </div>
+  </section>
+</Layout>

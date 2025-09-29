@@ -1,0 +1,56 @@
+---
+import Layout from "../../layouts/Layout.astro"
+---
+
+<Layout>
+  <section class="section min-h-screen bg-gray-50 py-10">
+    <div class="max-w-2xl mx-auto bg-white rounded-xl p-6 shadow space-y-8">
+
+      <!-- ====== Encabezado del perfil ====== -->
+      <div>
+        <h2 class="text-2xl font-semibold mb-2">Perfil del Cliente</h2>
+        <p class="text-gray-600 text-sm">Aquí puedes ver y editar tus datos personales.</p>
+      </div>
+
+      <!-- ====== Formulario de datos personales ====== -->
+      <form id="perfil-form" class="space-y-4">
+        <div>
+          <label class="block mb-1 text-sm">Nombre</label>
+          <input type="text" class="w-full border p-2 rounded" placeholder="Tu nombre">
+        </div>
+        <div>
+          <label class="block mb-1 text-sm">Email</label>
+          <input type="email" class="w-full border p-2 rounded" placeholder="tu@email.com">
+        </div>
+        <div>
+          <label class="block mb-1 text-sm">Teléfono</label>
+          <input type="tel" class="w-full border p-2 rounded" placeholder="+56 9 1234 5678">
+        </div>
+        <div>
+          <label class="block mb-1 text-sm">Dirección</label>
+          <input type="text" class="w-full border p-2 rounded" placeholder="Tu dirección">
+        </div>
+        <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded">Guardar Cambios</button>
+      </form>
+
+      <!-- ====== Mensajes ====== -->
+      <div id="mensaje-guardado" class="hidden bg-green-100 text-green-800 px-4 py-2 rounded">
+        Datos guardados con éxito.
+      </div>
+
+    </div>
+  </section>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const perfilForm = document.getElementById('perfil-form');
+      const mensajeGuardado = document.getElementById('mensaje-guardado');
+
+      perfilForm?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        mensajeGuardado?.classList.remove('hidden');
+        setTimeout(() => mensajeGuardado?.classList.add('hidden'), 3000);
+      });
+    });
+  </script>
+</Layout>

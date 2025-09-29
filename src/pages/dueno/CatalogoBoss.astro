@@ -1,0 +1,105 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout>
+  <section class="section min-h-screen bg-gray-50 py-10">
+    <div class="max-w-6xl mx-auto bg-white rounded-xl p-6 shadow space-y-12">
+
+      <!-- ====== B24: Políticas de Publicación ====== -->
+      <div>
+        <h2 class="text-2xl font-semibold mb-4">Políticas de Publicación</h2>
+        <form class="space-y-4 mb-6">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label class="block mb-1 text-sm">Producto</label>
+              <select class="w-full border p-2 rounded">
+                <option>Selecciona producto</option>
+              </select>
+            </div>
+            <div>
+              <label class="block mb-1 text-sm">Estado</label>
+              <select class="w-full border p-2 rounded">
+                <option>Borrador</option>
+                <option>Publicado</option>
+                <option>Agotado</option>
+              </select>
+            </div>
+            <div>
+              <label class="block mb-1 text-sm">Programar Publicación</label>
+              <input type="datetime-local" class="w-full border p-2 rounded">
+            </div>
+          </div>
+          <button class="w-full bg-blue-500 text-white p-2 rounded">Guardar Configuración</button>
+        </form>
+        <div class="overflow-x-auto">
+          <table class="min-w-full border">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="px-4 py-2 text-left text-sm">Producto</th>
+                <th class="px-4 py-2 text-left text-sm">Estado</th>
+                <th class="px-4 py-2 text-left text-sm">Fecha Programada</th>
+                <th class="px-4 py-2 text-center text-sm">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-t">
+                <td class="px-4 py-2">Rigatoni 500g</td>
+                <td class="px-4 py-2">Publicado</td>
+                <td class="px-4 py-2">2025-09-28 09:00</td>
+                <td class="px-4 py-2 text-center">
+                  <button class="bg-red-500 text-white px-2 py-1 rounded">Despublicar</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ====== B25: Categorías y Tipos de Plato ====== -->
+      <div>
+        <h2 class="text-2xl font-semibold mb-4">Categorías y Tipos de Plato</h2>
+        <form class="space-y-4 mb-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block mb-1 text-sm">Nueva Categoría</label>
+              <input type="text" class="w-full border p-2 rounded" placeholder="Ej: Pastas">
+            </div>
+            <div>
+              <label class="block mb-1 text-sm">Nuevo Tipo de Plato</label>
+              <input type="text" class="w-full border p-2 rounded" placeholder="Ej: Plato Fuerte">
+            </div>
+          </div>
+          <button class="w-full bg-green-500 text-white p-2 rounded">Guardar Categoría/Tipo</button>
+        </form>
+        <div class="overflow-x-auto">
+          <table class="min-w-full border">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="px-4 py-2 text-left text-sm">Categoría</th>
+                <th class="px-4 py-2 text-left text-sm">Tipo de Plato</th>
+                <th class="px-4 py-2 text-center text-sm">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-t">
+                <td class="px-4 py-2">Pastas</td>
+                <td class="px-4 py-2">Plato Fuerte</td>
+                <td class="px-4 py-2 text-center">
+                  <button class="bg-red-500 text-white px-2 py-1 rounded">Eliminar</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Aquí podrías poner lógica JS de simulación
+    });
+  </script>
+</Layout>

@@ -1,0 +1,35 @@
+<!-- Botón con ícono del carrito -->
+<button id="toggle-carrito" class="fixed top-5 right-5 bg-blue-500 text-white p-2 rounded-full shadow-lg z-50">
+  <i class="ri-shopping-cart-2-fill text-2xl"></i>
+</button>
+
+<!-- Carrito lateral oculto inicialmente -->
+<div id="carrito-lateral"
+     class="fixed top-0 right-0 h-full w-64 bg-white border-l shadow-lg p-4 space-y-4 hidden z-40 transition-transform duration-300">
+  <h3 class="text-lg font-semibold mb-2">Carrito</h3>
+  <ul class="space-y-2 text-sm">
+    <li class="flex justify-between">
+      <span>Rigatoni</span><span>$2.990</span>
+    </li>
+    <li class="flex justify-between">
+      <span>Pizza Margarita</span><span>$5.990</span>
+    </li>
+  </ul>
+  <div class="text-right font-bold">
+    Total: $8.980
+  </div>
+  <a href="/Carrito" class="block bg-blue-500 text-white text-center p-2 rounded">
+    Ver Carrito
+  </a>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const toggleBtn = document.getElementById('toggle-carrito');
+    const carritoLateral = document.getElementById('carrito-lateral');
+
+    toggleBtn?.addEventListener('click', () => {
+      carritoLateral?.classList.toggle('hidden');
+    });
+  });
+</script>

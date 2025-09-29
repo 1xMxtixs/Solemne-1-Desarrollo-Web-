@@ -1,0 +1,67 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout>
+  <section class="section min-h-screen bg-gray-50 py-10">
+    <div class="max-w-5xl mx-auto bg-white rounded-xl p-6 shadow space-y-10">
+
+      <!-- ====== Bloque 1: Configurar Políticas de Autenticación ====== -->
+      <div id="politicas-autenticacion">
+        <h2 class="text-xl font-semibold mb-4">Configurar Políticas de Autenticación</h2>
+        <form class="space-y-4">
+          <!-- Campos ejemplo -->
+          <div>
+            <label class="block mb-1 text-sm">Longitud mínima de contraseña</label>
+            <input type="number" class="w-full border p-2 rounded" placeholder="8">
+          </div>
+          <div>
+            <label class="block mb-1 text-sm">Requerir autenticación 2FA</label>
+            <select class="w-full border p-2 rounded">
+              <option>Opcional</option>
+              <option>Obligatorio</option>
+            </select>
+          </div>
+          <button class="w-full bg-blue-500 text-white p-2 rounded">Guardar Políticas</button>
+        </form>
+      </div>
+
+      <!-- ====== Bloque 2: Invitar y Revocar Accesos ====== -->
+      <div id="invitar-revocar">
+        <h2 class="text-xl font-semibold mb-4">Invitar y Revocar Accesos</h2>
+        <form class="space-y-4 mb-6">
+          <div>
+            <label class="block mb-1 text-sm">Email del usuario</label>
+            <input type="email" class="w-full border p-2 rounded" placeholder="usuario@ejemplo.com">
+          </div>
+          <button class="w-full bg-green-500 text-white p-2 rounded">Enviar Invitación</button>
+        </form>
+
+        <!-- Tabla de usuarios invitados -->
+        <div class="overflow-x-auto">
+          <table class="min-w-full border border-gray-200">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="px-4 py-2 text-left text-sm">Usuario</th>
+                <th class="px-4 py-2 text-left text-sm">Rol</th>
+                <th class="px-4 py-2 text-left text-sm">Estado</th>
+                <th class="px-4 py-2 text-center text-sm">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-t">
+                <td class="px-4 py-2">usuario@ejemplo.com</td>
+                <td class="px-4 py-2">Administrador</td>
+                <td class="px-4 py-2">Activo</td>
+                <td class="px-4 py-2 text-center">
+                  <button class="bg-red-500 text-white px-2 py-1 rounded">Revocar Acceso</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</Layout>

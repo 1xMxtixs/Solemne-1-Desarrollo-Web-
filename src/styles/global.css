@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+@theme {
+  /* Breakpoints */
+  --breakpoint-sm: 40rem;  /* 640px */
+  --breakpoint-md: 48rem;  /* 768px */
+  --breakpoint-lg: 64rem;  /* 1024px */
+  --breakpoint-xl: 80rem;  /* 1280px */
+  --breakpoint-2xl: 96rem; /* 1536px */
+
+  /* Colores */
+  --color-primary: #6E0F2C;
+  --color-secondary: #D4A373;
+
+  --color-accent: #6E0F2C;
+  --color-accent-secondary: #A3B18A;
+  --color-accent-tertiary: #F5F5F4;
+
+  --color-grey: #E8E8E8;
+
+  /* Tipografía */
+  --font-primary: Poppins, sans-serif;
+
+  /* Sombras */
+  --shadow-custom1: 0px 2px 40px 0px rgba(8, 70, 78, 0.08);
+  --shadow-custom2: 0px 0px 30px 0px rgba(8, 73, 81, 0.86);
+}
+
+/* ========== CONTAINER ========== */
+@utility container {
+  margin-inline: auto;
+  padding-inline: 15px;
+}
+
+/* ========== ESTILOS GLOBALES ========== */
+body {
+  @apply text-secondary font-primary text-[17px] leading-8;
+  background-color: #F5F5F4;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @apply text-primary leading-[128%];
+}
+
+.h1 {
+  @apply text-[36px] xl:text-[64px] font-semibold;
+}
+.h2 {
+  @apply text-[30px] xl:text-[44px] font-semibold capitalize tracking-[0.44px];
+}
+.h3 {
+  @apply text-[20px] xl:text-[26px] font-semibold;
+}
+.h4 {
+  @apply text-[20px] xl:text-[26px] font-semibold capitalize;
+}
+
+/* ========== BOTONES ========== */
+.btn {
+  @apply rounded-full uppercase tracking-[1.02px] flex items-center justify-center transition-all;
+}
+.btn-sm { @apply h-14 px-10; }
+.btn-lg { @apply h-16 px-[50px]; }
+.btn-accent { @apply bg-accent text-white hover:bg-accent-secondary; }
+.btn-white { @apply bg-white text-secondary hover:bg-white/90; }
+.btn-outline { 
+  @apply bg-transparent border-2 border-accent text-secondary 
+         hover:bg-accent hover:border-transparent hover:text-white;
+}
+
+/* ========== FORMULARIOS ========== */
+.input, .select {
+  @apply w-full rounded-[10px] h-[66px] outline-none border border-[#dbdfdf] 
+         text-secondary font-light placeholder:font-light placeholder:text-secondary;
+}
+.input { @apply px-4; }
+
+/* ========== SECCIONES ========== */
+.section { @apply py-12 xl:py-[150px]; }
+
+/* ========== SWIPER BULLETS ========== */
+.swiper-horizontal > .swiper-pagination-bullets .swiper-pagination-bullet,
+.swiper-pagination-horizontal.swiper-pagination-bullets .swiper-pagination-bullet {
+  @apply bg-accent;
+}

@@ -1,0 +1,114 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout>
+  <section class="section min-h-screen bg-gray-50 py-10">
+    <div class="max-w-md mx-auto bg-white rounded-xl p-6 shadow space-y-8">
+
+      <!-- ====== Selección de método de pago ====== -->
+      <div>
+        <h2 class="text-2xl font-semibold mb-4">Pago Online</h2>
+        <p class="text-sm text-gray-600 mb-4">Orden #LN-2025-09-0101 – Total $18.490</p>
+
+        <label class="block mb-2 text-sm font-medium">Método de Pago</label>
+        <select id="metodo-pago" class="w-full border p-2 rounded mb-4">
+          <option value="tarjeta">Tarjeta Crédito/Débito</option>
+          <option value="transferencia">Transferencia Bancaria</option>
+        </select>
+
+        <!-- Datos de pago (simulado) -->
+        <div id="datos-tarjeta" class="space-y-4">
+          <div>
+            <label class="block mb-1 text-sm">Número de Tarjeta</label>
+            <input type="text" class="w-full border p-2 rounded" placeholder="xxxx-xxxx-xxxx-xxxx">
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block mb-1 text-sm">Expira</label>
+              <input type="text" class="w-full border p-2 rounded" placeholder="MM/AA">
+            </div>
+            <div>
+              <label class="block mb-1 text-sm">CVV</label>
+              <input type="text" class="w-full border p-2 rounded" placeholder="123">
+            </div>
+          </div>
+        </div>
+
+        <div id="datos-transferencia" class="hidden">
+          <p class="text-sm text-gray-600">Transferencia a Banco Demo Cuenta 12345678.  
+          Se confirmará automáticamente una vez recibido.</p>
+        </div>
+
+        <button type="button" id="btn-pagar" class="w-full bg-blue-500 text-white p-2 rounded mt-4">
+          Pagar
+        </button>
+      </div>
+
+      <!-- ====== Resultado del pago ====== -->
+      <div id="resultado-pago" class="hidden space-y-4 text-center">
+        <h3 id="titulo-resultado" class="text-xl font-semibold"></h3>
+        <p id="detalle-resultado" class="text-sm text-gray-600"></p>
+        <div class="flex justify-center gap-4">
+          <a href="/" class="bg-gray-500 text-white px-4 py-2 rounded">Volver al Home</a>
+          <a href="Boleta" id="link-boleta" class="bg-green-500 text-white px-4 py-2 rounded hidden">Ver Boleta</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const metodoPago = document.getElementById("metodoPago"); 
+    const datosTarjeta = document.getElementById("datosTarjeta");
+    const datosTransferencia = document.getElementById("datosTransferencia");
+    
+    metodoPago?.addEventListener('change', () => {
+        if (metodoPago && 'value' in metodoPago && metodoPago.value === "tarjeta") {
+            datosTarjeta?.classList.remove("hidden");
+            datosTransferencia?.classList.add("hidden");
+        } else {
+            datosTarjeta?.classList.add("hidden");
+            datosTransferencia?.classList.remove("hidden");
+        }
+    });
+
+    const btnPagar = document.getElementById("btn-pagar");
+    const resultadoPago = document.getElementById("resultado-pago");
+    const tituloResultado = document.getElementById("titulo-resultado");
+    const detalleResultado = document.getElementById("detalle-resultado");
+    const linkBoleta = document.getElementById("link-boleta");
+
+    btnPagar?.addEventListener('click', () => {
+        const aprobado = Math.random() < 0.7;
+
+        if (aprobado) {
+            if (tituloResultado) {
+                tituloResultado.textContent = 'Pago Exitoso';
+            }
+            if (detalleResultado) {
+                detalleResultado.textContent = 'Tu boleta se ha generado y tu orden fue confirmada.';
+            }
+            
+            linkBoleta?.classList.remove("hidden");
+            
+            if (linkBoleta instanceof HTMLAnchorElement) {
+                linkBoleta.href = "/boleta/orden-LN-2025-09-0101&boleta-a-LN-A0023";
+            }
+        } else {
+            if (tituloResultado) {
+                tituloResultado.textContent = 'Pago Rechazado';
+            }
+            if (detalleResultado) {
+                detalleResultado.textContent = 'Tu pago fue rechazado, inténtalo nuevamente.';
+            }
+            
+            linkBoleta?.classList.add("hidden");
+        }
+        
+        resultadoPago?.classList.remove("hidden");
+    });
+});
+</script>
+</Layout

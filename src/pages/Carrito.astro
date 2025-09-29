@@ -1,0 +1,206 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout>
+  <section class="section min-h-screen bg-gray-50 py-10">
+    <div class="max-w-4xl mx-auto bg-white rounded-xl p-6 shadow space-y-10">
+      <!-- ====== B26 + B27: Productos en Carrito ====== -->
+      <div>
+        <h2 class="text-2xl font-semibold mb-4">Mi Carrito</h2>
+        <div class="overflow-x-auto">
+          <table class="min-w-full border">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="px-4 py-2 text-left text-sm">Producto</th>
+                <th class="px-4 py-2 text-left text-sm">Precio</th>
+                <th class="px-4 py-2 text-left text-sm">Cantidad</th>
+                <th class="px-4 py-2 text-left text-sm">Subtotal</th>
+                <th class="px-4 py-2 text-center text-sm">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="carrito-body">
+              <tr class="border-t">
+                <td class="px-4 py-2">Rigatoni 500g</td>
+                <td class="px-4 py-2">$2.990</td>
+                <td class="px-4 py-2">
+                  <!-- ====== B28: Actualizar cantidades ====== -->
+                  <div class="flex items-center">
+                    <button
+                      class="px-2 bg-gray-200"
+                      onclick="decrementarCantidad(this)">-</button
+                    >
+                    <input
+                      type="number"
+                      value="1"
+                      min="1"
+                      class="w-12 text-center border mx-1"
+                      onchange="cambiarCantidad(this)"
+                    />
+                    <button
+                      class="px-2 bg-gray-200"
+                      onclick="incrementarCantidad(this)">+</button
+                    >
+                  </div>
+                </td>
+                <td class="px-4 py-2 subtotal">$2.990</td>
+                <td class="px-4 py-2 text-center">
+                  <!-- ====== B29: Eliminar producto ====== -->
+                  <button
+                    class="bg-red-500 text-white px-2 py-1 rounded"
+                    onclick="eliminarProducto(this)">Eliminar</button
+                  >
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ====== B31: Aplicar Cupones ====== -->
+      <div class="space-y-4">
+        <h3 class="text-xl font-semibold">Cupón de Descuento</h3>
+        <div class="flex gap-2">
+          <input
+            type="text"
+            id="cupon"
+            class="border p-2 rounded flex-1"
+            placeholder="Ingresa tu cupón"
+          />
+          <button
+            class="bg-blue-500 text-white px-4 py-2 rounded"
+            onclick="aplicarCupon()">Aplicar</button
+          >
+        </div>
+        <p id="mensaje-cupon" class="text-sm text-gray-600"></p>
+      </div>
+
+      <!-- ====== B30: Subtotal y Total ====== -->
+      <div class="text-right space-y-2">
+        <p class="text-lg">
+          Subtotal: <span id="subtotal-general">$2.990</span>
+        </p>
+        <p class="text-lg font-bold">
+          Total: <span id="total-general">$2.990</span>
+        </p>
+      </div>
+
+      <!-- ====== B32: Guardar Carrito ====== -->
+      <div class="text-right">
+        <button
+          class="bg-green-500 text-white px-4 py-2 rounded"
+          onclick="guardarCarrito()">Guardar Carrito</button
+        >
+      </div>
+
+      <a href="/Checkout" class="bg-green-500 text-white px-4 py-2 rounded">
+        Ir a pagar
+      </a>
+    </div>
+  </section>
+
+  <script>
+    function recalcularTotal() {
+      let subtotal = 0;
+
+      document.querySelectorAll("#carrito-body tr").forEach((tr) => {
+        // Usar querySelector y asertar el tipo a HTMLInputElement
+        const cantidadInput = tr.querySelector(
+          'input[type="number"]'
+        ) as HTMLInputElement;
+        const subtotalCell = tr.querySelector(
+          ".subtotal"
+        ) as HTMLTableCellElement; // Asumimos que es una celda o un elemento de texto
+
+        const cantidad = cantidadInput ? parseInt(cantidadInput.value) || 1 : 1;
+        const precio = 2990; // Simulado
+        const subtotalItem = cantidad * precio;
+
+        if (subtotalCell) {
+          subtotalCell.textContent = "$" + subtotalItem.toLocaleString();
+        }
+        subtotal += subtotalItem;
+      });
+
+      const subtotalGeneral = document.getElementById("subtotal-general");
+      const totalGeneral = document.getElementById("total-general");
+
+      const subtotalText = "$" + subtotal.toLocaleString();
+
+      if (subtotalGeneral) {
+        subtotalGeneral.textContent = subtotalText;
+      }
+      if (totalGeneral) {
+        totalGeneral.textContent = subtotalText;
+      }
+    }
+
+    function incrementarCantidad(btn: HTMLElement) {
+      // Asegurar el tipo del input
+      const input = btn.parentNode?.querySelector(
+        'input[type="number"]'
+      ) as HTMLInputElement | null;
+      if (input) {
+        input.value = ((parseInt(input.value) || 0) + 1).toString();
+        recalcularTotal();
+      }
+    }
+
+    function decrementarCantidad(btn: HTMLElement) {
+      // Asegurar el tipo del input
+      const input = btn.parentNode?.querySelector(
+        'input[type="number"]'
+      ) as HTMLInputElement | null;
+      if (input) {
+        if (parseInt(input.value) > 1) {
+          input.value = ((parseInt(input.value) || 1) - 1).toString();
+          recalcularTotal();
+        } else {
+          alert("La cantidad mínima es 1");
+        }
+      }
+    }
+
+    function cambiarCantidad(input: HTMLInputElement) {
+      if (parseInt(input.value) < 1 || isNaN(parseInt(input.value))) {
+        input.value = "1";
+        alert("La cantidad mínima es 1");
+      }
+      recalcularTotal();
+    }
+
+    function eliminarProducto(btn: HTMLElement) {
+      btn.closest("tr")?.remove();
+      recalcularTotal();
+    }
+
+    function aplicarCupon() {
+      const cuponInput = document.getElementById(
+        "cupon"
+      ) as HTMLInputElement | null;
+      const mensaje = document.getElementById("mensaje-cupon");
+
+      if (!cuponInput) {
+        return;
+      }
+
+      const cupon = cuponInput.value.trim();
+
+      if (cupon === "PASTA10") {
+        if (mensaje) {
+          mensaje.textContent = "Descuento aplicado 10%";
+        }
+      } else {
+        if (mensaje) {
+          mensaje.textContent = "El cupón no es válido o está vencido";
+        }
+      }
+    }
+
+    function guardarCarrito() {
+      alert("Carrito guardado (simulación)");
+    }
+
+    document.addEventListener("DOMContentLoaded", recalcularTotal);
+  </script>
+</Layout>

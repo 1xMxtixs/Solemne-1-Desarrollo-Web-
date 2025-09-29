@@ -1,0 +1,121 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout>
+  <section class="section min-h-screen bg-gray-50 py-10">
+    <div class="max-w-5xl mx-auto bg-white rounded-xl p-6 shadow space-y-12">
+      <!-- ====== Listado de Pedidos en Preparación ====== -->
+      <div>
+        <h2 class="text-2xl font-semibold mb-4">Pedidos en Preparación</h2>
+        <div class="overflow-x-auto">
+          <table class="min-w-full border">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="px-4 py-2 text-left text-sm">Pedido</th>
+                <th class="px-4 py-2 text-left text-sm">Cliente</th>
+                <th class="px-4 py-2 text-left text-sm">Estado</th>
+                <th class="px-4 py-2 text-center text-sm">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-t">
+                <td class="px-4 py-2">#LN-2025-09-0042</td>
+                <td class="px-4 py-2">Juan Pérez</td>
+                <td class="px-4 py-2 text-yellow-600">Preparación</td>
+                <td class="px-4 py-2 text-center">
+                  <button
+                    type="button"
+                    class="bg-blue-500 text-white px-2 py-1 rounded"
+                    data-ver="LN-2025-09-0042"
+                  >
+                    Ver
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ====== Detalle Picking del Pedido Seleccionado ====== -->
+      <div id="detalle-picking" class="hidden">
+        <h3 class="text-xl font-semibold mb-4">
+          Picking Pedido <span id="pedido-id"></span>
+        </h3>
+        <button
+          class="bg-gray-500 text-white px-4 py-2 rounded mb-4"
+          onclick="imprimirPicking()">Imprimir Hoja de Picking</button
+        >
+
+        <div class="overflow-x-auto">
+          <table class="min-w-full border text-sm">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="px-4 py-2 text-left">SKU</th>
+                <th class="px-4 py-2 text-left">Descripción</th>
+                <th class="px-4 py-2 text-left">Ubicación</th>
+                <th class="px-4 py-2 text-left">Cantidad Pedida</th>
+                <th class="px-4 py-2 text-left">Cantidad Encontrada</th>
+              </tr>
+            </thead>
+            <tbody id="picking-items">
+              <tr class="border-t">
+                <td class="px-4 py-2">RIG-500</td>
+                <td class="px-4 py-2">Rigatoni 500g</td>
+                <td class="px-4 py-2">Pasillo A1</td>
+                <td class="px-4 py-2">2</td>
+                <td class="px-4 py-2"
+                  ><input type="number" value="2" class="border p-1 w-16" /></td
+                >
+              </tr>
+              <tr class="border-t">
+                <td class="px-4 py-2">GNO-500</td>
+                <td class="px-4 py-2">Gnocchi 500g</td>
+                <td class="px-4 py-2">Pasillo B3</td>
+                <td class="px-4 py-2">1</td>
+                <td class="px-4 py-2"
+                  ><input type="number" value="1" class="border p-1 w-16" /></td
+                >
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="flex gap-4 mt-4">
+          <button
+            class="bg-green-500 text-white px-4 py-2 rounded"
+            onclick="confirmarPicking('total')">Confirmar Total</button
+          >
+          <button
+            class="bg-yellow-500 text-white px-4 py-2 rounded"
+            onclick="confirmarPicking('parcial')">Confirmar Parcial</button
+          >
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    document.addEventListener("DOMContentLoaded", () => {
+      const detalle = document.getElementById("detalle-picking");
+      const pedidoSpan = document.getElementById("pedido-id");
+
+      document.addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-ver]");
+        if (!btn) return;
+
+        const pedidoId = btn.getAttribute("data-ver");
+        pedidoSpan.textContent = pedidoId;
+        detalle.classList.remove("hidden");
+        detalle.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+
+      document
+        .getElementById("cerrar-detalle")
+        ?.addEventListener("click", () => {
+          detalle.classList.add("hidden");
+        });
+    });
+  </script>
+</Layout>

@@ -1,0 +1,128 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout>
+  <section class="section min-h-screen bg-gray-50 py-10">
+    <div class="max-w-6xl mx-auto bg-white rounded-xl p-6 shadow space-y-12">
+
+      <!-- ====== B37: Dashboard KPIs ====== -->
+      <div>
+        <h2 class="text-2xl font-semibold mb-4">Dashboard KPIs</h2>
+        <div class="flex gap-4 mb-6">
+          <select id="periodo" class="border p-2 rounded">
+            <option>Hoy</option>
+            <option>Semana Actual</option>
+            <option>Mes Actual</option>
+            <option>Rango Personalizado</option>
+          </select>
+          <input type="date" id="fecha-inicio" class="border p-2 rounded hidden">
+          <input type="date" id="fecha-fin" class="border p-2 rounded hidden">
+        </div>
+
+        <!-- KPIs principales -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-gray-100 rounded p-4 text-center">
+            <h3 class="text-lg font-bold">Ventas Totales</h3>
+            <p class="text-2xl" id="ventas-totales">$0</p>
+          </div>
+          <div class="bg-gray-100 rounded p-4 text-center">
+            <h3 class="text-lg font-bold">Pedidos</h3>
+            <p class="text-2xl" id="num-pedidos">0</p>
+          </div>
+          <div class="bg-gray-100 rounded p-4 text-center">
+            <h3 class="text-lg font-bold">Ticket Promedio</h3>
+            <p class="text-2xl" id="ticket-promedio">$0</p>
+          </div>
+        </div>
+
+        <!-- Top productos -->
+        <h3 class="text-xl font-semibold mt-6 mb-2">Top 5 Productos</h3>
+        <ul id="top-productos" class="list-disc pl-6 text-sm">
+          <li>Rigatoni 500g</li>
+          <li>Lasagna</li>
+          <li>Gnocchi</li>
+        </ul>
+      </div>
+
+      <!-- ====== B38: Reportes Filtrados y Exportación ====== -->
+      <div>
+        <h2 class="text-2xl font-semibold mb-4">Reportes Filtrados</h2>
+        <!-- Filtros -->
+        <form id="form-filtros" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <div>
+            <label class="block mb-1 text-sm">Fecha Inicio</label>
+            <input type="date" class="w-full border p-2 rounded">
+          </div>
+          <div>
+            <label class="block mb-1 text-sm">Fecha Fin</label>
+            <input type="date" class="w-full border p-2 rounded">
+          </div>
+          <div>
+            <label class="block mb-1 text-sm">Categoría</label>
+            <select class="w-full border p-2 rounded">
+              <option>Pastas</option>
+              <option>Bebidas</option>
+              <option>Postres</option>
+            </select>
+          </div>
+          <div>
+            <label class="block mb-1 text-sm">Estado</label>
+            <select class="w-full border p-2 rounded">
+              <option>Todos</option>
+              <option>Entregado</option>
+              <option>Pendiente</option>
+            </select>
+          </div>
+          <button class="col-span-full bg-blue-500 text-white p-2 rounded mt-2">Aplicar Filtros</button>
+        </form>
+
+        <!-- Tabla resultados -->
+        <div class="overflow-x-auto">
+          <table class="min-w-full border text-sm">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="px-4 py-2 text-left">Fecha</th>
+                <th class="px-4 py-2 text-left">Orden</th>
+                <th class="px-4 py-2 text-left">Cliente</th>
+                <th class="px-4 py-2 text-left">Ítem</th>
+                <th class="px-4 py-2 text-left">Cantidad</th>
+                <th class="px-4 py-2 text-left">Precio</th>
+                <th class="px-4 py-2 text-left">Total</th>
+                <th class="px-4 py-2 text-left">Estado</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-reportes">
+              <tr class="border-t">
+                <td class="px-4 py-2">2025-09-26</td>
+                <td class="px-4 py-2">#00123</td>
+                <td class="px-4 py-2">Juan Pérez</td>
+                <td class="px-4 py-2">Rigatoni</td>
+                <td class="px-4 py-2">2</td>
+                <td class="px-4 py-2">$2.990</td>
+                <td class="px-4 py-2">$5.980</td>
+                <td class="px-4 py-2">Entregado</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="flex gap-4 mt-4 justify-end">
+          <button class="bg-green-500 text-white px-4 py-2 rounded">Exportar CSV</button>
+          <button class="bg-gray-700 text-white px-4 py-2 rounded">Exportar PDF</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Simulación de cambio periodo
+      const periodo = document.getElementById('periodo');
+      periodo?.addEventListener('change', () => {
+        alert('Simulación: cambiar KPIs al periodo seleccionado');
+      });
+    });
+  </script>
+</Layout>
