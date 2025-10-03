@@ -9,12 +9,12 @@
   --breakpoint-2xl: 96rem; /* 1536px */
 
   /* Colores */
-  --color-primary: #6E0F2C;
-  --color-secondary: #D4A373;
+  --color-primary: #2F4A2F;
+  --color-secondary:  #6C8672;
 
-  --color-accent: #6E0F2C;
-  --color-accent-secondary: #A3B18A;
-  --color-accent-tertiary: #F5F5F4;
+  --color-accent: #E38B2C;
+  --color-accent-secondary: #A05E2D;
+  --color-accent-tertiary: #F8F5E6;
 
   --color-grey: #E8E8E8;
 
@@ -35,7 +35,7 @@
 /* ========== ESTILOS GLOBALES ========== */
 body {
   @apply text-secondary font-primary text-[17px] leading-8;
-  background-color: #F5F5F4;
+  background-color: #fff;
 }
 
 h1, h2, h3, h4, h5, h6 {

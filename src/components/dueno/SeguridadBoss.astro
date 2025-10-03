@@ -1,0 +1,80 @@
+<section class="bg-gray-50 py-10 rounded-xl shadow-sm">
+  <div class="max-w-7xl mx-auto px-6 space-y-10">
+    <!-- Header -->
+    <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <h2 class="text-2xl font-bold text-primary">Seguridad y Roles</h2>
+      <button
+        class="px-4 py-2 bg-accent text-white rounded-lg shadow hover:bg-accent-secondary transition"
+      >
+        + Agregar Rol
+      </button>
+    </header>
+
+    <!-- Roles y accesos -->
+    <div class="bg-white shadow rounded-xl p-6 overflow-x-auto">
+      <h3 class="text-lg font-semibold text-primary mb-4">Roles del Sistema</h3>
+      <table class="min-w-full text-sm border border-gray-100 rounded-lg">
+        <thead class="bg-primary text-white">
+          <tr>
+            <th class="px-4 py-3 text-left">Rol</th>
+            <th class="px-4 py-3 text-left">Descripción</th>
+            <th class="px-4 py-3 text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          <tr class="hover:bg-gray-50">
+            <td class="px-4 py-3">Administrador</td>
+            <td class="px-4 py-3">Acceso completo al sistema</td>
+            <td class="px-4 py-3 text-center space-x-2">
+              <button class="px-3 py-1 bg-accent text-white rounded hover:bg-accent-secondary transition">Editar</button>
+              <button class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition">Eliminar</button>
+            </td>
+          </tr>
+          <tr class="hover:bg-gray-50">
+            <td class="px-4 py-3">Dueño</td>
+            <td class="px-4 py-3">Control total de métricas y seguridad</td>
+            <td class="px-4 py-3 text-center space-x-2">
+              <button class="px-3 py-1 bg-accent text-white rounded hover:bg-accent-secondary transition">Editar</button>
+              <button class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition">Eliminar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Usuarios activos -->
+    <div class="bg-white shadow rounded-xl p-6 overflow-x-auto">
+      <h3 class="text-lg font-semibold text-primary mb-4">Usuarios Activos</h3>
+      <table class="min-w-full text-sm border border-gray-100 rounded-lg">
+        <thead class="bg-primary text-white">
+          <tr>
+            <th class="px-4 py-3 text-left">Nombre</th>
+            <th class="px-4 py-3 text-left">Correo</th>
+            <th class="px-4 py-3 text-left">Rol</th>
+            <th class="px-4 py-3 text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          <tr class="hover:bg-gray-50">
+            <td class="px-4 py-3">Juan Pérez</td>
+            <td class="px-4 py-3">juan@ejemplo.com</td>
+            <td class="px-4 py-3">Administrador</td>
+            <td class="px-4 py-3 text-center space-x-2">
+              <button class="px-3 py-1 bg-accent text-white rounded hover:bg-accent-secondary transition">Editar</button>
+              <button class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition">Eliminar</button>
+            </td>
+          </tr>
+          <tr class="hover:bg-gray-50">
+            <td class="px-4 py-3">María López</td>
+            <td class="px-4 py-3">maria@ejemplo.com</td>
+            <td class="px-4 py-3">Dueño</td>
+            <td class="px-4 py-3 text-center space-x-2">
+              <button class="px-3 py-1 bg-accent text-white rounded hover:bg-accent-secondary transition">Editar</button>
+              <button class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition">Eliminar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

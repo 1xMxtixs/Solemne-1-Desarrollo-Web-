@@ -1,0 +1,66 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout>
+  <section class="bg-gray-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 space-y-8">
+
+      <!-- Header -->
+      <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <h1 class="text-2xl font-bold text-primary">Reglas del Carrito</h1>
+        <button class="px-4 py-2 rounded-lg bg-accent text-white hover:bg-accent-secondary transition shadow-sm">
+          + Agregar Regla
+        </button>
+      </header>
+
+      <!-- Card -->
+      <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-6 space-y-6">
+
+        <!-- Tabla -->
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm rounded-lg overflow-hidden shadow border border-gray-100">
+            <thead class="bg-primary text-white">
+              <tr>
+                <th class="px-4 py-3 text-left">Nombre</th>
+                <th class="px-4 py-3 text-left">Condición</th>
+                <th class="px-4 py-3 text-left">Descuento</th>
+                <th class="px-4 py-3 text-left">Estado</th>
+                <th class="px-4 py-3 text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 py-3">Descuento por monto</td>
+                <td class="px-4 py-3">Compra mínima $50.000</td>
+                <td class="px-4 py-3">10%</td>
+                <td class="px-4 py-3">
+                  <span class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full">Activo</span>
+                </td>
+                <td class="px-4 py-3 text-center space-x-2">
+                  <button class="px-3 py-1 bg-accent text-white rounded hover:bg-accent-secondary transition">Editar</button>
+                  <button class="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition">Desactivar</button>
+                  <button class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition">Eliminar</button>
+                </td>
+              </tr>
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 py-3">Envío gratis</td>
+                <td class="px-4 py-3">Compra mínima $30.000</td>
+                <td class="px-4 py-3">100% envío</td>
+                <td class="px-4 py-3">
+                  <span class="px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded-full">Inactivo</span>
+                </td>
+                <td class="px-4 py-3 text-center space-x-2">
+                  <button class="px-3 py-1 bg-accent text-white rounded hover:bg-accent-secondary transition">Editar</button>
+                  <button class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition">Activar</button>
+                  <button class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition">Eliminar</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,89 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout>
+  <section class="bg-gray-50 py-8">
+    <div class="max-w-6xl mx-auto px-4 space-y-12">
+
+      <!-- Roles y permisos -->
+      <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-6 space-y-6">
+        <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <h2 class="text-xl font-bold text-primary">Roles y Permisos</h2>
+          <button class="px-4 py-2 rounded-lg bg-accent text-white hover:bg-accent-secondary transition shadow-sm">
+            + Crear Rol
+          </button>
+        </header>
+
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm rounded-lg overflow-hidden shadow border border-gray-100">
+            <thead class="bg-primary text-white">
+              <tr>
+                <th class="px-4 py-3 text-left">Rol</th>
+                <th class="px-4 py-3 text-left">Descripción</th>
+                <th class="px-4 py-3 text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 py-3">Administrador</td>
+                <td class="px-4 py-3">Acceso completo al sistema</td>
+                <td class="px-4 py-3 text-center space-x-2">
+                  <button class="px-3 py-1 bg-accent text-white rounded hover:bg-accent-secondary transition">Editar</button>
+                  <button class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition">Eliminar</button>
+                </td>
+              </tr>
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 py-3">Cliente</td>
+                <td class="px-4 py-3">Acceso limitado a compras</td>
+                <td class="px-4 py-3 text-center space-x-2">
+                  <button class="px-3 py-1 bg-accent text-white rounded hover:bg-accent-secondary transition">Editar</button>
+                  <button class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition">Eliminar</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Configuración de seguridad -->
+      <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-6 space-y-6">
+        <h2 class="text-xl font-bold text-primary">Configuración de Seguridad</h2>
+
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-secondary">Requerir contraseña con mínimo 8 caracteres</span>
+            <input type="checkbox" class="toggle accent-accent" checked />
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-secondary">Expiración de contraseñas cada 90 días</span>
+            <input type="checkbox" class="toggle accent-accent" />
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-secondary">Requerir 2FA (Autenticación en dos pasos)</span>
+            <input type="checkbox" class="toggle accent-accent" checked />
+          </div>
+        </div>
+      </div>
+
+      <!-- Historial de accesos -->
+      <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-6 space-y-6">
+        <h2 class="text-xl font-bold text-primary">Historial de Accesos</h2>
+
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm rounded-lg overflow-hidden shadow border border-gray-100">
+            <thead class="bg-primary text-white">
+              <tr>
+                <th class="px-4 py-3 text-left">Usuario</th>
+                <th class="px-4 py-3 text-left">Fecha</th>
+                <th class="px-4 py-3 text-left">IP</th>
+                <th class="px-4 py-3 text-left">Estado</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 py-3">admin@nonna.cl</td>
+                <td class="px-4 py-3">2025-10-01 14:32</td>
+                <td class="px-4 py-3">192.168.0.12</td>
+                <td class="px-4 py-3 text-green-600 font-semibold">Éxito</td>
+              </tr>

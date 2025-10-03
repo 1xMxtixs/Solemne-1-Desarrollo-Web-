@@ -1,0 +1,266 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout>
+  <section id="analitica" class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 space-y-8">
+      <!-- Header -->
+      <header
+        class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+      >
+        <h1 class="text-2xl font-bold text-primary">Analítica</h1>
+        <div class="flex gap-3">
+          <button
+            class="px-4 py-2 rounded-lg bg-accent text-white hover:bg-accent-secondary transition shadow-sm duration-300"
+            >Exportar CSV</button
+          >
+          <button
+            class="px-4 py-2 rounded-lg bg-primary text-white/90 hover:opacity-90 transition shadow-sm duration-300"
+            >Exportar PDF</button
+          >
+        </div>
+      </header>
+
+      <!-- ====== B37: Dashboard KPIs ====== -->
+      <div
+        class="bg-white rounded-xl shadow-lg border border-gray-100 p-6 space-y-6"
+      >
+        <!-- Filtros de periodo -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div class="md:col-span-2">
+            <label class="block text-sm text-secondary mb-1">Periodo</label>
+            <select id="periodo" class="input">
+              <option>Hoy</option>
+              <option>Semana Actual</option>
+              <option>Mes Actual</option>
+              <option>Rango Personalizado</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm text-secondary mb-1">Desde</label>
+            <input id="fecha-inicio" type="date" class="input hidden" />
+          </div>
+          <div>
+            <label class="block text-sm text-secondary mb-1">Hasta</label>
+            <input id="fecha-fin" type="date" class="input hidden" />
+          </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div
+            class="rounded-xl border border-gray-100 p-5 bg-gradient-to-br form-primary/5 to-transparent"
+          >
+            <div class="flex items-start justify-between">
+              <p class="text-sm text-secondary">Ventas Totales</p>
+              <span
+                class="w-8 h-8 rounded-full bg-accent/10 grid place-content-center text-accent font-bold"
+                >$</span
+              >
+            </div>
+            <p id="ventas-totales" class="mt-2 text-3xl font-bold text-primary">
+              $0
+            </p>
+          </div>
+
+          <div
+            class="rounded-xl border border-gray-100 p-5 bg-gradient-to-br form-primary/5 to-transparent"
+          >
+            <div class="flex items-start justify-between">
+              <p class="text-sm text-secondary">Pedidos</p>
+              <span
+                class="w-8 h-8 rounded-full bg-primary/10 grid place-content-center text-primary font-bold"
+                >#</span
+              >
+            </div>
+            <p id="num-pedidos" class="mt-2 text-3xl font-bold text-primary">
+              0
+            </p>
+          </div>
+
+          <div
+            class="rounded-xl border border-gray-100 p-5 bg-gradient-to-br form-primary/5 to-transparent"
+          >
+            <div class="flex items-start justify-between">
+              <p class="text-sm text-secondary">Ticket Promedio</p>
+              <span
+                class="w-8 h-8 rounded-full bg-primary/10 grid place-content-center text-primary font-bold"
+                >∑</span
+              >
+            </div>
+            <p
+              id="ticket-promedio"
+              class="mt-2 text-3xl font-bold text-primary"
+            >
+              $0
+            </p>
+          </div>
+
+          <div
+            class="rounded-xl border border-gray-100 p-5 bg-gradient-to-br from-accent/5 to-transparent"
+          >
+            <div class="flex items-start justify-between">
+              <p class="text-sm text-secondary">Clientes Únicos</p>
+              <span
+                class="w-8 h-8 rounded-full bg-primary/10 grid place-content-center text-primary font-bold"
+                >👤</span
+              >
+            </div>
+            <p class="mt-2 text-3xl font-bold text-primary">0</p>
+          </div>
+        </div>
+
+        <!-- Top productos -->
+        <div>
+          <h3 class="text-lg font-semibold text-primary mb-3">
+            Top 5 Productos
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex items-center gap-3">
+              <span class="w-40 shrink-0 text-sm text-primary truncate"
+                >Rigatoni 500g</span
+              >
+              <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div class="h-full bg-accent" style="width: 72%"></div>
+              </div>
+              <span class="w-10 text-right text-sm font-semibold text-primary"
+                >72</span
+              >
+            </li>
+            <li class="flex items-center gap-3">
+              <span class="w-40 shrink-0 text-sm text-primary truncate"
+                >Lasagna</span
+              >
+              <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div class="h-full bg-accent" style="width: 54%"></div>
+              </div>
+              <span class="w-10 text-right text-sm font-semibold text-primary"
+                >54</span
+              >
+            </li>
+            <li class="flex items-center gap-3">
+              <span class="w-40 shrink-0 text-sm text-primary truncate"
+                >Gnocchi</span
+              >
+              <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div class="h-full bg-accent" style="width: 31%"></div>
+              </div>
+              <span class="w-10 text-right text-sm font-semibold text-primary"
+                >31</span
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Reportes ====== -->
+      <div
+        class="bg-white rounded-xl shadow-lg border border-gray-100 p-6 space-y-6"
+      >
+        <div class="flex items-center justify-between">
+          <h2 class="text-2xl font-semibold mb-4">Reportes Filtrados</h2>
+        </div>
+
+        <!-- Filtros -->
+        <form
+          id="form-filtros"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
+        >
+          <div>
+            <label class="block mb-1 text-sm text-secondary">Fecha Inicio</label
+            >
+            <input type="date" class="input" />
+          </div>
+          <div>
+            <label class="block mb-1 text-sm text-secondary">Fecha Fin</label>
+            <input type="date" class="input" />
+          </div>
+          <div>
+            <label class="block mb-1 text-sm text-secondary">Categoría</label>
+            <select class="input">
+              <option>Pastas</option>
+              <option>Bebidas</option>
+              <option>Postres</option>
+            </select>
+          </div>
+          <div>
+            <label class="block mb-1 text-sm text-secondary">Estado</label>
+            <select class="input">
+              <option>Todos</option>
+              <option>Entregado</option>
+              <option>Pendiente</option>
+            </select>
+          </div>
+          <div class="md:col-span-2 lg:col-span-4 flex justify-end">
+            <button
+              class="px-4 py-2 rounded-lg bg-accent text-white hover:bg-accent-secondary transition shadow-sm duration-300"
+              >Aplicar Filtros</button
+            >
+          </div>
+        </form>
+
+        <!-- Tabla resultados -->
+        <div class="-mx-4 md:mx-0 overflow-x-auto">
+          <table
+            class="min-w-full text-sm rounded-lg overflow-hidden shadow border border-gray-100"
+          >
+            <thead class="bg-primary text-white">
+              <tr>
+                <th class="px-4 py-3 text-left">Fecha</th>
+                <th class="px-4 py-3 text-left">Orden</th>
+                <th class="px-4 py-3 text-left">Cliente</th>
+                <th class="px-4 py-3 text-left">Ítem</th>
+                <th class="px-4 py-3 text-left">Cantidad</th>
+                <th class="px-4 py-3 text-left">Precio</th>
+                <th class="px-4 py-3 text-left">Total</th>
+                <th class="px-4 py-3 text-left">Estado</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 py-3">2025-09-26</td>
+                <td class="px-4 py-3">#00123</td>
+                <td class="px-4 py-3">Juan Pérez</td>
+                <td class="px-4 py-3">Rigatoni</td>
+                <td class="px-4 py-3">2</td>
+                <td class="px-4 py-3">$2.990</td>
+                <td class="px-4 py-3">$5.980</td>
+                <td class="px-4 py-3 text-green-600">Entregado</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      /** @type {HTMLInputElement | HTMLSelectElement | null} */
+      const periodo = document.getElementById("periodo");
+      const ini = document.getElementById("fecha-inicio");
+      const fin = document.getElementById("fecha-fin");
+
+
+      const elementosRango = [ini, fin];
+
+      function toggleRango() {
+        const valorPeriodo = periodo?.value || "";
+        const esRango = valorPeriodo.toLowerCase().includes("rango");
+
+        const debeOcultarse = !esRango;
+
+        elementosRango.forEach((el) => {
+          if (el) {
+            el.classList.toggle("hidden", debeOcultarse);
+          }
+        });
+      }
+
+      periodo?.addEventListener("change", toggleRango);
+
+      toggleRango();
+    });
+  </script>
+</Layout>

@@ -1,0 +1,112 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Users from "../components/admin/Users.astro";
+import Seguridad from "../components/admin/Seguridad.astro";
+import CatalogoAdmin from "../components/admin/CatalogoAdmin.astro";
+import ReglasCarrito from "../components/admin/ReglasCarrito.astro";
+import Analitica from "../components/admin/Analitica.astro";
+import BoletasAdmin from "../components/admin/BoletasAdmin.astro";
+---
+
+<Layout>
+  <section class="min-h-screen bg-gray-50">
+    <!-- 🔹 Topbar -->
+    <header
+      class="bg-white shadow-sm border-b px-6 py-4 flex items-center justify-between mb-6"
+    >
+      <h1 class="text-xl font-bold text-primary">Panel de Administración</h1>
+
+      <div class="flex items-center gap-6">
+        <span class="text-sm text-gray-500"
+          >Gestión centralizada del sistema</span
+        >
+
+        <button
+          id="logout-btn"
+          class="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition"
+        >
+          Cerrar Sesión
+        </button>
+      </div>
+    </header>
+
+    <!-- 🔹 Contenido principal -->
+    <div
+      class="max-w-7xl mx-auto px-6 py-12 space-y-16 bg-white rounded-xl shadow-sm"
+    >
+      <!-- Analítica -->
+      <section class="space-y-6 border-b border-gray-200 pb-10">
+        <header>
+          <h2 class="text-xl font-bold text-primary">📊 Analítica</h2>
+          <p class="text-sm text-secondary">Resumen de métricas clave</p>
+        </header>
+        <Analitica />
+      </section>
+
+      <!-- Boletas -->
+      <section class="space-y-6 border-b border-gray-200 pb-10">
+        <header>
+          <h2 class="text-xl font-bold text-primary">🧾 Boletas</h2>
+          <p class="text-sm text-secondary">
+            Control y seguimiento de boletas emitidas
+          </p>
+        </header>
+        <BoletasAdmin />
+      </section>
+
+      <!-- Catálogo -->
+      <section class="space-y-6 border-b border-gray-200 pb-10">
+        <header>
+          <h2 class="text-xl font-bold text-primary">📦 Catálogo</h2>
+          <p class="text-sm text-secondary">
+            Productos, categorías, variantes y vitrinas
+          </p>
+        </header>
+        <CatalogoAdmin />
+      </section>
+
+      <!-- Reglas del Carrito -->
+      <section class="space-y-6 border-b border-gray-200 pb-10">
+        <header>
+          <h2 class="text-xl font-bold text-primary">🛒 Reglas del Carrito</h2>
+          <p class="text-sm text-secondary">Gestión de reglas y descuentos</p>
+        </header>
+        <ReglasCarrito />
+      </section>
+
+      <!-- Usuarios -->
+      <section class="space-y-6 border-b border-gray-200 pb-10">
+        <header>
+          <h2 class="text-xl font-bold text-primary">👥 Usuarios</h2>
+          <p class="text-sm text-secondary">
+            Administración de cuentas y roles
+          </p>
+        </header>
+        <Users />
+      </section>
+
+      <!-- Seguridad -->
+      <section class="space-y-6">
+        <header>
+          <h2 class="text-xl font-bold text-primary">🔒 Seguridad</h2>
+          <p class="text-sm text-secondary">
+            Configuraciones de seguridad y accesos
+          </p>
+        </header>
+        <Seguridad />
+      </section>
+    </div>
+  </section>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const logoutBtn = document.getElementById("logout-btn");
+      if (logoutBtn) {
+        logoutBtn.addEventListener("click", () => {
+          sessionStorage.clear();
+          window.location.href = "/";
+        });
+      }
+    });
+  </script>
+</Layout>

@@ -1,0 +1,49 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<section class="bg-gray-50 py-10 rounded-xl shadow-md">
+  <div class="max-w-7xl mx-auto p-6 space-y-12">
+    <header
+      class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+    >
+      <h2 class="text-2xl font-bold text-primary">Analítica General</h2>
+      <p class="text-gray-500 text-sm">Resumen de métricas del negocio</p>
+    </header>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div
+        class="bg-white shadow rounded-xl p-6 text-center hover:shadow-md transition"
+      >
+        <h3 class="text-sm text-gray-500">Ventas Totales</h3>
+        <p class="text-2xl font-bold text-primary mt-2">$12.450.000</p>
+      </div>
+      <div
+        class="bg-white shadow rounded-xl p-6 text-center hover:shadow-md transition"
+      >
+        <h3 class="text-sm text-gray-500">Pedidos</h3>
+        <p class="text-2xl font-bold text-primary mt-2">1.230</p>
+      </div>
+      <div
+        class="bg-white shadow rounded-xl p-6 text-center hover:shadow-md transition"
+      >
+        <h3 class="text-sm text-gray-500">Clientes Activos</h3>
+        <p class="text-2xl font-bold text-primary mt-2">870</p>
+      </div>
+      <div
+        class="bg-white shadow rounded-xl p-6 text-center hover:shadow-md transition"
+      >
+        <h3 class="text-sm text-gray-500">Promedio Ticket</h3>
+        <p class="text-2xl font-bold text-primary mt-2">$10.120</p>
+      </div>
+    </div>
+
+    <!-- Gráfico -->
+    <div class="bg-white shadow rounded-xl p-6">
+      <h3 class="text-lg font-semibold text-primary mb-4">
+        Ventas Últimos 6 Meses
+      </h3>
+      <img src="" alt="Gráfico de ventas" class="w-full rounded-lg" />
+    </div>
+  </div>
+</section>
