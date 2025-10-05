@@ -136,7 +136,7 @@ import Layout from "../layouts/Layout.astro";
       class="hidden lg:flex w-1/2 bg-[#6E0F2C]/5 items-center justify-center"
     >
       <img
-        src="/images/pasta.png"
+        src="/images/Login/1.jpeg "
         alt="Imagen restaurante"
         class="w-full h-full object-cover rounded-l-2xl"
       />
@@ -264,18 +264,23 @@ import Layout from "../layouts/Layout.astro";
         const password = document.getElementById("password").value.trim();
 
         if (email === "admin@demo.com" && password === "1234") {
+          sessionStorage.setItem("rol", "admin");
           window.location.href = "/PanelAdmin";
         } else if (email === "cliente@demo.com" && password === "1234") {
+          sessionStorage.setItem("rol", "cliente");
           window.location.href = "/";
         } else if (email === "despacho@demo.com" && password === "1234") {
+          sessionStorage.setItem("rol", "despacho");
           window.location.href = "/PanelDespacho";
         } else if (email === "dueno@demo.com" && password === "1234") {
+          sessionStorage.setItem("rol", "dueno");
           window.location.href = "/PanelBoss";
         } else if (email === "bodega@demo.com" && password === "1234") {
+          sessionStorage.setItem("rol", "bodega");
           window.location.href = "/bodega/Picking";
         } else {
           alert(
-            "⚠️ Credenciales inválidas. Usa admin@demo.com o cliente@demo.com (1234)"
+            "⚠️ Credenciales inválidas. Usa admin@demo.com o cliente@demo.com o despacho@demo.com o dueno@demo.com o bodega@demo.com (1234)"
           );
         }
       });

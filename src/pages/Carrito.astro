@@ -21,6 +21,31 @@ import Header from "../components/Home/Header.astro";
         <!-- Aquí se insertan los productos dinámicamente -->
       </div>
 
+      <!-- Sección de Descuento -->
+      <div
+        class="bg-white rounded-xl shadow p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+      >
+        <div
+          class="w-full sm:w-auto flex flex-col sm:flex-row items-center gap-3"
+        >
+          <label for="cupon" class="text-sm font-medium text-primary"
+            >¿Tienes un cupón de descuento?</label
+          >
+          <input
+            id="cupon"
+            type="text"
+            placeholder="Ingresa tu código"
+            class="border rounded-lg p-2 w-full sm:w-60 focus:ring-2 focus:ring-accent/50"
+          />
+        </div>
+        <button
+          id="btn-aplicar-cupon"
+          class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-accent-secondary transition"
+        >
+          Aplicar Cupón
+        </button>
+      </div>
+
       <!-- Resumen -->
       <div
         class="bg-white rounded-xl shadow-lg p-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4"
