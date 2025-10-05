@@ -1,56 +1,141 @@
 ---
-import Layout from "../../layouts/Layout.astro"
+import Layout from "../../layouts/Layout.astro";
 ---
 
 <Layout>
-  <section class="section min-h-screen bg-gray-50 py-10">
-    <div class="max-w-2xl mx-auto bg-white rounded-xl p-6 shadow space-y-8">
+  <header class="bg-white shadow-sm border-b fixed top-0 inset-x-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-center relative">
+      <!-- Izquierda: Volver al Home -->
+      <button
+        id="back-home"
+        class="flex items-center gap-2 text-[#6E0F2C] hover:text-[#8B1E3F] transition font-medium absolute left-6"
+      >
+        <i class="ri-arrow-left-line text-xl"></i>
+        Volver al inicio
+      </button>
 
-      <!-- ====== Encabezado del perfil ====== -->
-      <div>
-        <h2 class="text-2xl font-semibold mb-2">Perfil del Cliente</h2>
-        <p class="text-gray-600 text-sm">Aquí puedes ver y editar tus datos personales.</p>
+      <!-- Centro: Logo -->
+      <div class="flex items-center gap-3">
+        <img src="/images/logo.svg" alt="La Nonna" class="h-10 w-auto" />
+        <h1 class="text-xl font-bold text-[#6E0F2C] hidden sm:block">
+          La Nonna
+        </h1>
+      </div>
+    </div>
+  </header>
+  <section
+    class="bg-gray-50 min-h-screen flex items-center justify-center py-16 px-4"
+  >
+    <div
+      class="w-full max-w-3xl bg-white shadow-lg rounded-2xl p-8 space-y-8 border border-gray-100"
+    >
+      <!-- Encabezado -->
+      <div class="text-center">
+        <div class="flex justify-center mb-3">
+          <div class="bg-[#8B1E3F]/10 p-3 rounded-full">
+            <i class="ri-user-3-fill text-3xl text-[#8B1E3F]"></i>
+          </div>
+        </div>
+        <h2 class="text-3xl font-bold text-[#6E0F2C]">Perfil del Cliente</h2>
+        <p class="text-gray-500 mt-1">
+          Administra tus datos personales y mantén tu información actualizada.
+        </p>
       </div>
 
-      <!-- ====== Formulario de datos personales ====== -->
-      <form id="perfil-form" class="space-y-4">
+      <!-- Formulario -->
+      <form id="perfil-form" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div>
-          <label class="block mb-1 text-sm">Nombre</label>
-          <input type="text" class="w-full border p-2 rounded" placeholder="Tu nombre">
+          <label class="block text-sm font-medium text-gray-700 mb-1"
+            >Nombre completo</label
+          >
+          <input
+            type="text"
+            class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E3F]/70 transition"
+            placeholder="Tu nombre completo"
+          />
         </div>
         <div>
-          <label class="block mb-1 text-sm">Email</label>
-          <input type="email" class="w-full border p-2 rounded" placeholder="tu@email.com">
+          <label class="block text-sm font-medium text-gray-700 mb-1"
+            >Correo electrónico</label
+          >
+          <input
+            type="email"
+            class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E3F]/70 transition"
+            placeholder="tunombre@email.com"
+          />
         </div>
         <div>
-          <label class="block mb-1 text-sm">Teléfono</label>
-          <input type="tel" class="w-full border p-2 rounded" placeholder="+56 9 1234 5678">
+          <label class="block text-sm font-medium text-gray-700 mb-1"
+            >Teléfono</label
+          >
+          <input
+            type="tel"
+            class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E3F]/70 transition"
+            placeholder="+56 9 1234 5678"
+          />
         </div>
         <div>
-          <label class="block mb-1 text-sm">Dirección</label>
-          <input type="text" class="w-full border p-2 rounded" placeholder="Tu dirección">
+          <label class="block text-sm font-medium text-gray-700 mb-1"
+            >Dirección</label
+          >
+          <input
+            type="text"
+            class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E3F]/70 transition"
+            placeholder="Av. Italia 1523, Providencia, Santiago"
+          />
         </div>
-        <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded">Guardar Cambios</button>
+
+        <div class="sm:col-span-2 flex justify-end">
+          <button
+            type="submit"
+            class="bg-[#8B1E3F] hover:bg-[#6E0F2C] text-white px-6 py-3 rounded-lg font-semibold shadow-md transition-all duration-200 hover:shadow-lg"
+          >
+            <i class="ri-save-3-line mr-2"></i> Guardar Cambios
+          </button>
+        </div>
       </form>
 
-      <!-- ====== Mensajes ====== -->
-      <div id="mensaje-guardado" class="hidden bg-green-100 text-green-800 px-4 py-2 rounded">
-        Datos guardados con éxito.
+      <!-- Mensaje de confirmación -->
+      <div
+        id="mensaje-guardado"
+        class="hidden text-center bg-green-50 text-green-700 py-3 px-4 rounded-lg border border-green-200 font-medium"
+      >
+        <i class="ri-check-line mr-1 text-lg"></i> Datos guardados con éxito.
       </div>
-
     </div>
   </section>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const perfilForm = document.getElementById('perfil-form');
-      const mensajeGuardado = document.getElementById('mensaje-guardado');
+    document.addEventListener("DOMContentLoaded", () => {
+      const perfilForm = document.getElementById("perfil-form");
+      const mensaje = document.getElementById("mensaje-guardado");
 
-      perfilForm?.addEventListener('submit', (e) => {
+      perfilForm?.addEventListener("submit", (e) => {
         e.preventDefault();
-        mensajeGuardado?.classList.remove('hidden');
-        setTimeout(() => mensajeGuardado?.classList.add('hidden'), 3000);
+        mensaje?.classList.remove("hidden");
+        mensaje?.classList.add("animate-fade-in");
+        setTimeout(() => mensaje?.classList.add("hidden"), 3000);
+      });
+
+      document.getElementById("back-home")?.addEventListener("click", () => {
+        window.location.href = "/";
       });
     });
   </script>
+
+  <style>
+    @keyframes fade-in {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .animate-fade-in {
+      animation: fade-in 0.4s ease-out;
+    }
+  </style>
 </Layout>

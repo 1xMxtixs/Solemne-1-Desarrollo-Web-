@@ -3,131 +3,155 @@ import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout>
-  <section class="section min-h-screen bg-gray-50 py-10">
-    <div class="max-w-4xl mx-auto bg-white rounded-xl p-6 shadow space-y-12">
-      <!-- ====== B34: Datos de Contacto y Entrega ====== -->
+  <header class="bg-white shadow-sm border-b fixed top-0 inset-x-0 z-50">
+    <div
+      class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-center relative"
+    >
+      <!-- Izquierda: Volver al carrito -->
+      <button
+        id="back-home"
+        class="flex items-center gap-2 text-[#6E0F2C] hover:text-[#8B1E3F] transition font-medium absolute left-6"
+      >
+        <i class="ri-arrow-left-line text-xl"></i>
+        Volver al carrito
+      </button>
+
+      <!-- Centro: Logo -->
+      <div class="flex items-center gap-3">
+        <img src="/images/logo.svg" alt="La Nonna" class="h-10 w-auto" />
+        <h1 class="text-xl font-bold text-[#6E0F2C] hidden sm:block">
+          La Nonna
+        </h1>
+      </div>
+    </div>
+  </header>
+
+  <section class="section min-h-screen bg-gray-50 py-12 mt-20">
+    <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-8 space-y-12">
+      
+      <!-- ====== DATOS DE ENTREGA ====== -->
       <div>
-        <h2 class="text-2xl font-semibold mb-4">Datos de Entrega</h2>
-        <form id="form-entrega" class="space-y-4">
+        <h2 class="text-3xl font-semibold text-[#6E0F2C] mb-4">Datos de Entrega</h2>
+        <form id="form-entrega" class="space-y-5">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label class="block mb-1 text-sm">Nombre</label>
-              <input
-                type="text"
-                class="w-full border p-2 rounded"
-                placeholder="Nombre completo"
-                required
-              />
+              <label class="block mb-1 text-sm font-medium text-gray-700">Nombre</label>
+              <input id="nombre" type="text" class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-accent/50" placeholder="Nombre completo" required />
             </div>
             <div>
-              <label class="block mb-1 text-sm">Teléfono</label>
-              <input
-                type="tel"
-                class="w-full border p-2 rounded"
-                placeholder="+56 9 1234 5678"
-                required
-              />
+              <label class="block mb-1 text-sm font-medium text-gray-700">Teléfono</label>
+              <input id="telefono" type="tel" class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-accent/50" placeholder="+56 9 1234 5678" required />
             </div>
             <div>
-              <label class="block mb-1 text-sm">Email</label>
-              <input
-                type="email"
-                class="w-full border p-2 rounded"
-                placeholder="correo@ejemplo.com"
-                required
-              />
+              <label class="block mb-1 text-sm font-medium text-gray-700">Email</label>
+              <input id="email" type="email" class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-accent/50" placeholder="correo@ejemplo.com" required />
             </div>
           </div>
 
           <div>
-            <label class="block mb-1 text-sm">Método de Entrega</label>
-            <select id="metodo-entrega" class="w-full border p-2 rounded">
+            <label class="block mb-1 text-sm font-medium text-gray-700">Método de Entrega</label>
+            <select id="metodo-entrega" class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-accent/50">
               <option value="delivery">Delivery</option>
               <option value="retiro">Retiro en Local</option>
             </select>
           </div>
 
-          <div id="delivery-fields" class="space-y-4">
-            <label class="block mb-1 text-sm">Dirección</label>
-            <input
-              type="text"
-              class="w-full border p-2 rounded"
-              placeholder="Dirección completa"
-            />
-            <label class="block mb-1 text-sm">Zona</label>
-            <select class="w-full border p-2 rounded">
-              <option>Zona 1 (+$1500)</option>
-              <option>Zona 2 (+$2500)</option>
-            </select>
+          <!-- Campos adicionales -->
+          <div id="delivery-fields" class="space-y-3">
+            <label class="block mb-1 text-sm font-medium text-gray-700">Dirección</label>
+            <input id="direccion" type="text" class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-accent/50" placeholder="Dirección completa" />
+            <p class="text-sm text-gray-600">Costo fijo de envío: <strong>$3.000</strong></p>
           </div>
 
-          <div id="retiro-fields" class="hidden">
-            <p class="text-sm text-gray-600">
-              Retiro en Sucursal Alameda 1146 – Sin cargo
-            </p>
+          <div id="retiro-fields" class="hidden text-sm text-gray-600">
+            Retiro en Sucursal Av. Italia 1523, Providencia, Santiago – Sin costo adicional.
           </div>
         </form>
       </div>
 
-      <!-- ====== B33: Procesar Pago ====== -->
+      <!-- ====== PAGO ====== -->
       <div>
-        <h2 class="text-2xl font-semibold mb-4">Pago</h2>
-        <form id="form-pago" class="space-y-4">
-          <p class="text-sm text-gray-600">
-            Total a pagar: <strong id="total-pagar">$9.970</strong>
-          </p>
-          <!-- Al final de checkout.astro -->
-          <div class="text-right mt-6">
-            <a
-              href="/Pagos"
-              class="inline-block bg-blue-500 text-white px-4 py-2 rounded"
-            >
-              Ir a Pago Online
-            </a>
-          </div>
-        </form>
-        <div id="mensaje-pago" class="text-sm mt-2"></div>
+        <h2 class="text-3xl font-semibold text-[#6E0F2C] mb-4">Pago</h2>
+        <p class="text-gray-700 text-sm mb-4">Verifica tus datos antes de proceder con el pago.</p>
+        <div class="bg-gray-50 p-4 rounded-lg border flex items-center justify-between">
+          <span class="font-medium text-gray-600">Total a pagar:</span>
+          <strong id="total-pagar" class="text-xl text-[#6E0F2C]">$0</strong>
+        </div>
+        <div class="text-right mt-6">
+          <button id="btn-pago" class="bg-[#6E0F2C] hover:bg-[#8b153a] text-white px-6 py-3 rounded-lg transition font-medium">
+            Ir a Pago Online
+          </button>
+        </div>
+        <p id="mensaje-pago" class="text-sm mt-3 text-gray-600"></p>
       </div>
+
     </div>
   </section>
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-    const metodoEntrega = document.getElementById("metodo-entrega"); 
-    const deliveryFields = document.getElementById("delivery-fields");
-    const retiroFields = document.getElementById("retiro-fields");
-    const btnPago = document.getElementById("btn-pago");
-    const mensajePago = document.getElementById("mensaje-pago");
+  <script>
+    // @ts-nocheck
+    document.addEventListener("DOMContentLoaded", () => {
+      const metodoEntrega = document.getElementById("metodo-entrega");
+      const deliveryFields = document.getElementById("delivery-fields");
+      const retiroFields = document.getElementById("retiro-fields");
+      const totalPagar = document.getElementById("total-pagar");
+      const btnPago = document.getElementById("btn-pago");
+      const mensajePago = document.getElementById("mensaje-pago");
+      const volverCarrito = document.getElementById("back-home");
 
+      const DELIVERY_COST = 3000;
 
+      // === Cargar total del carrito ===
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      const subtotal = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
+      let total = subtotal;
+      totalPagar.textContent = "$" + total.toLocaleString("es-CL");
 
-    metodoEntrega?.addEventListener('change', () => {
-        
-
-        if (metodoEntrega && 'value' in metodoEntrega && metodoEntrega.value === "delivery") {
-            // Se usa el encadenamiento opcional (?) para campos secundarios
-            deliveryFields?.classList.remove("hidden");
-            retiroFields?.classList.add("hidden");
+      // === Cambiar método de entrega ===
+      metodoEntrega.addEventListener("change", () => {
+        if (metodoEntrega.value === "delivery") {
+          deliveryFields.classList.remove("hidden");
+          retiroFields.classList.add("hidden");
+          total = subtotal + DELIVERY_COST;
         } else {
-            deliveryFields?.classList.add("hidden");
-            retiroFields?.classList.remove("hidden");
+          deliveryFields.classList.add("hidden");
+          retiroFields.classList.remove("hidden");
+          total = subtotal;
         }
-    });
+        totalPagar.textContent = "$" + total.toLocaleString("es-CL");
+      });
 
+      // === Volver al carrito ===
+      volverCarrito.addEventListener("click", () => {
+        window.location.href = "/Carrito";
+      });
 
-    btnPago?.addEventListener('click', () => {
+      // === Validar formulario antes del pago ===
+      btnPago.addEventListener("click", (e) => {
+        e.preventDefault();
+        mensajePago.textContent = "";
 
-        const estado = Math.random() < 0.7 ? "Aprobado" : "Rechazado"; 
-        
+        const nombre = document.getElementById("nombre").value.trim();
+        const telefono = document.getElementById("telefono").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const metodo = metodoEntrega.value;
+        const direccion = document.getElementById("direccion").value.trim();
 
-        if (mensajePago) { 
-            if (estado === "Aprobado") {
-                mensajePago.textContent = "Pago aprobado. Orden #UN-2025-09-0042 generada."; 
-            } else {
-                mensajePago.textContent = "Pago rechazado. Conservamos tu carrito para reintento.";
-            }
+        if (!nombre || !telefono || !email || (metodo === "delivery" && !direccion)) {
+          mensajePago.textContent = "⚠️ Por favor completa todos los campos requeridos antes de continuar.";
+          mensajePago.classList.add("text-red-600");
+          return;
         }
+
+        // === Guardar datos para boleta y pago ===
+        localStorage.setItem("checkoutTotal", total);
+        localStorage.setItem("clienteNombre", nombre);
+        localStorage.setItem("clienteEmail", email);
+        localStorage.setItem("metodoEntrega", metodo);
+        localStorage.setItem("deliveryCosto", metodo === "delivery" ? DELIVERY_COST : 0);
+
+        window.location.href = "/Pagos";
+      });
     });
-});
-</script>
+  </script>
 </Layout>

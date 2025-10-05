@@ -3,33 +3,64 @@ import Layout from "../../layouts/Layout.astro";
 ---
 
 <Layout>
-  <section class="section min-h-screen bg-gray-50 py-10">
-    <div class="max-w-5xl mx-auto bg-white rounded-xl p-6 shadow space-y-12">
-      <!-- ====== Listado de Pedidos en Preparación ====== -->
+  <!-- 🔹 Header -->
+  <header class="bg-white shadow-sm border-b mb-8">
+    <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
       <div>
-        <h2 class="text-2xl font-semibold mb-4">Pedidos en Preparación</h2>
-        <div class="overflow-x-auto">
-          <table class="min-w-full border">
-            <thead class="bg-gray-100">
+        <h1 class="text-2xl font-bold text-primary">Panel de Despacho</h1>
+        <p class="text-gray-500 text-sm">
+          Gestión de pedidos y picking en tiempo real
+        </p>
+      </div>
+      <div class="flex items-center gap-4">
+        <button
+          id="logout-btn"
+          class="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition"
+        >
+          Cerrar Sesión
+        </button>
+      </div>
+    </div>
+  </header>
+  <section class="min-h-screen bg-gray-50 py-12">
+    <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-lg p-8 space-y-12">
+      <!-- ====== Pedidos en Preparación ====== -->
+      <div>
+        <h2
+          class="text-2xl font-bold text-primary mb-6 flex items-center gap-2"
+        >
+          📦 Pedidos en Preparación
+        </h2>
+        <div
+          class="overflow-x-auto rounded-lg border border-gray-200 shadow-sm"
+        >
+          <table class="min-w-full text-sm">
+            <thead class="bg-primary text-white">
               <tr>
-                <th class="px-4 py-2 text-left text-sm">Pedido</th>
-                <th class="px-4 py-2 text-left text-sm">Cliente</th>
-                <th class="px-4 py-2 text-left text-sm">Estado</th>
-                <th class="px-4 py-2 text-center text-sm">Acciones</th>
+                <th class="px-4 py-3 text-left">Pedido</th>
+                <th class="px-4 py-3 text-left">Cliente</th>
+                <th class="px-4 py-3 text-left">Estado</th>
+                <th class="px-4 py-3 text-center">Acciones</th>
               </tr>
             </thead>
-            <tbody>
-              <tr class="border-t">
-                <td class="px-4 py-2">#LN-2025-09-0042</td>
-                <td class="px-4 py-2">Juan Pérez</td>
-                <td class="px-4 py-2 text-yellow-600">Preparación</td>
-                <td class="px-4 py-2 text-center">
+            <tbody class="divide-y divide-gray-100">
+              <tr class="hover:bg-gray-50 transition">
+                <td class="px-4 py-3 font-medium">#LN-2025-09-0042</td>
+                <td class="px-4 py-3">Juan Pérez</td>
+                <td class="px-4 py-3">
+                  <span
+                    class="px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-700 rounded-full"
+                  >
+                    Preparación
+                  </span>
+                </td>
+                <td class="px-4 py-3 text-center">
                   <button
                     type="button"
-                    class="bg-blue-500 text-white px-2 py-1 rounded"
+                    class="px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent-secondary transition"
                     data-ver="LN-2025-09-0042"
                   >
-                    Ver
+                    Ver Detalle
                   </button>
                 </td>
               </tr>
@@ -38,59 +69,77 @@ import Layout from "../../layouts/Layout.astro";
         </div>
       </div>
 
-      <!-- ====== Detalle Picking del Pedido Seleccionado ====== -->
+      <!-- ====== Detalle Picking ====== -->
       <div id="detalle-picking" class="hidden">
-        <h3 class="text-xl font-semibold mb-4">
-          Picking Pedido <span id="pedido-id"></span>
-        </h3>
-        <button
-          class="bg-gray-500 text-white px-4 py-2 rounded mb-4"
-          onclick="imprimirPicking()">Imprimir Hoja de Picking</button
-        >
+        <div class="border-t pt-8 space-y-6">
+          <h3 class="text-xl font-bold text-primary">
+            📝 Picking del Pedido <span id="pedido-id" class="text-accent"
+            ></span>
+          </h3>
 
-        <div class="overflow-x-auto">
-          <table class="min-w-full border text-sm">
-            <thead class="bg-gray-100">
-              <tr>
-                <th class="px-4 py-2 text-left">SKU</th>
-                <th class="px-4 py-2 text-left">Descripción</th>
-                <th class="px-4 py-2 text-left">Ubicación</th>
-                <th class="px-4 py-2 text-left">Cantidad Pedida</th>
-                <th class="px-4 py-2 text-left">Cantidad Encontrada</th>
-              </tr>
-            </thead>
-            <tbody id="picking-items">
-              <tr class="border-t">
-                <td class="px-4 py-2">RIG-500</td>
-                <td class="px-4 py-2">Rigatoni 500g</td>
-                <td class="px-4 py-2">Pasillo A1</td>
-                <td class="px-4 py-2">2</td>
-                <td class="px-4 py-2"
-                  ><input type="number" value="2" class="border p-1 w-16" /></td
-                >
-              </tr>
-              <tr class="border-t">
-                <td class="px-4 py-2">GNO-500</td>
-                <td class="px-4 py-2">Gnocchi 500g</td>
-                <td class="px-4 py-2">Pasillo B3</td>
-                <td class="px-4 py-2">1</td>
-                <td class="px-4 py-2"
-                  ><input type="number" value="1" class="border p-1 w-16" /></td
-                >
-              </tr>
-            </tbody>
-          </table>
-        </div>
+          <button
+            class="bg-gray-600 text-white px-5 py-2 rounded-lg hover:bg-gray-700 transition"
+            onclick="imprimirPicking()"
+          >
+            🖨 Imprimir Hoja de Picking
+          </button>
 
-        <div class="flex gap-4 mt-4">
-          <button
-            class="bg-green-500 text-white px-4 py-2 rounded"
-            onclick="confirmarPicking('total')">Confirmar Total</button
+          <div
+            class="overflow-x-auto rounded-lg border border-gray-200 shadow-sm"
           >
-          <button
-            class="bg-yellow-500 text-white px-4 py-2 rounded"
-            onclick="confirmarPicking('parcial')">Confirmar Parcial</button
-          >
+            <table class="min-w-full text-sm">
+              <thead class="bg-gray-100">
+                <tr>
+                  <th class="px-4 py-2 text-left">SKU</th>
+                  <th class="px-4 py-2 text-left">Descripción</th>
+                  <th class="px-4 py-2 text-left">Ubicación</th>
+                  <th class="px-4 py-2 text-left">Cantidad Pedida</th>
+                  <th class="px-4 py-2 text-left">Cantidad Encontrada</th>
+                </tr>
+              </thead>
+              <tbody id="picking-items" class="divide-y divide-gray-100">
+                <tr>
+                  <td class="px-4 py-2">RIG-500</td>
+                  <td class="px-4 py-2">Rigatoni 500g</td>
+                  <td class="px-4 py-2">Pasillo A1</td>
+                  <td class="px-4 py-2">2</td>
+                  <td class="px-4 py-2">
+                    <input type="number" value="2" class="input w-20" />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-2">GNO-500</td>
+                  <td class="px-4 py-2">Gnocchi 500g</td>
+                  <td class="px-4 py-2">Pasillo B3</td>
+                  <td class="px-4 py-2">1</td>
+                  <td class="px-4 py-2">
+                    <input type="number" value="1" class="input w-20" />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="flex flex-wrap gap-4">
+            <button
+              class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
+              onclick="confirmarPicking('total')"
+            >
+              ✔ Confirmar Total
+            </button>
+            <button
+              class="px-6 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition"
+              onclick="confirmarPicking('parcial')"
+            >
+              ⚠ Confirmar Parcial
+            </button>
+            <button
+              id="cerrar-detalle"
+              class="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+            >
+              ✖ Cerrar
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -116,6 +165,12 @@ import Layout from "../../layouts/Layout.astro";
         ?.addEventListener("click", () => {
           detalle.classList.add("hidden");
         });
+
+      const logoutBtn = document.getElementById("logout-btn");
+      logoutBtn?.addEventListener("click", () => {
+        sessionStorage.clear();
+        window.location.href = "/";
+      });
     });
   </script>
 </Layout>

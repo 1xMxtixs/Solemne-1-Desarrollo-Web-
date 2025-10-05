@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+:root {
+  --lightPink: #fff7f0;
+}
+
 @theme {
   /* Breakpoints */
   --breakpoint-sm: 40rem;  /* 640px */
@@ -40,6 +44,18 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   @apply text-primary leading-[128%];
+}
+
+.section-title {
+  @apply w-full lg:w-[60%] mx-auto text-center mb-16;
+}
+
+.section.heading {
+  @apply text-4xl md:text-5xl font-semibold capitalize mb-4;
+}
+
+.section-description {
+  @apply text-lg text-gray-500 font-normal;
 }
 
 .h1 {

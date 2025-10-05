@@ -1,206 +1,131 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import Header from "../components/Home/Header.astro";
 ---
 
 <Layout>
-  <section class="section min-h-screen bg-gray-50 py-10">
-    <div class="max-w-4xl mx-auto bg-white rounded-xl p-6 shadow space-y-10">
-      <!-- ====== B26 + B27: Productos en Carrito ====== -->
-      <div>
-        <h2 class="text-2xl font-semibold mb-4">Mi Carrito</h2>
-        <div class="overflow-x-auto">
-          <table class="min-w-full border">
-            <thead class="bg-gray-100">
-              <tr>
-                <th class="px-4 py-2 text-left text-sm">Producto</th>
-                <th class="px-4 py-2 text-left text-sm">Precio</th>
-                <th class="px-4 py-2 text-left text-sm">Cantidad</th>
-                <th class="px-4 py-2 text-left text-sm">Subtotal</th>
-                <th class="px-4 py-2 text-center text-sm">Acciones</th>
-              </tr>
-            </thead>
-            <tbody id="carrito-body">
-              <tr class="border-t">
-                <td class="px-4 py-2">Rigatoni 500g</td>
-                <td class="px-4 py-2">$2.990</td>
-                <td class="px-4 py-2">
-                  <!-- ====== B28: Actualizar cantidades ====== -->
-                  <div class="flex items-center">
-                    <button
-                      class="px-2 bg-gray-200"
-                      onclick="decrementarCantidad(this)">-</button
-                    >
-                    <input
-                      type="number"
-                      value="1"
-                      min="1"
-                      class="w-12 text-center border mx-1"
-                      onchange="cambiarCantidad(this)"
-                    />
-                    <button
-                      class="px-2 bg-gray-200"
-                      onclick="incrementarCantidad(this)">+</button
-                    >
-                  </div>
-                </td>
-                <td class="px-4 py-2 subtotal">$2.990</td>
-                <td class="px-4 py-2 text-center">
-                  <!-- ====== B29: Eliminar producto ====== -->
-                  <button
-                    class="bg-red-500 text-white px-2 py-1 rounded"
-                    onclick="eliminarProducto(this)">Eliminar</button
-                  >
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+  <Header />
 
-      <!-- ====== B31: Aplicar Cupones ====== -->
-      <div class="space-y-4">
-        <h3 class="text-xl font-semibold">Cupón de Descuento</h3>
-        <div class="flex gap-2">
-          <input
-            type="text"
-            id="cupon"
-            class="border p-2 rounded flex-1"
-            placeholder="Ingresa tu cupón"
-          />
-          <button
-            class="bg-blue-500 text-white px-4 py-2 rounded"
-            onclick="aplicarCupon()">Aplicar</button
-          >
-        </div>
-        <p id="mensaje-cupon" class="text-sm text-gray-600"></p>
-      </div>
-
-      <!-- ====== B30: Subtotal y Total ====== -->
-      <div class="text-right space-y-2">
-        <p class="text-lg">
-          Subtotal: <span id="subtotal-general">$2.990</span>
+  <section class="bg-gray-50 pt-24 pb-12">
+    <div class="max-w-7xl mx-auto px-6 space-y-8">
+      <!-- Título -->
+      <header class="text-center">
+        <h2 class="text-3xl font-bold text-primary">🛒 Carrito de Compras</h2>
+        <p class="text-gray-500 mt-2">
+          Revisa los productos antes de finalizar tu pedido
         </p>
-        <p class="text-lg font-bold">
-          Total: <span id="total-general">$2.990</span>
-        </p>
+      </header>
+
+      <!-- Contenido -->
+      <div id="carrito-container" class="space-y-6">
+        <!-- Aquí se insertan los productos dinámicamente -->
       </div>
 
-      <!-- ====== B32: Guardar Carrito ====== -->
-      <div class="text-right">
+      <!-- Resumen -->
+      <div
+        class="bg-white rounded-xl shadow-lg p-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4"
+      >
+        <p class="text-lg font-bold text-primary">
+          Total: <span id="carrito-total">$0</span>
+        </p>
         <button
-          class="bg-green-500 text-white px-4 py-2 rounded"
-          onclick="guardarCarrito()">Guardar Carrito</button
+          id="go-to-checkout"
+          class="px-6 py-3 bg-accent text-white rounded-lg hover:bg-accent-secondary transition shadow"
         >
+          Proceder al Pago
+        </button>
       </div>
-
-      <a href="/Checkout" class="bg-green-500 text-white px-4 py-2 rounded">
-        Ir a pagar
-      </a>
     </div>
   </section>
 
   <script>
-    function recalcularTotal() {
-      let subtotal = 0;
+    // @ts-nocheck
+    document.addEventListener("DOMContentLoaded", () => {
+      const carritoContainer = document.getElementById("carrito-container");
+      const carritoTotal = document.getElementById("carrito-total");
 
-      document.querySelectorAll("#carrito-body tr").forEach((tr) => {
-        // Usar querySelector y asertar el tipo a HTMLInputElement
-        const cantidadInput = tr.querySelector(
-          'input[type="number"]'
-        ) as HTMLInputElement;
-        const subtotalCell = tr.querySelector(
-          ".subtotal"
-        ) as HTMLTableCellElement; // Asumimos que es una celda o un elemento de texto
+      // Recuperar carrito desde localStorage
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-        const cantidad = cantidadInput ? parseInt(cantidadInput.value) || 1 : 1;
-        const precio = 2990; // Simulado
-        const subtotalItem = cantidad * precio;
+      function renderCarrito() {
+        carritoContainer.innerHTML = "";
 
-        if (subtotalCell) {
-          subtotalCell.textContent = "$" + subtotalItem.toLocaleString();
+        if (cart.length === 0) {
+          carritoContainer.innerHTML = `
+          <p class="text-gray-500 text-center">Tu carrito está vacío</p>
+        `;
+          carritoTotal.textContent = "$0";
+          return;
         }
-        subtotal += subtotalItem;
-      });
 
-      const subtotalGeneral = document.getElementById("subtotal-general");
-      const totalGeneral = document.getElementById("total-general");
+        cart.forEach((item, index) => {
+          carritoContainer.innerHTML += `
+          <div class="bg-white rounded-lg shadow p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div class="flex items-center gap-4">
+              <img src="${item.img}" class="w-20 h-20 object-cover rounded" />
+              <div>
+                <h3 class="text-lg font-bold text-primary">${item.name}</h3>
+                <p class="text-sm text-gray-500">$${item.price.toLocaleString()}</p>
+              </div>
+            </div>
 
-      const subtotalText = "$" + subtotal.toLocaleString();
+            <div class="flex items-center gap-4">
+              <button onclick="updateQty(${index}, -1)" class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300">-</button>
+              <span>${item.qty}</span>
+              <button onclick="updateQty(${index}, 1)" class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300">+</button>
+            </div>
 
-      if (subtotalGeneral) {
-        subtotalGeneral.textContent = subtotalText;
-      }
-      if (totalGeneral) {
-        totalGeneral.textContent = subtotalText;
-      }
-    }
+            <p class="font-semibold text-accent">$${(item.price * item.qty).toLocaleString()}</p>
 
-    function incrementarCantidad(btn: HTMLElement) {
-      // Asegurar el tipo del input
-      const input = btn.parentNode?.querySelector(
-        'input[type="number"]'
-      ) as HTMLInputElement | null;
-      if (input) {
-        input.value = ((parseInt(input.value) || 0) + 1).toString();
-        recalcularTotal();
-      }
-    }
+            <button onclick="removeFromCarrito(${index})" class="text-red-500 hover:text-red-700">
+              <i class="ri-delete-bin-line text-xl"></i>
+            </button>
+          </div>
+        `;
+        });
 
-    function decrementarCantidad(btn: HTMLElement) {
-      // Asegurar el tipo del input
-      const input = btn.parentNode?.querySelector(
-        'input[type="number"]'
-      ) as HTMLInputElement | null;
-      if (input) {
-        if (parseInt(input.value) > 1) {
-          input.value = ((parseInt(input.value) || 1) - 1).toString();
-          recalcularTotal();
-        } else {
-          alert("La cantidad mínima es 1");
-        }
-      }
-    }
-
-    function cambiarCantidad(input: HTMLInputElement) {
-      if (parseInt(input.value) < 1 || isNaN(parseInt(input.value))) {
-        input.value = "1";
-        alert("La cantidad mínima es 1");
-      }
-      recalcularTotal();
-    }
-
-    function eliminarProducto(btn: HTMLElement) {
-      btn.closest("tr")?.remove();
-      recalcularTotal();
-    }
-
-    function aplicarCupon() {
-      const cuponInput = document.getElementById(
-        "cupon"
-      ) as HTMLInputElement | null;
-      const mensaje = document.getElementById("mensaje-cupon");
-
-      if (!cuponInput) {
-        return;
+        carritoTotal.textContent =
+          "$" +
+          cart
+            .reduce((acc, item) => acc + item.price * item.qty, 0)
+            .toLocaleString();
       }
 
-      const cupon = cuponInput.value.trim();
+      // Actualizar cantidad
+      window.updateQty = (index, change) => {
+        cart[index].qty += change;
+        if (cart[index].qty <= 0) cart.splice(index, 1);
+        saveCarrito();
+      };
 
-      if (cupon === "PASTA10") {
-        if (mensaje) {
-          mensaje.textContent = "Descuento aplicado 10%";
-        }
-      } else {
-        if (mensaje) {
-          mensaje.textContent = "El cupón no es válido o está vencido";
-        }
+      // Eliminar producto
+      window.removeFromCarrito = (index) => {
+        cart.splice(index, 1);
+        saveCarrito();
+      };
+
+      function saveCarrito() {
+        localStorage.setItem("cart", JSON.stringify(cart));
+        renderCarrito();
       }
-    }
 
-    function guardarCarrito() {
-      alert("Carrito guardado (simulación)");
-    }
+      renderCarrito();
+    });
 
-    document.addEventListener("DOMContentLoaded", recalcularTotal);
+    document.addEventListener("DOMContentLoaded", () => {
+      const goToCheckoutBtn = document.getElementById("go-to-checkout");
+      if (goToCheckoutBtn) {
+        goToCheckoutBtn.addEventListener("click", () => {
+          const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+          if (cart.length === 0) {
+            alert(
+              "Tu carrito está vacío. Agrega productos antes de proceder al pago."
+            );
+            return;
+          }
+          window.location.href = "/Checkout";
+        });
+      }
+    });
   </script>
 </Layout>

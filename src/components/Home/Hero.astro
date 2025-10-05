@@ -1,35 +1,55 @@
 <section class="hero py-12 xl:pt-12 xl:pb-0 overflow-hidden mt-20">
   <div class="container mx-auto h-full">
-    <!-- text & img -->
+    <!-- Texto e imagen -->
     <div class="flex flex-col xl:flex-row items-center justify-between h-full">
-      <!-- text -->
+      <!-- Texto -->
       <div class="hero__text xl:w-[48%] text-center xl:text-left">
-        <!-- badge -->
+        <!-- Badge -->
         <div
-          class="flex items-center bg-white py-[10px] px-[20px] w-max gap-x-2 mb-[26px] rounded-full mx-auto xl:mx-0"
+          class="flex items-center bg-white py-[10px] px-[20px] w-max gap-x-2 mb-[26px] rounded-full mx-auto xl:mx-0 shadow-sm"
         >
-          <!-- badge icon -->
-          <i class="ri-restaurant-fill text-2xl text-accent"></i>
+          <i class="ri-restaurant-fill text-2xl text-[#8B1E3F]"></i>
           <div
-            class="uppercase text-base font-medium text-[#9ab4b7] tracking-[2.24px]"
+            class="uppercase text-base font-medium text-gray-500 tracking-[2.24px]"
           >
-            Un sabor para compartir
+            Tradición italiana con amor
           </div>
         </div>
-        <!-- title -->
-        <h1 class="h1 mb-6">El verdadero sabor de Italia en cada plato</h1>
-        <!-- desc -->
-        <p class="mb-[42px] md:max-w-xl mx-auto xl:mx-0">
-          En La Nonna elaboramos pastas frescas todos los días con recetas auténticas y el cariño de la cocina casera. Disfruta de un ambiente cálido y familiar, ideal para compartir momentos únicos alrededor de la mesa.
-        </p>
-        <!-- btn -->
-        <button class="btn btn-lg btn-accent mx-auto xl:mx-0">Haz tu reserva</button
+
+        <!-- Título -->
+        <h1 class="h1 mb-6 text-[#6E0F2C] leading-tight">
+          Siente el auténtico <span class="text-[#8B1E3F]">sabor de Italia</span
+          >
+          en cada plato
+        </h1>
+
+        <!-- Descripción -->
+        <p
+          class="mb-[42px] md:max-w-xl mx-auto xl:mx-0 text-gray-600 leading-relaxed"
         >
+          En <strong>La Nonna</strong>, cada receta es una historia que nace del
+          corazón de Italia. Pastas frescas, ingredientes de primera calidad y
+          un ambiente acogedor te esperan para compartir momentos inolvidables
+          con quienes más quieres.
+        </p>
+
+        <!-- Botón -->
+        <button
+          class="btn btn-lg bg-[#8B1E3F] hover:bg-[#6E0F2C] text-white rounded-full shadow-md px-8 py-3 transition transform hover:scale-105"
+          onclick="document.getElementById('reserva').scrollIntoView({ behavior: 'smooth' })"
+        >
+          <i class="ri-calendar-check-line mr-2"></i> Haz tu reserva
+        </button>
       </div>
-      <!-- img -->
+
+      <!-- Imagen -->
       <div class="hero__img hidden xl:flex max-w-[814px] self-end">
-        <div class="w-200 h-200 rounded-full overflow-hidden mx-auto">
-          <img src="/images/3.png" alt="" />
+        <div class="w-150 h-150 rounded-full overflow-hidden mx-auto shadow-lg">
+          <img
+            src="/images/3.png"
+            alt="Chef preparando pasta italiana"
+            class="object-cover w-full h-full"
+          />
         </div>
       </div>
     </div>
