@@ -1,46 +1,57 @@
-# Astro Starter Kit: Basics
+# 🍝 La Nonna — Restaurante Italiano
 
-```sh
-pnpm create astro@latest -- --template basics
+Proyecto desarrollado con **Astro** y **Tailwind CSS**, que simula una página web para un restaurante italiano.
+
+Incluye funcionalidades como **menú interactivo**, **carrito de compras**, **proceso de pago** y **generación de boleta electrónica**.
+
+---
+
+## ⚙️ Tecnologías utilizadas
+
+- **🧩 Astro** — Framework rápido de sitios estáticos y SSR.
+- **🎨 Tailwind CSS** — Framework de utilidades CSS para diseño moderno y responsivo.
+
+---
+
+## 🛠️ Instalación del proyecto
+
+Sigue estos pasos para ejecutar el proyecto localmente.
+
+### 1. Clonar el repositorio
+
+```bash
+git clone (https://github.com/1xMxtixs/Solemne-1-Desarrollo-Web-.git)
+cd Solemne-1-Desarrollo-Web
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+###  2. Instalar dependencias
+Primero asegúrate de tener Node.js instalado (versión 18 o superior).
+Luego instala las dependencias con pnpm, npm o yarn:
+```bash
+pnpm install
+# o
+npm install
+# o
+yarn install
+```
+---
 
-## 🚀 Project Structure
+### 3. Ejecutar el servidor de desarrollo
+ ```bash
 
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
+pnpm run dev
+# o
+npm run dev
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+### 4. Configuración de Astro (Opcional, para nuevo proyecto)
+Astro se configura automáticamente al crear el proyecto, pero si deseas iniciar uno nuevo:
+```bash
+npm create astro@latest
+```
 
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+### 5. Agregar Tailwind CSS (Si Astro no lo incluyó)
+Puedes añadirlo fácilmente con el comando:
+```bash
+npx astro add tailwind
+```
