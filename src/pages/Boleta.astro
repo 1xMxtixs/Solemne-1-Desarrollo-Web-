@@ -96,14 +96,14 @@ import Layout from "../layouts/Layout.astro";
           </div>
           <div
             id="row-descuento"
-            class="flex justify-between text-green-600 font-medium hidden"
+            class="justify-between text-green-600 font-medium hidden"
           >
             <span
               >Descuento <span id="nombre-cupon" class="text-xs"></span></span
             >
             <span id="monto-descuento">-$0</span>
           </div>
-          <div id="row-envio" class="flex justify-between text-gray-600 hidden">
+          <div id="row-envio" class="justify-between text-gray-600 hidden">
             <span>Costo de Envío</span>
             <span id="monto-envio">$0</span>
           </div>
@@ -204,6 +204,7 @@ import Layout from "../layouts/Layout.astro";
 
       if (descuento > 0) {
         document.getElementById("row-descuento").classList.remove("hidden");
+        rowDesc.classList.add("flex");
         document.getElementById("monto-descuento").textContent =
           "-$" + descuento.toLocaleString("es-CL");
         if (cuponNombre)
@@ -213,6 +214,7 @@ import Layout from "../layouts/Layout.astro";
 
       if (deliveryCosto > 0) {
         document.getElementById("row-envio").classList.remove("hidden");
+        rowDesc.classList.add("flex");
         document.getElementById("monto-envio").textContent =
           "$" + deliveryCosto.toLocaleString("es-CL");
       }

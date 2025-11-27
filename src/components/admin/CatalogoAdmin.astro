@@ -507,12 +507,14 @@ const formatoCLP = (valor: number) =>
 
         if (data.imagenes && data.imagenes.length > 0) {
           previewContainer?.classList.remove("hidden");
+          previewContainer.classList.add("flex");
           if (imgPreview)
             imgPreview.src = `http://localhost:8000${data.imagenes[0].url}`;
           if (imgStatus)
             imgStatus.innerText = "Si subes otra, reemplazará a la actual.";
         } else {
           previewContainer?.classList.add("hidden");
+          previewContainer.classList.add("flex");
           if (imgStatus)
             imgStatus.innerText = "Deja vacío para mantener sin imagen.";
         }

@@ -276,10 +276,12 @@ const valorTotalMenu = productos.reduce(
 
         if (data.imagenes && data.imagenes.length > 0) {
           previewContainer.classList.remove("hidden");
+          previewContainer.classList.add("flex");
           imgPreview.src = `http://localhost:8000${data.imagenes[0].url}`;
           imgStatus.innerText = "Si subes otra, reemplazará a la actual.";
         } else {
           previewContainer.classList.add("hidden");
+          previewContainer.classList.add("flex");
           imgPreview.src = "";
           imgStatus.innerText = "Deja vacío para mantener sin imagen.";
         }
