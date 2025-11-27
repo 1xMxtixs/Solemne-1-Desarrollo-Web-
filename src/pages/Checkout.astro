@@ -27,30 +27,62 @@ import Layout from "../layouts/Layout.astro";
   </header>
 
   <section class="section min-h-screen bg-gray-50 py-12 mt-20">
-    <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-8 space-y-12">
-      
+    <div
+      class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-8 space-y-12"
+    >
       <!-- ====== DATOS DE ENTREGA ====== -->
       <div>
-        <h2 class="text-3xl font-semibold text-[#6E0F2C] mb-4">Datos de Entrega</h2>
+        <h2 class="text-3xl font-semibold text-[#6E0F2C] mb-4">
+          Datos de Entrega
+        </h2>
         <form id="form-entrega" class="space-y-5">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label class="block mb-1 text-sm font-medium text-gray-700">Nombre</label>
-              <input id="nombre" type="text" class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-accent/50" placeholder="Nombre completo" required />
+              <label class="block mb-1 text-sm font-medium text-gray-700"
+                >Nombre</label
+              >
+              <input
+                id="nombre"
+                type="text"
+                class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-accent/50"
+                placeholder="Nombre completo"
+                required
+              />
             </div>
             <div>
-              <label class="block mb-1 text-sm font-medium text-gray-700">Teléfono</label>
-              <input id="telefono" type="tel" class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-accent/50" placeholder="+56 9 1234 5678" required />
+              <label class="block mb-1 text-sm font-medium text-gray-700"
+                >Teléfono</label
+              >
+              <input
+                id="telefono"
+                type="tel"
+                class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-accent/50"
+                placeholder="+56 9 1234 5678"
+                required
+              />
             </div>
             <div>
-              <label class="block mb-1 text-sm font-medium text-gray-700">Email</label>
-              <input id="email" type="email" class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-accent/50" placeholder="correo@ejemplo.com" required />
+              <label class="block mb-1 text-sm font-medium text-gray-700"
+                >Email</label
+              >
+              <input
+                id="email"
+                type="email"
+                class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-accent/50"
+                placeholder="correo@ejemplo.com"
+                required
+              />
             </div>
           </div>
 
           <div>
-            <label class="block mb-1 text-sm font-medium text-gray-700">Método de Entrega</label>
-            <select id="metodo-entrega" class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-accent/50">
+            <label class="block mb-1 text-sm font-medium text-gray-700"
+              >Método de Entrega</label
+            >
+            <select
+              id="metodo-entrega"
+              class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-accent/50"
+            >
               <option value="delivery">Delivery</option>
               <option value="retiro">Retiro en Local</option>
             </select>
@@ -58,13 +90,23 @@ import Layout from "../layouts/Layout.astro";
 
           <!-- Campos adicionales -->
           <div id="delivery-fields" class="space-y-3">
-            <label class="block mb-1 text-sm font-medium text-gray-700">Dirección</label>
-            <input id="direccion" type="text" class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-accent/50" placeholder="Dirección completa" />
-            <p class="text-sm text-gray-600">Costo fijo de envío: <strong>$3.000</strong></p>
+            <label class="block mb-1 text-sm font-medium text-gray-700"
+              >Dirección</label
+            >
+            <input
+              id="direccion"
+              type="text"
+              class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-accent/50"
+              placeholder="Dirección completa"
+            />
+            <p class="text-sm text-gray-600">
+              Costo fijo de envío: <strong>$3.000</strong>
+            </p>
           </div>
 
           <div id="retiro-fields" class="hidden text-sm text-gray-600">
-            Retiro en Sucursal Av. Italia 1523, Providencia, Santiago – Sin costo adicional.
+            Retiro en Sucursal Av. Italia 1523, Providencia, Santiago – Sin
+            costo adicional.
           </div>
         </form>
       </div>
@@ -72,19 +114,25 @@ import Layout from "../layouts/Layout.astro";
       <!-- ====== PAGO ====== -->
       <div>
         <h2 class="text-3xl font-semibold text-[#6E0F2C] mb-4">Pago</h2>
-        <p class="text-gray-700 text-sm mb-4">Verifica tus datos antes de proceder con el pago.</p>
-        <div class="bg-gray-50 p-4 rounded-lg border flex items-center justify-between">
+        <p class="text-gray-700 text-sm mb-4">
+          Verifica tus datos antes de proceder con el pago.
+        </p>
+        <div
+          class="bg-gray-50 p-4 rounded-lg border flex items-center justify-between"
+        >
           <span class="font-medium text-gray-600">Total a pagar:</span>
           <strong id="total-pagar" class="text-xl text-[#6E0F2C]">$0</strong>
         </div>
         <div class="text-right mt-6">
-          <button id="btn-pago" class="bg-[#6E0F2C] hover:bg-[#8b153a] text-white px-6 py-3 rounded-lg transition font-medium">
+          <button
+            id="btn-pago"
+            class="bg-[#6E0F2C] hover:bg-[#8b153a] text-white px-6 py-3 rounded-lg transition font-medium"
+          >
             Ir a Pago Online
           </button>
         </div>
         <p id="mensaje-pago" class="text-sm mt-3 text-gray-600"></p>
       </div>
-
     </div>
   </section>
 
@@ -101,35 +149,51 @@ import Layout from "../layouts/Layout.astro";
 
       const DELIVERY_COST = 3000;
 
-      // === Cargar total del carrito ===
       const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-      const subtotal = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
-      let total = subtotal;
-      totalPagar.textContent = "$" + total.toLocaleString("es-CL");
+      const montoDescuento = parseInt(
+        localStorage.getItem("montoDescuento") || "0"
+      );
 
-      // === Cambiar método de entrega ===
-      metodoEntrega.addEventListener("change", () => {
+      if (cart.length === 0) {
+        window.location.href = "/Carrito";
+        return;
+      }
+
+      const subtotalProductos = cart.reduce(
+        (acc, item) => acc + item.price * item.qty,
+        0
+      );
+
+      const actualizarTotal = () => {
+        let totalFinal = subtotalProductos - montoDescuento;
+
         if (metodoEntrega.value === "delivery") {
+          totalFinal += DELIVERY_COST;
           deliveryFields.classList.remove("hidden");
           retiroFields.classList.add("hidden");
-          total = subtotal + DELIVERY_COST;
         } else {
           deliveryFields.classList.add("hidden");
           retiroFields.classList.remove("hidden");
-          total = subtotal;
         }
-        totalPagar.textContent = "$" + total.toLocaleString("es-CL");
-      });
 
-      // === Volver al carrito ===
-      volverCarrito.addEventListener("click", () => {
-        window.location.href = "/Carrito";
-      });
+        totalFinal = Math.max(0, totalFinal);
+        totalPagar.textContent = "$" + totalFinal.toLocaleString("es-CL");
 
-      // === Validar formulario antes del pago ===
-      btnPago.addEventListener("click", (e) => {
+        localStorage.setItem("checkoutTotal", totalFinal);
+      };
+
+      actualizarTotal();
+
+      metodoEntrega.addEventListener("change", actualizarTotal);
+      volverCarrito.addEventListener(
+        "click",
+        () => (window.location.href = "/Carrito")
+      );
+
+      btnPago.addEventListener("click", async (e) => {
         e.preventDefault();
         mensajePago.textContent = "";
+        mensajePago.className = "text-sm mt-3 text-gray-600";
 
         const nombre = document.getElementById("nombre").value.trim();
         const telefono = document.getElementById("telefono").value.trim();
@@ -137,20 +201,98 @@ import Layout from "../layouts/Layout.astro";
         const metodo = metodoEntrega.value;
         const direccion = document.getElementById("direccion").value.trim();
 
-        if (!nombre || !telefono || !email || (metodo === "delivery" && !direccion)) {
-          mensajePago.textContent = "⚠️ Por favor completa todos los campos requeridos antes de continuar.";
+        if (
+          !nombre ||
+          !telefono ||
+          !email ||
+          (metodo === "delivery" && !direccion)
+        ) {
+          mensajePago.textContent =
+            "⚠️ Por favor completa todos los campos de entrega.";
           mensajePago.classList.add("text-red-600");
           return;
         }
 
-        // === Guardar datos para boleta y pago ===
-        localStorage.setItem("checkoutTotal", total);
-        localStorage.setItem("clienteNombre", nombre);
-        localStorage.setItem("clienteEmail", email);
-        localStorage.setItem("metodoEntrega", metodo);
-        localStorage.setItem("deliveryCosto", metodo === "delivery" ? DELIVERY_COST : 0);
+        const token = sessionStorage.getItem("access_token");
+        if (!token) {
+          alert("Tu sesión ha expirado.");
+          window.location.href = "/Auth";
+          return;
+        }
 
-        window.location.href = "/Pagos";
+        const itemsPayload = cart.map((i) => ({
+          nombre: i.name,
+          precio: i.price,
+          cantidad: i.qty,
+          img: i.img || "",
+        }));
+
+        const datosEntregaPayload = {
+          nombre: nombre,
+          email: email,
+          telefono: telefono,
+          metodo: metodo,
+          direccion: metodo === "delivery" ? direccion : "Retiro en Local",
+        };
+
+        const totalFinal = parseInt(
+          localStorage.getItem("checkoutTotal") || "0"
+        );
+
+        btnPago.disabled = true;
+        btnPago.innerHTML = `<i class="ri-loader-4-line animate-spin"></i> Conectando con Webpay...`;
+
+        try {
+          const response = await fetch(
+            "http://localhost:8000/api/checkout/iniciar-pago",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                items: itemsPayload,
+                total: totalFinal,
+                datos_entrega: datosEntregaPayload,
+              }),
+            }
+          );
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.detail || "Error al iniciar transacción");
+          }
+
+          const data = await response.json();
+
+          localStorage.setItem("clienteNombre", nombre);
+          localStorage.setItem("clienteEmail", email);
+          localStorage.setItem("metodoEntrega", metodo);
+          localStorage.setItem(
+            "deliveryCosto",
+            metodo === "delivery" ? DELIVERY_COST : 0
+          );
+
+          const form = document.createElement("form");
+          form.action = data.url;
+          form.method = "POST";
+
+          const inputToken = document.createElement("input");
+          inputToken.type = "hidden";
+          inputToken.name = "token_ws";
+          inputToken.value = data.token;
+
+          form.appendChild(inputToken);
+          document.body.appendChild(form);
+          form.submit();
+        } catch (error) {
+          console.error(error);
+          mensajePago.textContent = "❌ Error: " + error.message;
+          mensajePago.classList.add("text-red-600");
+          btnPago.disabled = false;
+          btnPago.textContent = "Ir a Pago Online";
+        }
       });
     });
   </script>

@@ -2,63 +2,146 @@
 import Layout from "../layouts/Layout.astro";
 ---
 
-<Layout>
-  <section class="section min-h-screen bg-gray-50 py-20">
-    <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl p-8 space-y-8">
-      <!-- ENCABEZADO -->
+<Layout title="Boleta Electrónica">
+  <style>
+    @media print {
+      /* Ocultar todo lo que no sea la boleta */
+      body * {
+        visibility: hidden;
+      }
+
+      /* Hacer visible solo el contenido de la boleta */
+      #boleta-content,
+      #boleta-content * {
+        visibility: visible;
+      }
+
+      /* Posicionar la boleta arriba a la izquierda */
+      #boleta-content {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        border: none !important; /* Quitar bordes */
+        box-shadow: none !important; /* Quitar sombras pesadas */
+      }
+
+      /* Ocultar botones de acción dentro de la boleta si los hubiera */
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+
+  <section class="min-h-screen bg-gray-50 py-20 px-4">
+    <div
+      class="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl p-8 space-y-8 border border-gray-200"
+      id="boleta-content"
+    >
       <div class="text-center border-b pb-6">
-        <img src="/images/logo.svg" alt="La Nonna" class="h-14 mx-auto mb-3" />
+        <img src="/images/logo.svg" alt="La Nonna" class="h-16 mx-auto mb-4" />
         <h2 class="text-3xl font-bold text-[#6E0F2C]">Boleta Electrónica</h2>
-        <p id="info-boleta" class="text-gray-600 mt-2 text-sm"></p>
-      </div>
-
-      <!-- DATOS DEL CLIENTE -->
-      <div class="text-sm bg-gray-50 p-4 rounded-lg border">
-        <p><strong>Cliente:</strong> Juan Pérez</p>
-        <p><strong>Email:</strong> juan@ejemplo.com</p>
-        <p><strong>Fecha:</strong> <span id="fecha-boleta"></span></p>
-      </div>
-
-      <!-- DETALLE DE COMPRA -->
-      <div class="overflow-x-auto">
-        <table
-          class="min-w-full border text-sm rounded-lg overflow-hidden"
-          id="tabla-boleta"
-        >
-          <thead class="bg-[#6E0F2C] text-white">
-            <tr>
-              <th class="px-4 py-2 text-left">Producto</th>
-              <th class="px-4 py-2 text-left">Cant.</th>
-              <th class="px-4 py-2 text-left">Precio</th>
-              <th class="px-4 py-2 text-left">Subtotal</th>
-            </tr>
-          </thead>
-          <tbody id="detalle-boleta" class="text-gray-700 bg-white"></tbody>
-        </table>
-      </div>
-
-      <!-- TOTAL -->
-      <div class="text-right text-sm space-y-1">
-        <p id="subtotal" class="text-gray-600">Subtotal: $0</p>
-        <p id="iva" class="text-gray-600">IVA (19%): $0</p>
-        <p id="total" class="text-xl font-bold text-[#6E0F2C] mt-2">
-          Total: $0
+        <p class="text-gray-500 mt-2 font-mono text-sm" id="orden-id">
+          Cargando...
         </p>
       </div>
 
-      <!-- BOTONES -->
-      <div class="flex justify-end gap-4 pt-4 border-t">
-        <button
-          id="descargar-pdf"
-          class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg transition"
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm bg-gray-50 p-6 rounded-xl border border-gray-100 print:bg-white print:border-gray-300"
+      >
+        <div>
+          <p class="text-gray-500 mb-1">Cliente</p>
+          <p class="font-bold text-gray-800 text-lg" id="cliente-nombre">...</p>
+        </div>
+        <div>
+          <p class="text-gray-500 mb-1">Email</p>
+          <p class="font-bold text-gray-800" id="cliente-email">...</p>
+        </div>
+        <div>
+          <p class="text-gray-500 mb-1">Fecha de Emisión</p>
+          <p class="font-bold text-gray-800" id="fecha-emision">...</p>
+        </div>
+        <div>
+          <p class="text-gray-500 mb-1">Método de Entrega</p>
+          <p class="font-bold text-gray-800 uppercase" id="metodo-entrega">
+            ...
+          </p>
+        </div>
+      </div>
+
+      <div class="overflow-hidden rounded-lg border border-gray-200">
+        <table class="min-w-full text-sm">
+          <thead
+            class="bg-[#6E0F2C] text-white print:text-black print:bg-gray-200"
+          >
+            <tr>
+              <th class="px-6 py-3 text-left font-semibold">Producto</th>
+              <th class="px-4 py-3 text-center font-semibold">Cant.</th>
+              <th class="px-6 py-3 text-right font-semibold">Total</th>
+            </tr>
+          </thead>
+          <tbody id="detalle-boleta" class="divide-y divide-gray-100"> </tbody>
+        </table>
+      </div>
+
+      <div class="flex justify-end">
+        <div
+          class="w-full md:w-1/2 space-y-2 text-right p-4 bg-gray-50 rounded-lg print:bg-white"
         >
-          Descargar PDF
+          <div class="flex justify-between text-gray-600">
+            <span>Suma Productos</span>
+            <span id="suma-productos">$0</span>
+          </div>
+          <div
+            id="row-descuento"
+            class="flex justify-between text-green-600 font-medium hidden"
+          >
+            <span
+              >Descuento <span id="nombre-cupon" class="text-xs"></span></span
+            >
+            <span id="monto-descuento">-$0</span>
+          </div>
+          <div id="row-envio" class="flex justify-between text-gray-600 hidden">
+            <span>Costo de Envío</span>
+            <span id="monto-envio">$0</span>
+          </div>
+
+          <div class="border-t border-gray-200 my-2"></div>
+
+          <div class="flex justify-between text-gray-500 text-xs">
+            <span>Monto Neto</span>
+            <span id="neto">$0</span>
+          </div>
+          <div class="flex justify-between text-gray-500 text-xs">
+            <span>IVA (19%)</span>
+            <span id="iva">$0</span>
+          </div>
+
+          <div
+            class="flex justify-between text-xl font-bold text-[#6E0F2C] pt-2 mt-1"
+          >
+            <span>Total Pagado</span>
+            <span id="total-final">$0</span>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="flex flex-col sm:flex-row justify-end gap-4 pt-8 border-t mt-8 no-print"
+      >
+        <button
+          id="descargar-btn"
+          class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition flex items-center justify-center gap-2 shadow-lg"
+        >
+          <i class="ri-file-download-line"></i> Descargar PDF / Imprimir
         </button>
         <a
           href="/"
-          class="bg-[#6E0F2C] hover:bg-[#8B1E3F] text-white px-5 py-2 rounded-lg transition"
+          class="bg-[#6E0F2C] hover:bg-[#8B1E3F] text-white px-6 py-3 rounded-lg transition text-center flex items-center justify-center gap-2 shadow-lg"
         >
-          Volver al Inicio
+          Volver al Inicio <i class="ri-arrow-right-line"></i>
         </a>
       </div>
     </div>
@@ -67,83 +150,88 @@ import Layout from "../layouts/Layout.astro";
   <script>
     // @ts-nocheck
     document.addEventListener("DOMContentLoaded", () => {
-      const detalleBoleta = document.getElementById("detalle-boleta");
-      const subtotalEl = document.getElementById("subtotal");
-      const ivaEl = document.getElementById("iva");
-      const totalEl = document.getElementById("total");
-      const btnDescargar = document.getElementById("descargar-pdf");
-      const infoBoleta = document.getElementById("info-boleta");
-      const fechaEl = document.getElementById("fecha-boleta");
+      const nombre = localStorage.getItem("clienteNombre") || "Cliente General";
+      const email = localStorage.getItem("clienteEmail") || "No registrado";
+      const metodo = localStorage.getItem("metodoEntrega") || "Retiro";
+      const ordenID = localStorage.getItem("ordenID") || "PENDIENTE";
 
-      // === Obtener datos del pedido desde localStorage ===
-      const cart = JSON.parse(localStorage.getItem("ordenConfirmada") || "[]");
-      const ordenID = localStorage.getItem("ordenID") || "LN-0000-00-0000";
-      const totalGuardado = parseInt(localStorage.getItem("ordenTotal")) || 0;
       const deliveryCosto = parseInt(
         localStorage.getItem("deliveryCosto") || "0"
       );
+      const descuento = parseInt(localStorage.getItem("montoDescuento") || "0");
+      const cuponNombre = localStorage.getItem("cuponAplicado") || "";
 
-      // === Mostrar encabezado ===
-      const boletaID = "B-" + ordenID.replace("LN-", "LN-000");
-      infoBoleta.textContent = `Orden ${ordenID} — Boleta ${boletaID}`;
-      fechaEl.textContent = new Date().toLocaleDateString("es-CL");
-
-      // === Si no hay productos ===
-      if (!cart || cart.length === 0) {
-        detalleBoleta.innerHTML = `
-      <tr>
-        <td colspan="4" class="text-center py-4 text-gray-500">
-          No hay productos registrados en esta orden
-        </td>
-      </tr>`;
-        subtotalEl.textContent = "Subtotal: $0";
-        ivaEl.textContent = "IVA (19%): $0";
-        totalEl.textContent = "Total: $0";
-        return;
+      let items = [];
+      try {
+        items = JSON.parse(localStorage.getItem("ordenConfirmada") || "[]");
+      } catch (e) {
+        console.error("Error parsing items", e);
       }
 
-      // === Calcular montos ===
-      let subtotal = 0;
+      document.getElementById("cliente-nombre").textContent = nombre;
+      document.getElementById("cliente-email").textContent = email;
+      document.getElementById("metodo-entrega").textContent =
+        metodo === "delivery" ? "DELIVERY A DOMICILIO" : "RETIRO EN LOCAL";
+      document.getElementById("orden-id").textContent = `Orden N° ${ordenID}`;
+      document.getElementById("fecha-emision").textContent =
+        new Date().toLocaleString("es-CL");
 
-      // Agregar productos al detalle
-      cart.forEach((item) => {
-        const itemSubtotal = item.price * item.qty;
-        subtotal += itemSubtotal;
-        detalleBoleta.innerHTML += `
-      <tr class="border-t hover:bg-gray-50 transition">
-        <td class="px-4 py-2">${item.name}</td>
-        <td class="px-4 py-2">${item.qty}</td>
-        <td class="px-4 py-2">$${item.price.toLocaleString("es-CL")}</td>
-        <td class="px-4 py-2">$${itemSubtotal.toLocaleString("es-CL")}</td>
-      </tr>
-    `;
-      });
+      const tbody = document.getElementById("detalle-boleta");
+      let sumaProductos = 0;
 
-      // Agregar costo de delivery (si aplica)
+      if (items.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" class="text-center py-6 text-gray-500">No se encontró detalle de productos.</td></tr>`;
+      } else {
+        items.forEach((item) => {
+          const precio = item.precio || item.price || 0;
+          const cantidad = item.cantidad || item.qty || 0;
+          const nombre = item.nombre || item.name || "Producto";
+          const totalItem = precio * cantidad;
+          sumaProductos += totalItem;
+
+          tbody.innerHTML += `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 text-gray-800">${nombre}</td>
+                    <td class="px-4 py-4 text-center text-gray-600">${cantidad}</td>
+                    <td class="px-6 py-4 text-right font-medium text-gray-800">$${totalItem.toLocaleString("es-CL")}</td>
+                </tr>
+            `;
+        });
+      }
+
+      document.getElementById("suma-productos").textContent =
+        "$" + sumaProductos.toLocaleString("es-CL");
+
+      if (descuento > 0) {
+        document.getElementById("row-descuento").classList.remove("hidden");
+        document.getElementById("monto-descuento").textContent =
+          "-$" + descuento.toLocaleString("es-CL");
+        if (cuponNombre)
+          document.getElementById("nombre-cupon").textContent =
+            `(${cuponNombre})`;
+      }
+
       if (deliveryCosto > 0) {
-        subtotal += deliveryCosto;
-        detalleBoleta.innerHTML += `
-      <tr class="border-t bg-gray-50">
-        <td class="px-4 py-2">Delivery</td>
-        <td class="px-4 py-2">1</td>
-        <td class="px-4 py-2">$${deliveryCosto.toLocaleString("es-CL")}</td>
-        <td class="px-4 py-2">$${deliveryCosto.toLocaleString("es-CL")}</td>
-      </tr>
-    `;
+        document.getElementById("row-envio").classList.remove("hidden");
+        document.getElementById("monto-envio").textContent =
+          "$" + deliveryCosto.toLocaleString("es-CL");
       }
 
-      // Calcular IVA y total final
-      const iva = Math.round(subtotal * 0.19);
-      const total = subtotal + iva;
+      const totalFinal = Math.max(0, sumaProductos - descuento + deliveryCosto);
+      const neto = Math.round(totalFinal / 1.19);
+      const iva = totalFinal - neto;
 
-      // Mostrar resultados
-      subtotalEl.textContent = "Subtotal: $" + subtotal.toLocaleString("es-CL");
-      ivaEl.textContent = "IVA (19%): $" + iva.toLocaleString("es-CL");
-      totalEl.textContent = "Total: $" + total.toLocaleString("es-CL");
+      document.getElementById("neto").textContent =
+        "$" + neto.toLocaleString("es-CL");
+      document.getElementById("iva").textContent =
+        "$" + iva.toLocaleString("es-CL");
+      document.getElementById("total-final").textContent =
+        "$" + totalFinal.toLocaleString("es-CL");
 
-      // === Descargar PDF (simulado) ===
+      const btnDescargar = document.getElementById("descargar-btn");
+
       btnDescargar.addEventListener("click", () => {
-        alert(`💾 Boleta ${boletaID} descargada con éxito.`);
+        window.print();
       });
     });
   </script>

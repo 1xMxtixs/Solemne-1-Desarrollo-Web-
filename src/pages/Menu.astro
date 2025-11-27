@@ -1,6 +1,47 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Header from "../components/Home/Header.astro";
+
+interface Categoria {
+  slug: string;
+  nombre: string;
+}
+
+interface Imagen {
+  url: string;
+}
+
+interface Producto {
+  nombre: string;
+  descripcion: string;
+  precio_base: number;
+  categoria: Categoria;
+  imagenes: Imagen[];
+}
+
+let categorias: Categoria[] = [];
+let productos: Producto[] = [];
+let errorCarga: string | null = null;
+
+try {
+  const [catResponse, prodResponse] = await Promise.all([
+    fetch("http://localhost:8000/api/categorias"),
+    fetch("http://localhost:8000/api/productos?solo_activos=true"),
+  ]);
+
+  if (catResponse.ok) categorias = await catResponse.json();
+  if (prodResponse.ok) productos = await prodResponse.json();
+} catch (error) {
+  console.error("Error conectando con API:", error);
+  errorCarga = "No se pudo cargar el menú. Por favor intenta más tarde.";
+}
+
+const formatoCLP = (valor: number) => {
+  return new Intl.NumberFormat("es-CL", {
+    style: "currency",
+    currency: "CLP",
+  }).format(valor);
+};
 ---
 
 <Layout>
@@ -8,374 +49,92 @@ import Header from "../components/Home/Header.astro";
 
   <section class="bg-gray-50 pt-24 py-12">
     <div class="max-w-7xl mx-auto px-6 space-y-10">
-      <!-- Título -->
       <header class="text-center">
         <h2 class="text-3xl font-bold text-primary">🍝 Nuestro Menú</h2>
         <p class="text-gray-500 mt-2">
           Descubre la mejor selección de comida italiana
         </p>
+        {errorCarga && <p class="text-red-500 mt-4 font-bold">{errorCarga}</p>}
       </header>
 
-      <!-- Categorías -->
-      <div class="flex justify-center space-x-4">
+      <div class="flex flex-wrap justify-center gap-4">
         <button
-          class="category-btn px-5 py-2 rounded-full bg-gray-200 text-gray-700 font-semibold transition hover:bg-accent hover:text-white"
-          data-category="entrada">Entrada</button
+          class="category-btn px-5 py-2 rounded-full bg-accent text-white font-semibold transition hover:bg-accent hover:text-white"
+          data-category="todos">Todos</button
         >
-        <button
-          class="category-btn px-5 py-2 rounded-full bg-gray-200 text-gray-700 font-semibold transition hover:bg-accent hover:text-white"
-          data-category="plato">Plato de Fondo</button
-        >
-        <button
-          class="category-btn px-5 py-2 rounded-full bg-gray-200 text-gray-700 font-semibold transition hover:bg-accent hover:text-white"
-          data-category="postre">Postres</button
-        >
-        <button
-          class="category-btn px-5 py-2 rounded-full bg-gray-200 text-gray-700 font-semibold transition hover:bg-accent hover:text-white"
-          data-category="bebestible">Bebestibles</button
-        >
+
+        {
+          categorias.map((cat) => (
+            <button
+              class="category-btn px-5 py-2 rounded-full bg-gray-200 text-gray-700 font-semibold transition hover:bg-accent hover:text-white"
+              data-category={cat.slug}
+            >
+              {cat.nombre}
+            </button>
+          ))
+        }
       </div>
 
-      <!-- Lista de platos -->
       <div
         id="menu-list"
         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
       >
-        <!-- Card -->
-        <!-- 1 -->
-        <div
-          data-category="entrada"
-          class="bg-white rounded-xl shadow hover:shadow-lg transition group cursor-pointer open-modal"
-        >
-          <div class="overflow-hidden rounded-t-xl">
-            <img
-              src="/images/Menu/Entrada/bruschetta.jfif"
-              alt="Bruschetta"
-              class="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-          </div>
-          <div class="p-4">
-            <h3 class="text-lg font-bold text-primary">Bruschetta</h3>
-            <p class="text-sm text-gray-500">
-              Pan tostado con tomate, ajo y albahaca fresca.
-            </p>
-            <p class="text-accent font-semibold mt-2">$4.500</p>
-          </div>
-        </div>
+        {
+          productos.map((prod) => {
+            const imagenUrl =
+              prod.imagenes && prod.imagenes.length > 0
+                ? `http://localhost:8000${prod.imagenes[0].url}`
+                : "/images/placeholder-food.jpg"; 
 
-        <!-- 2 -->
-        <div
-          data-category="entrada"
-          class="bg-white rounded-xl shadow hover:shadow-lg transition group cursor-pointer open-modal"
-        >
-          <div class="overflow-hidden rounded-t-xl">
-            <img
-              src="/images/Menu/Entrada/carpaccio-di-manzo.jpg"
-              alt="Carpaccio di Manzo"
-              class="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-          </div>
-          <div class="p-4">
-            <h3 class="text-lg font-bold text-primary">Carpaccio di Manzo</h3>
-            <p class="text-sm text-gray-500">
-              Finas láminas de carne de res marinadas con limón, aceite de
-              oliva, alcaparras y lascas de parmesano.
-            </p>
-            <p class="text-accent font-semibold mt-2">$8.990</p>
-          </div>
-        </div>
-
-        <!-- 3 -->
-        <div
-          data-category="entrada"
-          class="bg-white rounded-xl shadow hover:shadow-lg transition group cursor-pointer open-modal"
-        >
-          <div class="overflow-hidden rounded-t-xl">
-            <img
-              src="/images/Menu/Entrada/caprese.jpg"
-              alt="Caprese"
-              class="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-          </div>
-          <div class="p-4">
-            <h3 class="text-lg font-bold text-primary">Caprese</h3>
-            <p class="text-sm text-gray-500">
-              Ensalada fresca de mozzarella de búfala, tomate y hojas de
-              albahaca con un toque de reducción balsámica.
-            </p>
-            <p class="text-accent font-semibold mt-2">$6.500</p>
-          </div>
-        </div>
-
-        <!-- 4 -->
-        <div
-          data-category="entrada"
-          class="bg-white rounded-xl shadow hover:shadow-lg transition group cursor-pointer open-modal"
-        >
-          <div class="overflow-hidden rounded-t-xl">
-            <img
-              src="/images/Menu/Entrada/arancini-di-riso.webp"
-              alt="Arancini di Riso"
-              class="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-          </div>
-          <div class="p-4">
-            <h3 class="text-lg font-bold text-primary">Arancini di Riso</h3>
-            <p class="text-sm text-gray-500">
-              Croquetas de arroz rellenas de mozzarella y ragú de carne,
-              empanizadas y fritas hasta dorar.
-            </p>
-            <p class="text-accent font-semibold mt-2">$7.200</p>
-          </div>
-        </div>
-
-        <!-- plato 1 -->
-        <div
-          data-category="plato"
-          class="bg-white rounded-xl shadow hover:shadow-lg transition group cursor-pointer open-modal"
-        >
-          <div class="overflow-hidden rounded-t-xl">
-            <img
-              src="/images/Menu/Fondo/spaghetti-bolognesa.webp"
-              alt="Spaghetti Bolognesa"
-              class="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-          </div>
-          <div class="p-4">
-            <h3 class="text-lg font-bold text-primary">Spaghetti Bolognesa</h3>
-            <p class="text-sm text-gray-500">
-              Fideos artesanales con salsa boloñesa.
-            </p>
-            <p class="text-accent font-semibold mt-2">$8.990</p>
-          </div>
-        </div>
-        <!-- plato 2 -->
-        <div
-          data-category="plato"
-          class="bg-white rounded-xl shadow hover:shadow-lg transition group cursor-pointer open-modal"
-        >
-          <div class="overflow-hidden rounded-t-xl">
-            <img
-              src="/images/Menu/Fondo/lasagna-alla-bolognese.jpg"
-              alt="Lasagna alla Bolognese"
-              class="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-          </div>
-          <div class="p-4">
-            <h3 class="text-lg font-bold text-primary">
-              Lasagna alla Bolognese
-            </h3>
-            <p class="text-sm text-gray-500">
-              Capas de pasta fresca rellenas con carne, salsa de tomate,
-              bechamel y gratinadas con abundante queso parmesano.
-            </p>
-            <p class="text-accent font-semibold mt-2">$11.500</p>
-          </div>
-        </div>
-        <!-- plato 3 -->
-        <div
-          data-category="plato"
-          class="bg-white rounded-xl shadow hover:shadow-lg transition group cursor-pointer open-modal"
-        >
-          <div class="overflow-hidden rounded-t-xl">
-            <img
-              src="/images/Menu/Fondo/fettuccine-alfredo.jpg"
-              alt="Fettuccine Alfredo"
-              class="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-          </div>
-          <div class="p-4">
-            <h3 class="text-lg font-bold text-primary">Fettuccine Alfredo</h3>
-            <p class="text-sm text-gray-500">
-              Pasta fresca en una cremosa salsa de mantequilla, crema y queso
-              parmesano.
-            </p>
-            <p class="text-accent font-semibold mt-2">$8.990</p>
-          </div>
-        </div>
-        <!-- plato 4 -->
-        <div
-          data-category="plato"
-          class="bg-white rounded-xl shadow hover:shadow-lg transition group cursor-pointer open-modal"
-        >
-          <div class="overflow-hidden rounded-t-xl">
-            <img
-              src="/images/Menu/Fondo/risottoai-funghi.jpg "
-              alt="Risotto ai Funghi"
-              class="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-          </div>
-          <div class="p-4">
-            <h3 class="text-lg font-bold text-primary">Risotto ai Funghi</h3>
-            <p class="text-sm text-gray-500">
-              Arroz italiano cocinado lentamente en caldo, con champiñones
-              frescos y finalizado con mantequilla y parmesano.
-            </p>
-            <p class="text-accent font-semibold mt-2">$10.200</p>
-          </div>
-        </div>
-
-        <!-- postre 1 -->
-        <div
-          data-category="postre"
-          class="bg-white rounded-xl shadow hover:shadow-lg transition group cursor-pointer open-modal"
-        >
-          <div class="overflow-hidden rounded-t-xl">
-            <img
-              src="/images/Menu/Postres/tiramisu.webp"
-              alt="Tiramisú"
-              class="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-          </div>
-          <div class="p-4">
-            <h3 class="text-lg font-bold text-primary">Tiramisú</h3>
-            <p class="text-sm text-gray-500">
-              Clásico postre italiano con café y mascarpone.
-            </p>
-            <p class="text-accent font-semibold mt-2">$5.500</p>
-          </div>
-        </div>
-        <!-- postre 2 -->
-        <div
-          data-category="postre"
-          class="bg-white rounded-xl shadow hover:shadow-lg transition group cursor-pointer open-modal"
-        >
-          <div class="overflow-hidden rounded-t-xl">
-            <img
-              src="/images/Menu/Postres/pannacotta.jfif"
-              alt="Panna Cotta"
-              class="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-          </div>
-          <div class="p-4">
-            <h3 class="text-lg font-bold text-primary">Panna Cotta</h3>
-            <p class="text-sm text-gray-500">
-              Cremoso postre de nata cocida servido con salsa de frutos rojos
-              frescos.
-            </p>
-            <p class="text-accent font-semibold mt-2">$4.800</p>
-          </div>
-        </div>
-        <!-- postre 3 -->
-        <div
-          data-category="postre"
-          class="bg-white rounded-xl shadow hover:shadow-lg transition group cursor-pointer open-modal"
-        >
-          <div class="overflow-hidden rounded-t-xl">
-            <img
-              src="/images/Menu/Postres/cannoli-siciliani.jpg"
-              alt="Cannoli Siciliani"
-              class="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-          </div>
-          <div class="p-4">
-            <h3 class="text-lg font-bold text-primary">Cannoli Siciliani</h3>
-            <p class="text-sm text-gray-500">
-              Crujientes tubos de masa frita rellenos con ricotta dulce,
-              ralladura de cítricos y chips de chocolate.
-            </p>
-            <p class="text-accent font-semibold mt-2">$5.200</p>
-          </div>
-        </div>
-        <!-- postre 4 -->
-        <div
-          data-category="postre"
-          class="bg-white rounded-xl shadow hover:shadow-lg transition group cursor-pointer open-modal"
-        >
-          <div class="overflow-hidden rounded-t-xl">
-            <img
-              src="/images/Menu/Postres/gelato-italiano-(- sabores).jpg"
-              alt="Gelato Italiano"
-              class="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-          </div>
-          <div class="p-4">
-            <h3 class="text-lg font-bold text-primary">Gelato Italiano</h3>
-            <p class="text-sm text-gray-500">
-              Helado artesanal italiano, más cremoso y ligero, disponible en
-              sabores como pistacho, chocolate o frutilla.
-            </p>
-            <p class="text-accent font-semibold mt-2">$4.500</p>
-          </div>
-        </div>
-
-        <!-- bebestible 1 -->
-        <div
-          data-category="bebestible"
-          class="bg-white rounded-xl shadow hover:shadow-lg transition group cursor-pointer open-modal"
-        >
-          <div class="overflow-hidden rounded-t-xl">
-            <img
-              src="/images/Menu/Bebestibles/prosecco-di-valdobbiadene.webp"
-              alt="Prosecco di Valdobbiadene"
-              class="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-          </div>
-          <div class="p-4">
-            <h3 class="text-lg font-bold text-primary">Prosecco di Valdobbiadene</h3>
-            <p class="text-sm text-gray-500">
-              Espumante italiano con burbujas finas y aroma a pera y manzana verde.
-            </p>
-            <p class="text-accent font-semibold mt-2">$6.500</p>
-          </div>
-        </div>
-        <div
-          data-category="bebestible"
-          class="bg-white rounded-xl shadow hover:shadow-lg transition group cursor-pointer open-modal"
-        >
-          <div class="overflow-hidden rounded-t-xl">
-            <img
-              src="/images/Menu/Bebestibles/Negroni.jpg"
-              alt="Negroni"
-              class="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-          </div>
-          <div class="p-4">
-            <h3 class="text-lg font-bold text-primary">Negroni</h3>
-            <p class="text-sm text-gray-500">
-              Cóctel tradicional italiano con gin, vermut rosso y Campari, servido con cáscara de naranja.
-            </p>
-            <p class="text-accent font-semibold mt-2">$7.800</p>
-          </div>
-        </div>
-        <div
-          data-category="bebestible"
-          class="bg-white rounded-xl shadow hover:shadow-lg transition group cursor-pointer open-modal"
-        >
-          <div class="overflow-hidden rounded-t-xl">
-            <img
-              src="/images/Menu/Bebestibles/espresso-italiano.webp"
-              alt="Espresso Italiano"
-              class="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-          </div>
-          <div class="p-4">
-            <h3 class="text-lg font-bold text-primary">Espresso Italiano</h3>
-            <p class="text-sm text-gray-500">
-              Café intenso preparado con granos 100% arábica, en taza pequeña.
-            </p>
-            <p class="text-accent font-semibold mt-2">$2.200</p>
-          </div>
-        </div>
-
+            return (
+              <div
+                data-category={prod.categoria.slug}
+                class="bg-white rounded-xl shadow hover:shadow-lg transition group cursor-pointer open-modal product-card"
+                data-json={JSON.stringify({
+                  title: prod.nombre,
+                  desc: prod.descripcion || "Sin descripción",
+                  price: prod.precio_base,
+                  img: imagenUrl,
+                })}
+              >
+                <div class="overflow-hidden rounded-t-xl relative h-48">
+                  <img
+                    src={imagenUrl}
+                    alt={prod.nombre}
+                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    onerror="this.src='/images/logo.svg'"
+                  />
+                </div>
+                <div class="p-4">
+                  <h3 class="text-lg font-bold text-primary">{prod.nombre}</h3>
+                  <p class="text-sm text-gray-500 line-clamp-2">
+                    {prod.descripcion || "Deliciosa preparación de la casa."}
+                  </p>
+                  <p class="text-accent font-semibold mt-2">
+                    {formatoCLP(prod.precio_base)}
+                  </p>
+                </div>
+              </div>
+            );
+          })
+        }
       </div>
     </div>
   </section>
 
-  <!-- Modal -->
   <div
     id="plato-modal"
     class="fixed inset-0 hidden items-center justify-center z-50 bg-black/40 backdrop-blur-sm"
   >
-    <div class="bg-white rounded-xl shadow-lg w-full max-w-md p-6 relative">
+    <div
+      class="bg-white rounded-xl shadow-lg w-full max-w-md p-6 relative mx-4"
+    >
       <button
         id="close-modal"
         class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-2xl"
         ><i class="ri-close-line text-3xl"></i></button
       >
-      <div id="modal-content">
-        <!-- Aquí se cargará dinámicamente la info del plato -->
-      </div>
+      <div id="modal-content"></div>
       <button
         id="add-to-cart-btn"
         class="mt-4 w-full py-2 bg-accent text-white rounded-lg hover:bg-accent-secondary transition"
@@ -389,7 +148,7 @@ import Header from "../components/Home/Header.astro";
     // @ts-nocheck
     document.addEventListener("DOMContentLoaded", () => {
       const categoryBtns = document.querySelectorAll(".category-btn");
-      const cards = document.querySelectorAll("#menu-list > div");
+      const cards = document.querySelectorAll(".product-card");
       const modal = document.getElementById("plato-modal");
       const closeModal = document.getElementById("close-modal");
       const modalContent = document.getElementById("modal-content");
@@ -410,9 +169,6 @@ import Header from "../components/Home/Header.astro";
         }
       };
 
-      updateCategoryStyles(null);
-      cards.forEach((card) => (card.style.display = "block"));
-
       // === Agregar al carrito ===
       addToCartBtn?.addEventListener("click", () => {
         if (!currentPlato) return;
@@ -430,19 +186,15 @@ import Header from "../components/Home/Header.astro";
 
         localStorage.setItem("cart", JSON.stringify(cart));
 
-        if (window.updateCartDisplay) {
-          window.updateCartDisplay();
-        }
+        window.dispatchEvent(new Event("cart-updated"));
 
+        const originalText = addToCartBtn.innerText;
         addToCartBtn.innerText = "✔ Agregado!";
-        setTimeout(
-          () => (addToCartBtn.innerText = "➕ Añadir al Carrito"),
-          1500
-        );
-
-        modal.classList.add("hidden");
-        modal.classList.remove("flex");
-        currentPlato = null;
+        setTimeout(() => {
+          addToCartBtn.innerText = "➕ Añadir al Carrito";
+          modal.classList.add("hidden");
+          modal.classList.remove("flex");
+        }, 1000);
       });
 
       // === Filtro por categoría ===
@@ -450,29 +202,30 @@ import Header from "../components/Home/Header.astro";
         btn.addEventListener("click", () => {
           updateCategoryStyles(btn);
           const category = btn.dataset.category;
+
           cards.forEach((card) => {
-            card.style.display =
-              card.dataset.category === category ? "block" : "none";
+            if (category === "todos") {
+              card.style.display = "block";
+            } else {
+              card.style.display =
+                card.dataset.category === category ? "block" : "none";
+            }
           });
         });
       });
 
       // === Abrir modal de plato ===
-      document.querySelectorAll(".open-modal").forEach((card) => {
+      cards.forEach((card) => {
         card.addEventListener("click", () => {
-          const title = card.querySelector("h3").innerText;
-          const desc = card.querySelector("p").innerText;
-          const priceText = card.querySelector(".text-accent").innerText;
-          const price = parseInt(priceText.replace(/\D/g, ""));
-          const img = card.querySelector("img").src;
+          const data = JSON.parse(card.dataset.json);
 
-          currentPlato = { title, desc, price, img };
+          currentPlato = data;
 
           modalContent.innerHTML = `
-          <img src="${img}" class="w-full h-48 object-cover rounded-lg mb-4" />
-          <h3 class="text-xl font-bold text-primary">${title}</h3>
-          <p class="text-gray-500">${desc}</p>
-          <p class="text-accent font-semibold mt-2">$${price.toLocaleString("es-CL")}</p>
+          <img src="${data.img}" class="w-full h-48 object-cover rounded-lg mb-4" onerror="this.src='/images/logo.svg'"/>
+          <h3 class="text-xl font-bold text-primary">${data.title}</h3>
+          <p class="text-gray-500">${data.desc}</p>
+          <p class="text-accent font-semibold mt-2">$${data.price.toLocaleString("es-CL")}</p>
         `;
           addToCartBtn.innerText = "➕ Añadir al Carrito";
           modal.classList.remove("hidden");
@@ -485,6 +238,14 @@ import Header from "../components/Home/Header.astro";
         modal.classList.add("hidden");
         modal.classList.remove("flex");
         currentPlato = null;
+      });
+
+      // Cerrar modal con click afuera
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) {
+          modal.classList.add("hidden");
+          modal.classList.remove("flex");
+        }
       });
     });
   </script>

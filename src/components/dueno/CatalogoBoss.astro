@@ -1,87 +1,322 @@
 ---
-import Producto from "../admin/Producto.astro" // si lo tienes creado como componente
+import ProductoForm from "../admin/Producto.astro";
+
+let productos = [];
+let categorias = [];
+
+try {
+  const [prodRes, catRes] = await Promise.all([
+    fetch("http://localhost:8000/api/productos"),
+    fetch("http://localhost:8000/api/categorias"),
+  ]);
+
+  if (prodRes.ok) productos = await prodRes.json();
+  if (catRes.ok) categorias = await catRes.json();
+} catch (e) {
+  console.error("Error cargando datos dueño:", e);
+}
+
+const formatoCLP = (valor: number) =>
+  new Intl.NumberFormat("es-CL", { style: "currency", currency: "CLP" }).format(
+    valor
+  );
+const valorTotalMenu = productos.reduce(
+  (acc: number, prod: any) => acc + prod.precio_base,
+  0
+);
 ---
 
-<section class="bg-gray-50 py-10 rounded-xl shadow-sm">
-  <div class="max-w-7xl mx-auto px-6 space-y-10">
-    <!-- Título -->
-    <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      <h2 class="text-2xl font-bold text-primary">Gestión del Catálogo</h2>
-      <button
-        id="open-product-modal"
-        class="px-4 py-2 bg-accent text-white rounded-lg shadow hover:bg-accent-secondary transition"
-      >
-        + Agregar Producto
-      </button>
-    </header>
-
-    <!-- Tabla de productos -->
-    <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-x-auto">
-      <table class="min-w-full text-sm">
-        <thead class="bg-primary text-white">
-          <tr>
-            <th class="px-4 py-3 text-left">Imagen</th>
-            <th class="px-4 py-3 text-left">Nombre</th>
-            <th class="px-4 py-3 text-left">Categoría</th>
-            <th class="px-4 py-3 text-left">Precio</th>
-            <th class="px-4 py-3 text-left">Stock</th>
-            <th class="px-4 py-3 text-center">Acciones</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-100">
-          <tr class="hover:bg-gray-50">
-            <td class="px-4 py-3">
-              <img src="/images/pasta.png" class="w-12 h-12 rounded object-cover" />
-            </td>
-            <td class="px-4 py-3">Spaghetti Clásico</td>
-            <td class="px-4 py-3">Pastas</td>
-            <td class="px-4 py-3">$4.990</td>
-            <td class="px-4 py-3">120</td>
-            <td class="px-4 py-3 text-center space-x-2">
-              <button class="px-3 py-1 bg-accent text-white rounded hover:bg-accent-secondary transition">
-                Editar
-              </button>
-              <button class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition">
-                Eliminar
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+<section class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+  <div
+    class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 border-b border-gray-100 pb-6"
+  >
+    <div>
+      <h2 class="text-2xl font-bold text-gray-800">Gestión de Carta</h2>
+      <p class="text-sm text-gray-500 mt-1">
+        Vista propietaria del inventario.
+      </p>
     </div>
 
-    <!-- Modal de producto -->
-    <div
-      id="producto-modal"
-      class="fixed inset-0 hidden items-center justify-center z-50 bg-white/20 backdrop-blur-sm"
-    >
-      <div class="bg-white rounded-xl shadow-lg w-full max-w-3xl p-6 relative">
-        <button
-          id="close-producto-modal"
-          class="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
+    <div class="flex gap-4">
+      <div class="px-4 py-2 bg-orange-50 rounded-lg border border-orange-100">
+        <span class="block text-xs text-orange-600 font-bold uppercase"
+          >Total Platos</span
         >
-          <i class="ri-close-fill text-3xl"></i>
-        </button>
-        <Producto />
+        <span id="kpi-total" class="text-xl font-bold text-gray-800"
+          >{productos.length}</span
+        >
       </div>
+      <div class="px-4 py-2 bg-green-50 rounded-lg border border-green-100">
+        <span class="block text-xs text-green-600 font-bold uppercase"
+          >Valor Promedio</span
+        >
+        <span id="kpi-promedio" class="text-xl font-bold text-gray-800">
+          {
+            productos.length
+              ? formatoCLP(valorTotalMenu / productos.length)
+              : "$0"
+          }
+        </span>
+      </div>
+    </div>
+
+    <button
+      id="btn-nuevo-plato"
+      class="bg-gray-900 text-white px-5 py-2.5 rounded-lg hover:bg-gray-800 transition shadow-lg flex items-center gap-2"
+    >
+      <i class="ri-add-fill"></i> Nuevo Plato
+    </button>
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="w-full text-left border-collapse">
+      <thead>
+        <tr class="text-xs text-gray-500 uppercase border-b border-gray-200">
+          <th class="py-3 font-medium">Producto</th>
+          <th class="py-3 font-medium">Categoría</th>
+          <th class="py-3 font-medium">Estado</th>
+          <th class="py-3 font-medium text-right">Precio Base</th>
+          <th class="py-3 font-medium text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100 text-sm" id="tabla-productos-body">
+        {
+          productos.length === 0 ? (
+            <tr>
+              <td colspan="5" class="text-center py-8 text-gray-400">
+                No hay productos en la carta.
+              </td>
+            </tr>
+          ) : (
+            productos.map((prod: any) => (
+              <tr class="group hover:bg-gray-50 transition-colors">
+                <td class="py-3 pr-4">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-gray-200 overflow-hidden shrink-0">
+                      <img
+                        src={
+                          prod.imagenes && prod.imagenes.length > 0
+                            ? `http://localhost:8000${prod.imagenes[0].url}`
+                            : "/images/logo.svg"
+                        }
+                        class="w-full h-full object-cover"
+                        onerror="this.src='/images/logo.svg'"
+                      />
+                    </div>
+                    <div>
+                      <p class="font-semibold text-gray-800">{prod.nombre}</p>
+                      <p class="text-xs text-gray-400">{prod.sku}</p>
+                    </div>
+                  </div>
+                </td>
+                <td class="py-3">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                    {prod.categoria ? prod.categoria.nombre : "General"}
+                  </span>
+                </td>
+                <td class="py-3">
+                  {prod.estado === "Activo" ? (
+                    <span class="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-bold border border-green-200">
+                      Activo
+                    </span>
+                  ) : prod.estado === "Desactivado" ? (
+                    <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs font-bold border border-gray-200">
+                      Desactivado
+                    </span>
+                  ) : (
+                    <span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs font-bold border border-yellow-200">
+                      Borrador
+                    </span>
+                  )}
+                </td>
+                <td class="py-3 text-right font-mono font-medium text-gray-600">
+                  {formatoCLP(prod.precio_base)}
+                </td>
+                <td class="py-3 text-center">
+                  <div class="flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      class="p-1.5 text-blue-600 hover:bg-blue-50 rounded-md btn-boss-editar"
+                      data-json={JSON.stringify(prod)}
+                      title="Editar"
+                    >
+                      <i class="ri-pencil-line" />
+                    </button>
+                    <button
+                      class="p-1.5 text-red-500 hover:bg-red-50 rounded-md btn-boss-eliminar"
+                      data-id={prod.id}
+                      title="Eliminar"
+                    >
+                      <i class="ri-delete-bin-line" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))
+          )
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div
+    id="modal-boss"
+    class="fixed inset-0 z-50 hidden bg-black/40 backdrop-blur-sm items-center justify-center p-4"
+  >
+    <div
+      class="bg-white rounded-xl shadow-2xl w-full max-w-2xl p-6 relative animate-fade-in max-h-[90vh] overflow-y-auto"
+    >
+      <button
+        id="close-modal-boss"
+        class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+      >
+        <i class="ri-close-line text-2xl"></i>
+      </button>
+      <ProductoForm categorias={categorias} />
     </div>
   </div>
 </section>
 
 <script>
+  // @ts-nocheck
   document.addEventListener("DOMContentLoaded", () => {
-    const modal = document.getElementById("producto-modal");
-    const openBtn = document.getElementById("open-product-modal");
-    const closeBtn = document.getElementById("close-producto-modal");
+    const modal = document.getElementById("modal-boss");
+    const btnNuevo = document.getElementById("btn-nuevo-plato");
+    const btnCerrar = document.getElementById("close-modal-boss");
+    const btnCancelarForm = document.getElementById("btn-cancelar-form");
 
-    openBtn?.addEventListener("click", () => {
-      modal?.classList.remove("hidden");
-      modal?.classList.add("flex");
+    // Referencias formulario
+    const modalTitle = document.getElementById("modal-title");
+    const inpId = document.getElementById("prod-id");
+    const inpNombre = document.getElementById("prod-nombre");
+    const inpSku = document.getElementById("prod-sku");
+    const inpCategoria = document.getElementById("prod-categoria");
+    const inpEstado = document.getElementById("prod-estado");
+    const inpDesc = document.getElementById("prod-desc");
+    const inpPrecio = document.getElementById("prod-precio");
+
+    // Referencias Métricas
+    const kpiTotal = document.getElementById("kpi-total");
+    const kpiPromedio = document.getElementById("kpi-promedio");
+
+    const actualizarMetricas = async () => {
+      try {
+        const res = await fetch("http://localhost:8000/api/productos");
+        if (res.ok) {
+          const productos = await res.json();
+
+          // 1. Actualizar Total
+          kpiTotal.innerText = productos.length;
+
+          // 2. Actualizar Promedio
+          const suma = productos.reduce((acc, p) => acc + p.precio_base, 0);
+          const promedio = productos.length
+            ? Math.round(suma / productos.length)
+            : 0;
+          kpiPromedio.innerText = "$" + promedio.toLocaleString("es-CL");
+        }
+      } catch (e) {
+        console.error("Error actualizando métricas", e);
+      }
+    };
+
+
+    const formProducto = document.getElementById("form-producto");
+    formProducto?.addEventListener("submit", () => {
+      setTimeout(() => {
+        actualizarMetricas();
+        toggleModal(false);
+        window.location.reload();
+      }, 500);
     });
 
-    closeBtn?.addEventListener("click", () => {
-      modal?.classList.add("hidden");
-      modal?.classList.remove("flex");
+    const toggleModal = (show) => {
+      if (show) {
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+      } else {
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+      }
+    };
+
+    btnCancelarForm?.addEventListener("click", () => toggleModal(false));
+    btnNuevo?.addEventListener("click", () => {
+      if (modalTitle) modalTitle.innerText = "Nuevo Plato";
+      if (inpId) inpId.value = "";
+      if (inpNombre) inpNombre.value = "";
+      if (inpSku) inpSku.value = "";
+      if (inpDesc) inpDesc.value = "";
+      if (inpPrecio) inpPrecio.value = "";
+      document.getElementById("preview-container")?.classList.add("hidden");
+      document.getElementById("prod-imagen").value = "";
+      toggleModal(true);
+    });
+
+    btnCerrar?.addEventListener("click", () => toggleModal(false));
+
+    document.addEventListener("click", (e) => {
+      // Editar
+      if (e.target.closest(".btn-boss-editar")) {
+        const btn = e.target.closest(".btn-boss-editar");
+        const data = JSON.parse(btn.dataset.json);
+
+        if (modalTitle) modalTitle.innerText = "Editar Plato";
+        if (inpId) inpId.value = data.id;
+        if (inpNombre) inpNombre.value = data.nombre;
+        if (inpSku) inpSku.value = data.sku;
+        if (inpDesc) inpDesc.value = data.descripcion || "";
+        if (inpPrecio) inpPrecio.value = data.precio_base;
+        if (inpEstado) inpEstado.value = data.estado || "Borrador";
+        if (inpCategoria && data.categoria?.id)
+          inpCategoria.value = data.categoria.id;
+
+        const previewContainer = document.getElementById("preview-container");
+        const imgPreview = document.getElementById("img-preview");
+        const imgStatus = document.getElementById("img-status");
+
+        if (data.imagenes && data.imagenes.length > 0) {
+          previewContainer.classList.remove("hidden");
+          imgPreview.src = `http://localhost:8000${data.imagenes[0].url}`;
+          imgStatus.innerText = "Si subes otra, reemplazará a la actual.";
+        } else {
+          previewContainer.classList.add("hidden");
+          imgPreview.src = "";
+          imgStatus.innerText = "Deja vacío para mantener sin imagen.";
+        }
+        toggleModal(true);
+      }
+
+      // Eliminar
+      if (e.target.closest(".btn-boss-eliminar")) {
+        const btn = e.target.closest(".btn-boss-eliminar");
+        if (confirm("¿Eliminar este plato de la carta?")) {
+          fetch(`http://localhost:8000/api/productos/${btn.dataset.id}`, {
+            method: "DELETE",
+          }).then((res) => {
+            if (res.ok) {
+              window.location.reload();
+            } else {
+              alert("Error al eliminar");
+            }
+          });
+        }
+      }
     });
   });
 </script>
+
+<style>
+  .animate-fade-in {
+    animation: fadeIn 0.2s ease-out;
+  }
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+</style>

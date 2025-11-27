@@ -1,45 +1,75 @@
 ---
-import Layout from "../../layouts/Layout.astro";
 import Producto from "./Producto.astro";
+
+let productos = [];
+let categorias = [];
+let vitrinas = [];
+
+try {
+  const [prodRes, catRes, vitRes] = await Promise.all([
+    fetch("http://localhost:8000/api/productos"),
+    fetch("http://localhost:8000/api/categorias"),
+    fetch("http://localhost:8000/api/vitrinas"),
+  ]);
+
+  if (prodRes.ok) productos = await prodRes.json();
+  if (catRes.ok) categorias = await catRes.json();
+  if (vitRes.ok) vitrinas = await vitRes.json();
+} catch (e) {
+  console.error("Error cargando catálogo:", e);
+}
+
+const formatoCLP = (valor: number) =>
+  new Intl.NumberFormat("es-CL", { style: "currency", currency: "CLP" }).format(
+    valor
+  );
 ---
 
-<Layout>
-  <section class="bg-gray-50 py-8">
-    <div class="max-w-7xl mx-auto px-4 space-y-12">
-      <!-- ================= Productos ================= -->
+<section class="bg-gray-50 py-8">
+  <div class="max-w-7xl mx-auto px-4 space-y-8">
+    <div class="border-b border-gray-200">
+      <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+        <button
+          class="tab-btn border-b-2 border-accent text-accent whitespace-nowrap py-4 px-1 font-medium text-sm"
+          data-target="tab-productos"
+        >
+          <i class="ri-restaurant-2-line mr-2"></i> Productos
+        </button>
+
+        <button
+          class="tab-btn border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 font-medium text-sm"
+          data-target="tab-categorias"
+        >
+          <i class="ri-list-check-2 text-lg mr-2"></i> Categorías
+        </button>
+
+        <button
+          class="tab-btn border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 font-medium text-sm"
+          data-target="tab-vitrinas"
+        >
+          <i class="ri-star-smile-line mr-2"></i> Vitrinas
+        </button>
+      </nav>
+    </div>
+
+    <div id="tab-productos" class="tab-content space-y-6">
       <div
         class="bg-white rounded-xl shadow-lg border border-gray-100 p-6 space-y-6"
       >
         <header
           class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
         >
-          <h2 class="text-xl font-bold text-primary">Productos</h2>
+          <h2 class="text-xl font-bold text-primary">
+            Listado de Productos ({productos.length})
+          </h2>
           <button
             id="open-producto-modal"
-            class="px-4 py-2 rounded-lg bg-accent text-white hover:bg-accent-secondary transition shadow-sm"
+            class="px-4 py-2 rounded-lg bg-accent text-white hover:bg-accent-secondary transition shadow-sm flex items-center gap-2"
           >
-            + Agregar Producto
+            <i class="ri-add-line"></i> Nuevo Producto
           </button>
         </header>
 
-        <!-- Filtros -->
-        <div
-          class="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between"
-        >
-          <input
-            type="text"
-            placeholder="Buscar producto..."
-            class="input w-full sm:w-1/2"
-          />
-          <select class="input w-full sm:w-1/4">
-            <option value="">Categoría</option>
-            <option>Pastas</option>
-            <option>Salsas</option>
-            <option>Bebidas</option>
-          </select>
-        </div>
-
-        <!-- Tabla productos -->
         <div class="overflow-x-auto">
           <table
             class="min-w-full text-sm rounded-lg overflow-hidden shadow border border-gray-100"
@@ -48,236 +78,592 @@ import Producto from "./Producto.astro";
               <tr>
                 <th class="px-4 py-3 text-left">Imagen</th>
                 <th class="px-4 py-3 text-left">Nombre</th>
+                <th class="px-4 py-3 text-left">SKU</th>
                 <th class="px-4 py-3 text-left">Categoría</th>
+                <th class="px-4 py-3 text-left">Estado</th>
                 <th class="px-4 py-3 text-left">Precio</th>
-                <th class="px-4 py-3 text-left">Stock</th>
                 <th class="px-4 py-3 text-center">Acciones</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
-              <tr class="hover:bg-gray-50">
-                <td class="px-4 py-3"
-                  ><img
-                    src="/images/pasta.png"
-                    class="w-12 h-12 object-cover rounded"
-                  /></td
-                >
-                <td class="px-4 py-3">Spaghetti Clásico</td>
-                <td class="px-4 py-3">Pastas</td>
-                <td class="px-4 py-3">$4.990</td>
-                <td class="px-4 py-3">120</td>
-                <td class="px-4 py-3 text-center space-x-2">
-                  <button
-                    class="px-3 py-1 bg-accent text-white rounded hover:bg-accent-secondary transition"
-                    >Editar</button
-                  >
-                  <button
-                    class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition"
-                    >Eliminar</button
-                  >
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- ================= Categorías ================= -->
-      <div
-        class="bg-white rounded-xl shadow-lg border border-gray-100 p-6 space-y-6"
-      >
-        <header
-          class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
-        >
-          <h2 class="text-xl font-bold text-primary">Categorías</h2>
-          <button
-            class="px-4 py-2 rounded-lg bg-accent text-white hover:bg-accent-secondary transition shadow-sm"
-          >
-            + Agregar Categoría
-          </button>
-
-          <!-- Modal -->
-          <div
-            id="producto-modal"
-            class="fixed inset-0 items-center justify-center z-50 backdrop-blur-sm hidden"
-          >
-            <div
-              class="bg-white/90 rounded-xl shadow-lg w-full max-w-3xl p-6 relative transform scale-95 transition-transform duration-300"
-            >
-              <!-- Botón cerrar -->
-              <button
-                id="close-producto-modal"
-                class="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
-              >
-                ✕
-              </button>
-
-              <!-- Formulario de producto -->
-              <Producto />
-            </div>
-          </div>
-        </header>
-
-        <div class="overflow-x-auto">
-          <table
-            class="min-w-full text-sm rounded-lg overflow-hidden shadow border border-gray-100"
-          >
-            <thead class="bg-primary text-white">
-              <tr>
-                <th class="px-4 py-3 text-left">Nombre</th>
-                <th class="px-4 py-3 text-left">Descripción</th>
-                <th class="px-4 py-3 text-center">Acciones</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100">
-              <tr class="hover:bg-gray-50">
-                <td class="px-4 py-3">Pastas</td>
-                <td class="px-4 py-3">Fideos artesanales e industriales</td>
-                <td class="px-4 py-3 text-center space-x-2">
-                  <button
-                    class="px-3 py-1 bg-accent text-white rounded hover:bg-accent-secondary transition"
-                    >Editar</button
-                  >
-                  <button
-                    class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition"
-                    >Eliminar</button
-                  >
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- ================= Variantes ================= -->
-      <div
-        class="bg-white rounded-xl shadow-lg border border-gray-100 p-6 space-y-6"
-      >
-        <header
-          class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
-        >
-          <h2 class="text-xl font-bold text-primary">Variantes</h2>
-          <button
-            class="px-4 py-2 rounded-lg bg-accent text-white hover:bg-accent-secondary transition shadow-sm"
-          >
-            + Agregar Variante
-          </button>
-        </header>
-
-        <div class="overflow-x-auto">
-          <table
-            class="min-w-full text-sm rounded-lg overflow-hidden shadow border border-gray-100"
-          >
-            <thead class="bg-primary text-white">
-              <tr>
-                <th class="px-4 py-3 text-left">Producto</th>
-                <th class="px-4 py-3 text-left">Variante</th>
-                <th class="px-4 py-3 text-left">Precio</th>
-                <th class="px-4 py-3 text-left">Stock</th>
-                <th class="px-4 py-3 text-center">Acciones</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100">
-              <tr class="hover:bg-gray-50">
-                <td class="px-4 py-3">Spaghetti Clásico</td>
-                <td class="px-4 py-3">500g</td>
-                <td class="px-4 py-3">$2.500</td>
-                <td class="px-4 py-3">80</td>
-                <td class="px-4 py-3 text-center space-x-2">
-                  <button
-                    class="px-3 py-1 bg-accent text-white rounded hover:bg-accent-secondary transition"
-                    >Editar</button
-                  >
-                  <button
-                    class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition"
-                    >Eliminar</button
-                  >
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- ================= Vitrinas ================= -->
-      <div
-        class="bg-white rounded-xl shadow-lg border border-gray-100 p-6 space-y-6"
-      >
-        <header
-          class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
-        >
-          <h2 class="text-xl font-bold text-primary">Vitrinas Destacadas</h2>
-          <button
-            class="px-4 py-2 rounded-lg bg-accent text-white hover:bg-accent-secondary transition shadow-sm"
-          >
-            + Agregar a Vitrina
-          </button>
-        </header>
-
-        <div class="overflow-x-auto">
-          <table
-            class="min-w-full text-sm rounded-lg overflow-hidden shadow border border-gray-100"
-          >
-            <thead class="bg-primary text-white">
-              <tr>
-                <th class="px-4 py-3 text-left">Producto</th>
-                <th class="px-4 py-3 text-left">Categoría</th>
-                <th class="px-4 py-3 text-left">Orden</th>
-                <th class="px-4 py-3 text-left">Activo</th>
-                <th class="px-4 py-3 text-center">Acciones</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100">
-              <tr class="hover:bg-gray-50">
-                <td class="px-4 py-3">Salsa Alfredo</td>
-                <td class="px-4 py-3">Salsas</td>
-                <td class="px-4 py-3">1</td>
-                <td class="px-4 py-3">
-                  <span
-                    class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full"
-                    >Activo</span
-                  >
-                </td>
-                <td class="px-4 py-3 text-center space-x-2">
-                  <button
-                    class="px-3 py-1 bg-accent text-white rounded hover:bg-accent-secondary transition"
-                    >Editar</button
-                  >
-                  <button
-                    class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition"
-                    >Eliminar</button
-                  >
-                </td>
-              </tr>
+              {
+                productos.length === 0 ? (
+                  <tr>
+                    <td colspan="7" class="text-center py-8 text-gray-500">
+                      No hay productos. ¡Crea el primero!
+                    </td>
+                  </tr>
+                ) : (
+                  productos.map((prod: any) => (
+                    <tr class="hover:bg-gray-50">
+                      <td class="px-4 py-3">
+                        <div class="w-10 h-10 rounded bg-gray-100 overflow-hidden border border-gray-200">
+                          <img
+                            src={
+                              prod.imagenes && prod.imagenes.length > 0
+                                ? `http://localhost:8000${prod.imagenes[0].url}`
+                                : "/images/logo.svg"
+                            }
+                            class="w-full h-full object-cover"
+                            onerror="this.src='/images/logo.svg'"
+                          />
+                        </div>
+                      </td>
+                      <td class="px-4 py-3 font-medium">{prod.nombre}</td>
+                      <td class="px-4 py-3 text-gray-500 text-xs">
+                        {prod.sku}
+                      </td>
+                      <td class="px-4 py-3">
+                        <span class="bg-blue-50 text-blue-700 border border-blue-100 text-xs px-2 py-1 rounded-full">
+                          {prod.categoria ? prod.categoria.nombre : "Sin Cat"}
+                        </span>
+                      </td>
+                      <td class="px-4 py-3">
+                        {prod.estado === "Activo" ? (
+                          <span class="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-bold border border-green-200">
+                            Activo
+                          </span>
+                        ) : prod.estado === "Desactivado" ? (
+                          <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs font-bold border border-gray-200">
+                            Desactivado
+                          </span>
+                        ) : (
+                          <span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs font-bold border border-yellow-200">
+                            Borrador
+                          </span>
+                        )}
+                      </td>
+                      <td class="px-4 py-3 font-bold text-gray-700">
+                        {formatoCLP(prod.precio_base)}
+                      </td>
+                      <td class="px-4 py-3 text-center space-x-2">
+                        <button
+                          class="text-blue-600 hover:text-blue-800 btn-editar"
+                          data-json={JSON.stringify(prod)}
+                          title="Editar"
+                        >
+                          <i class="ri-pencil-line text-lg" />
+                        </button>
+                        <button
+                          class="text-red-500 hover:text-red-700 btn-eliminar"
+                          data-id={prod.id}
+                          title="Eliminar"
+                        >
+                          <i class="ri-delete-bin-line text-lg" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )
+              }
             </tbody>
           </table>
         </div>
       </div>
     </div>
-  </section>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const modal = document.getElementById("producto-modal");
-      const openBtn = document.getElementById("open-producto-modal");
-      const closeBtn = document.getElementById("close-producto-modal");
-      const cancelBtn = document.getElementById("cancelar-modal");
+    <div id="tab-categorias" class="tab-content hidden space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="md:col-span-1">
+          <div
+            class="bg-white p-6 rounded-xl shadow border border-gray-100 sticky top-6"
+          >
+            <h3 class="text-lg font-bold text-gray-800 mb-4">
+              Nueva Categoría
+            </h3>
+            <form id="form-categoria" class="space-y-4">
+              <div>
+                <label class="block text-sm text-gray-600 mb-1">Nombre</label>
+                <input
+                  type="text"
+                  name="nombre"
+                  id="cat-nombre"
+                  class="input w-full border p-2 rounded focus:ring-2 focus:ring-accent outline-none"
+                  placeholder="Ej: Vinos"
+                  required
+                />
+              </div>
+              <div>
+                <label class="block text-sm text-gray-600 mb-1"
+                  >Slug (URL)</label
+                >
+                <input
+                  type="text"
+                  name="slug"
+                  id="cat-slug"
+                  class="input w-full border p-2 rounded bg-gray-50 text-gray-500"
+                  placeholder="ej: vinos"
+                  readonly
+                  required
+                />
+                <p class="text-xs text-gray-400 mt-1">
+                  Se genera automáticamente.
+                </p>
+              </div>
+              <button
+                type="submit"
+                class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg transition font-medium"
+              >
+                Crear Categoría
+              </button>
+            </form>
+          </div>
+        </div>
 
-      if (openBtn && modal) {
-        openBtn.addEventListener("click", () => {
-          modal.classList.remove("hidden");
-          modal.classList.add("flex");
+        <div class="md:col-span-2">
+          <div
+            class="bg-white rounded-xl shadow border border-gray-100 overflow-hidden"
+          >
+            <table class="w-full text-sm text-left">
+              <thead class="bg-gray-50 text-gray-700 uppercase text-xs">
+                <tr>
+                  <th class="px-6 py-3">Nombre</th>
+                  <th class="px-6 py-3">Slug</th>
+                  <th class="px-6 py-3 text-right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-100">
+                {
+                  categorias.map((cat: any) => (
+                    <tr class="hover:bg-gray-50">
+                      <td class="px-6 py-4 font-medium text-gray-900">
+                        {cat.nombre}
+                      </td>
+                      <td class="px-6 py-4 text-gray-500 font-mono text-xs">
+                        {cat.slug}
+                      </td>
+                      <td class="px-6 py-4 text-right">
+                        <button
+                          class="text-red-400 hover:text-red-600 text-xs btn-eliminar-cat"
+                          data-id={cat.id}
+                          title="Eliminar"
+                        >
+                          <i class="ri-delete-bin-line text-lg" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-vitrinas" class="tab-content hidden space-y-6">
+      <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
+        <header class="flex justify-between items-center mb-6">
+          <h2 class="text-xl font-bold text-primary">Vitrinas Destacadas</h2>
+          <button
+            id="btn-nueva-vitrina"
+            class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center gap-2 transition shadow-sm"
+          >
+            <i class="ri-add-line"></i> Nueva Vitrina
+          </button>
+        </header>
+
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm text-left">
+            <thead class="bg-gray-50 text-gray-700 uppercase text-xs">
+              <tr>
+                <th class="px-6 py-3">Nombre</th>
+                <th class="px-6 py-3">Slug</th>
+                <th class="px-6 py-3">Productos</th>
+                <th class="px-6 py-3">Estado</th>
+                <th class="px-6 py-3 text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              {
+                vitrinas.length === 0 ? (
+                  <tr>
+                    <td colspan="5" class="text-center py-8 text-gray-500">
+                      No hay vitrinas.
+                    </td>
+                  </tr>
+                ) : (
+                  vitrinas.map((v: any) => (
+                    <tr class="hover:bg-gray-50">
+                      <td class="px-6 py-4 font-bold text-gray-800">
+                        {v.nombre}
+                      </td>
+                      <td class="px-6 py-4 text-gray-500 font-mono text-xs">
+                        {v.slug}
+                      </td>
+                      <td class="px-6 py-4">
+                        <span class="bg-blue-50 text-blue-700 px-2 py-1 rounded text-xs font-bold border border-blue-100">
+                          {v.productos?.length || 0} items
+                        </span>
+                      </td>
+                      <td class="px-6 py-4">
+                        {v.activa ? (
+                          <span class="text-green-600 text-xs font-bold bg-green-50 px-2 py-1 rounded">
+                            Activa
+                          </span>
+                        ) : (
+                          <span class="text-gray-500 text-xs font-bold bg-gray-100 px-2 py-1 rounded">
+                            Inactiva
+                          </span>
+                        )}
+                      </td>
+                      <td class="px-6 py-4 text-center">
+                        <button
+                          class="text-red-500 hover:text-red-700 btn-eliminar-vitrina"
+                          data-id={v.id}
+                        >
+                          <i class="ri-delete-bin-line text-lg" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="producto-modal"
+      class="fixed inset-0 items-center justify-center z-50 bg-black/50 backdrop-blur-sm hidden"
+    >
+      <div
+        class="bg-white rounded-xl shadow-2xl w-full max-w-3xl p-6 relative max-h-[90vh] overflow-y-auto animate-fade-in"
+      >
+        <button
+          id="close-producto-modal"
+          class="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition"
+        >
+          <i class="ri-close-line text-2xl"></i>
+        </button>
+        <Producto categorias={categorias} />
+      </div>
+    </div>
+
+    <div
+      id="modal-vitrina"
+      class="fixed inset-0 z-50 hidden bg-black/50 backdrop-blur-sm items-center justify-center"
+    >
+      <div
+        class="bg-white rounded-xl shadow-2xl w-full max-w-xl p-6 relative max-h-[90vh] overflow-y-auto animate-fade-in"
+      >
+        <button
+          id="btn-cerrar-vitrina-x"
+          class="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition"
+        >
+          <i class="ri-close-line text-2xl"></i>
+        </button>
+        <h3 class="text-xl font-bold text-gray-800 mb-4">Crear Vitrina</h3>
+        <form id="form-vitrina" class="space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Nombre</label
+              >
+              <input
+                type="text"
+                name="nombre"
+                id="vit-nombre"
+                class="input w-full border p-2 rounded focus:ring-2 focus:ring-purple-200 outline-none"
+                required
+                placeholder="Ej: Ofertas Verano"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Slug</label
+              >
+              <input
+                type="text"
+                name="slug"
+                id="vit-slug"
+                class="input w-full border p-2 rounded bg-gray-50 text-gray-500"
+                readonly
+              />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Selecciona Productos</label
+            >
+            <div
+              class="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto border p-2 rounded bg-gray-50"
+            >
+              {
+                productos.map((p: any) => (
+                  <label class="flex items-center gap-2 p-2 bg-white border rounded cursor-pointer hover:bg-blue-50 transition">
+                    <input
+                      type="checkbox"
+                      name="productoIds"
+                      value={p.id}
+                      class="accent-purple-600 w-4 h-4"
+                    />
+                    <span class="text-sm text-gray-700 line-clamp-1">
+                      {p.nombre}
+                    </span>
+                  </label>
+                ))
+              }
+            </div>
+          </div>
+
+          <div class="flex justify-end gap-3 pt-4 border-t">
+            <button
+              type="button"
+              id="btn-cerrar-vitrina"
+              class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition"
+              >Cancelar</button
+            >
+            <button
+              type="submit"
+              class="px-6 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition shadow"
+              >Guardar</button
+            >
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // @ts-nocheck
+  document.addEventListener("DOMContentLoaded", () => {
+    // 1. LÓGICA DE PESTAÑAS
+    const tabs = document.querySelectorAll(".tab-btn");
+    const contents = document.querySelectorAll(".tab-content");
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        tabs.forEach((t) => {
+          t.classList.remove("border-accent", "text-accent");
+          t.classList.add("border-transparent", "text-gray-500");
         });
-      }
+        contents.forEach((c) => c.classList.add("hidden"));
 
-      [closeBtn, cancelBtn].forEach((btn) => {
-        if (btn) {
-          btn.addEventListener("click", () => {
-            modal?.classList.add("hidden");
-            modal?.classList.remove("flex");
-          });
+        tab.classList.remove("border-transparent", "text-gray-500");
+        tab.classList.add("border-accent", "text-accent");
+        document.getElementById(tab.dataset.target)?.classList.remove("hidden");
+      });
+    });
+
+    // 2. LÓGICA PRODUCTOS (Modal, Editar, Eliminar)
+    const modal = document.getElementById("producto-modal");
+    const openBtn = document.getElementById("open-producto-modal");
+    const closeBtn = document.getElementById("close-producto-modal");
+
+    // Referencias del hijo Producto.astro
+    const modalTitle = document.getElementById("modal-title");
+    const inpId = document.getElementById("prod-id");
+    const inpNombre = document.getElementById("prod-nombre");
+    const inpSku = document.getElementById("prod-sku");
+    const inpCategoria = document.getElementById("prod-categoria");
+    const inpEstado = document.getElementById("prod-estado");
+    const inpDesc = document.getElementById("prod-desc");
+    const inpPrecio = document.getElementById("prod-precio");
+    const imgStatus = document.getElementById("img-status");
+    const previewContainer = document.getElementById("preview-container");
+    const imgPreview = document.getElementById("img-preview");
+
+    const abrirModal = () => {
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    };
+    const cerrarModal = () => {
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    };
+
+    openBtn?.addEventListener("click", () => {
+      modalTitle.innerText = "Crear Nuevo Producto";
+      inpId.value = "";
+      inpNombre.value = "";
+      inpSku.value = "";
+      inpDesc.value = "";
+      inpPrecio.value = "";
+      document.getElementById("prod-imagen").value = "";
+      previewContainer?.classList.add("hidden");
+      if (imgStatus) imgStatus.innerText = "Selecciona una imagen";
+      abrirModal();
+    });
+
+    closeBtn?.addEventListener("click", cerrarModal);
+
+    // Editar Producto
+    document.querySelectorAll(".btn-editar").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const data = JSON.parse(btn.dataset.json);
+        modalTitle.innerText = "Editar Producto";
+        inpId.value = data.id;
+        inpNombre.value = data.nombre;
+        inpSku.value = data.sku;
+        inpDesc.value = data.descripcion || "";
+        inpPrecio.value = data.precio_base;
+        if (inpEstado) inpEstado.value = data.estado || "Borrador";
+        if (data.categoria?.id) inpCategoria.value = data.categoria.id;
+
+        if (data.imagenes && data.imagenes.length > 0) {
+          previewContainer?.classList.remove("hidden");
+          if (imgPreview)
+            imgPreview.src = `http://localhost:8000${data.imagenes[0].url}`;
+          if (imgStatus)
+            imgStatus.innerText = "Si subes otra, reemplazará a la actual.";
+        } else {
+          previewContainer?.classList.add("hidden");
+          if (imgStatus)
+            imgStatus.innerText = "Deja vacío para mantener sin imagen.";
+        }
+        abrirModal();
+      });
+    });
+
+    // Eliminar Producto
+    document.querySelectorAll(".btn-eliminar").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        if (!confirm("⚠️ ¿Seguro que quieres eliminar este producto?")) return;
+        try {
+          const res = await fetch(
+            `http://localhost:8000/api/productos/${btn.dataset.id}`,
+            { method: "DELETE" }
+          );
+          if (res.ok || res.status === 204) window.location.reload();
+          else alert("Error al eliminar.");
+        } catch (e) {
+          console.error(e);
+          alert("Error de conexión.");
         }
       });
     });
-  </script>
-</Layout>
+
+    // 3. LÓGICA CATEGORÍAS
+    const catNombre = document.getElementById("cat-nombre");
+    const catSlug = document.getElementById("cat-slug");
+    const formCat = document.getElementById("form-categoria");
+
+    catNombre?.addEventListener("input", (e) => {
+      const val = e.target.value.toLowerCase().trim();
+      catSlug.value = val.replace(/\s+/g, "-").replace(/[^\w\-]+/g, "");
+    });
+
+    formCat?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const data = { nombre: catNombre.value, slug: catSlug.value };
+      try {
+        const res = await fetch("http://localhost:8000/api/categorias", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        if (res.ok) {
+          alert("✅ Categoría creada");
+          window.location.reload();
+        } else {
+          const err = await res.json();
+          alert("Error: " + err.detail);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    });
+
+    document.querySelectorAll(".btn-eliminar-cat").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        if (!confirm("⚠️ ¿Borrar categoría?")) return;
+        await fetch(`http://localhost:8000/api/categorias/${btn.dataset.id}`, {
+          method: "DELETE",
+        });
+        window.location.reload();
+      });
+    });
+
+    // 4. LÓGICA VITRINAS
+    const modalVitrina = document.getElementById("modal-vitrina");
+    const btnNuevaVitrina = document.getElementById("btn-nueva-vitrina");
+    const btnCerrarVitrina = document.getElementById("btn-cerrar-vitrina");
+    const btnCerrarVitrinaX = document.getElementById("btn-cerrar-vitrina-x");
+    const formVitrina = document.getElementById("form-vitrina");
+    const vitNombre = document.getElementById("vit-nombre");
+    const vitSlug = document.getElementById("vit-slug");
+
+    const toggleVitrina = (show) => {
+      if (show) {
+        modalVitrina.classList.remove("hidden");
+        modalVitrina.classList.add("flex");
+      } else {
+        modalVitrina.classList.add("hidden");
+        modalVitrina.classList.remove("flex");
+      }
+    };
+
+    btnNuevaVitrina?.addEventListener("click", () => toggleVitrina(true));
+    btnCerrarVitrina?.addEventListener("click", () => toggleVitrina(false));
+    btnCerrarVitrinaX?.addEventListener("click", () => toggleVitrina(false));
+
+    vitNombre?.addEventListener("input", (e) => {
+      vitSlug.value = e.target.value
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/[^\w\-]+/g, "");
+    });
+
+    formVitrina?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const selectedProducts = Array.from(
+        formVitrina.querySelectorAll('input[name="productoIds"]:checked')
+      ).map((cb) => cb.value);
+
+      const data = {
+        nombre: vitNombre.value,
+        slug: vitSlug.value,
+        activa: true,
+        productoIds: selectedProducts,
+      };
+
+      try {
+        const res = await fetch("http://localhost:8000/api/vitrinas", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        if (res.ok) {
+          alert("✅ Vitrina creada");
+          window.location.reload();
+        } else {
+          const err = await res.json();
+          alert("Error: " + err.detail);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    });
+
+    document.querySelectorAll(".btn-eliminar-vitrina").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        if (!confirm("¿Borrar vitrina?")) return;
+        await fetch(`http://localhost:8000/api/vitrinas/${btn.dataset.id}`, {
+          method: "DELETE",
+        });
+        window.location.reload();
+      });
+    });
+  });
+</script>
+
+<style>
+  .animate-fade-in {
+    animation: fadeIn 0.2s ease-out;
+  }
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+</style>

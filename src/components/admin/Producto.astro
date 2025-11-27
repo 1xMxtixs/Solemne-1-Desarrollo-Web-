@@ -1,81 +1,256 @@
-<div class="space-y-6">
-  <h2 class="text-2xl font-bold text-primary">Crear / Editar Producto</h2>
-  <p class="text-secondary text-sm mb-4">
-    Completa los datos para agregar o modificar un producto del catálogo.
-  </p>
+---
+const { categorias = [] } = Astro.props;
+---
 
-  <form class="space-y-6">
-    <!-- Datos básicos -->
+<div class="space-y-6">
+  <h2 class="text-2xl font-bold text-primary" id="modal-title">
+    Crear Nuevo Producto
+  </h2>
+
+  <form id="form-producto" class="space-y-6">
+    <input type="hidden" name="id" id="prod-id" value="" />
+
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div>
-        <label class="block text-sm text-primary mb-1">Nombre del producto</label>
-        <input type="text" class="input" placeholder="Ej: Spaghetti Clásico" />
+        <label class="block text-sm text-primary mb-1">Nombre</label>
+        <input
+          type="text"
+          name="nombre"
+          id="prod-nombre"
+          class="input w-full border p-2 rounded"
+          required
+        />
       </div>
       <div>
+        <label class="block text-sm text-primary mb-1">SKU</label>
+        <input
+          type="text"
+          name="sku"
+          id="prod-sku"
+          class="input w-full border p-2 rounded"
+          required
+        />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
         <label class="block text-sm text-primary mb-1">Categoría</label>
-        <select class="input">
-          <option value="">Selecciona una categoría</option>
-          <option>Pastas</option>
-          <option>Salsas</option>
-          <option>Bebidas</option>
+        <select
+          name="categoriaId"
+          id="prod-categoria"
+          class="input w-full border p-2 rounded bg-white"
+          required
+        >
+          <option value="">Selecciona...</option>
+          {
+            categorias.map((cat: any) => (
+              <option value={cat.id}>{cat.nombre}</option>
+            ))
+          }
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm text-primary mb-1">Estado</label>
+        <select
+          name="estado"
+          id="prod-estado"
+          class="input w-full border p-2 rounded bg-white"
+          required
+        >
+          <option value="Activo">Activo (Visible)</option>
+          <option value="Borrador">Borrador (Oculto)</option>
+          <option value="Desactivado">Desactivado (Fuera de temp.)</option>
         </select>
       </div>
     </div>
 
-    <!-- Descripción -->
     <div>
       <label class="block text-sm text-primary mb-1">Descripción</label>
-      <textarea class="input h-24" placeholder="Escribe una breve descripción del producto"></textarea>
+      <textarea
+        name="descripcion"
+        id="prod-desc"
+        class="input w-full border p-2 rounded h-24"></textarea>
     </div>
 
-    <!-- Precio y stock -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div>
-        <label class="block text-sm text-primary mb-1">Precio</label>
-        <input type="number" class="input" placeholder="$0" />
+        <label class="block text-sm text-primary mb-1">Precio Base</label>
+        <input
+          type="number"
+          name="precio_base"
+          id="prod-precio"
+          class="input w-full border p-2 rounded"
+          required
+        />
       </div>
+
       <div>
-        <label class="block text-sm text-primary mb-1">Stock disponible</label>
-        <input type="number" class="input" placeholder="Ej: 100" />
+        <label class="block text-sm text-primary mb-1">Imagen</label>
+
+        <div
+          id="preview-container"
+          class="hidden flex items-center gap-4 mb-3 p-2 border border-gray-200 rounded bg-gray-50"
+        >
+          <img
+            id="img-preview"
+            src=""
+            alt="Preview"
+            class="w-16 h-16 object-cover rounded shadow-sm"
+          />
+          <div class="flex-1">
+            <p class="text-xs text-gray-500">Imagen actual</p>
+            <button
+              type="button"
+              id="btn-delete-img"
+              class="text-xs text-red-600 hover:text-red-800 hover:underline flex items-center gap-1 mt-1"
+            >
+              <i class="ri-delete-bin-line"></i> Eliminar imagen
+            </button>
+          </div>
+        </div>
+
+        <input
+          type="file"
+          id="prod-imagen"
+          accept="image/*"
+          class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
+        />
+        <p class="text-xs text-gray-400 mt-1" id="img-status">
+          Sube una imagen nueva para reemplazar.
+        </p>
       </div>
     </div>
 
-    <!-- Imagen -->
-    <div>
-      <label class="block text-sm text-primary mb-1">Imagen del producto</label>
-      <input type="file" class="input" />
-      <p class="text-xs text-secondary mt-1">
-        Formatos permitidos: JPG, PNG. Máx: 2MB.
-      </p>
-    </div>
-
-    <!-- Variantes -->
-    <div>
-      <label class="block text-sm text-primary mb-1">Variantes</label>
-      <input type="text" class="input mb-2" placeholder="Ej: 250g, 500g, 1kg" />
+    <div class="flex justify-end gap-4 pt-4 border-t">
       <button
         type="button"
-        class="px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent-secondary transition"
-      >
-        + Agregar Variante
-      </button>
-    </div>
-
-    <!-- Acciones -->
-    <div class="flex justify-end gap-4">
-      <button
-        type="button"
-        id="cancelar-modal"
+        id="btn-cancelar-form"
         class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition"
+        >Cancelar</button
       >
-        Cancelar
-      </button>
       <button
         type="submit"
-        class="px-6 py-2 bg-accent text-white rounded-lg hover:bg-accent-secondary shadow-sm"
+        id="btn-submit"
+        class="px-6 py-2 bg-accent text-white rounded-lg hover:bg-accent-secondary shadow-sm flex items-center gap-2"
       >
-        Guardar Producto
+        <span>Guardar</span>
       </button>
     </div>
   </form>
 </div>
+
+<script>
+  // @ts-nocheck
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("form-producto");
+    const btnCancelar = document.getElementById("btn-cancelar-form");
+    const btnSubmit = document.getElementById("btn-submit");
+    const fileInput = document.getElementById("prod-imagen");
+
+    // Elementos de Preview
+    const previewContainer = document.getElementById("preview-container");
+    const btnDeleteImg = document.getElementById("btn-delete-img");
+    const imgPreview = document.getElementById("img-preview");
+    const prodIdInput = document.getElementById("prod-id");
+
+    btnCancelar?.addEventListener("click", () => {
+      document.getElementById("close-producto-modal")?.click();
+    });
+
+    // ELIMINAR IMAGEN
+    btnDeleteImg?.addEventListener("click", async () => {
+      if (!confirm("¿Seguro que quieres borrar esta imagen?")) return;
+
+      const prodId = prodIdInput.value;
+      const fullUrl = imgPreview.src;
+      const urlPath = new URL(fullUrl).pathname;
+
+      try {
+        const response = await fetch(
+          `http://localhost:8000/api/productos/${prodId}/imagenes?url_imagen=${urlPath}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        if (response.ok || response.status === 204) {
+          alert("Imagen eliminada");
+          previewContainer.classList.add("hidden"); 
+          imgPreview.src = "";
+        } else {
+          alert("Error al eliminar la imagen en el servidor");
+        }
+      } catch (error) {
+        console.error(error);
+        alert("Error de conexión");
+      }
+    });
+
+    // GUARDADO 
+    form?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const originalText = btnSubmit.innerText;
+      btnSubmit.innerText = "Guardando...";
+      btnSubmit.disabled = true;
+
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      data.precio_base = Number(data.precio_base);
+      data.etiquetaIds = [];
+
+      const id = data.id;
+      delete data.id;
+
+      let url = "http://localhost:8000/api/productos";
+      let method = "POST";
+
+      if (id) {
+        url = `http://localhost:8000/api/productos/${id}`;
+        method = "PUT";
+      }
+
+      try {
+        const response = await fetch(url, {
+          method: method,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+          const err = await response.json();
+          throw new Error(err.detail || "Error al guardar datos");
+        }
+
+        const productoGuardado = await response.json();
+        const productoId = productoGuardado.id;
+
+        if (fileInput.files.length > 0) {
+          btnSubmit.innerText = "Subiendo imagen...";
+          const imageFormData = new FormData();
+          imageFormData.append("archivo", fileInput.files[0]);
+          imageFormData.append("esPrincipal", "true");
+
+          const imgResponse = await fetch(
+            `http://localhost:8000/api/productos/${productoId}/imagenes`,
+            { method: "POST", body: imageFormData }
+          );
+
+          if (!imgResponse.ok) {
+            alert("⚠️ Producto guardado, pero falló la subida de imagen.");
+          }
+        }
+
+        alert("✅ Operación exitosa");
+        window.location.reload();
+      } catch (error) {
+        console.error(error);
+        alert("❌ Error: " + error.message);
+      } finally {
+        btnSubmit.innerText = originalText;
+        btnSubmit.disabled = false;
+      }
+    });
+  });
+</script>

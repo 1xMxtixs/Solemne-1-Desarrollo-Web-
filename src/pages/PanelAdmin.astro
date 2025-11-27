@@ -8,105 +8,160 @@ import Analitica from "../components/admin/Analitica.astro";
 import BoletasAdmin from "../components/admin/BoletasAdmin.astro";
 ---
 
-<Layout>
+<Layout title="Panel de Administración">
   <section class="min-h-screen bg-gray-50">
-    <!-- 🔹 Topbar -->
-    <header
-      class="bg-white shadow-sm border-b px-6 py-4 flex items-center justify-between mb-6"
-    >
-      <h1 class="text-xl font-bold text-primary">Panel de Administración</h1>
-
-      <div class="flex items-center gap-6">
-        <span class="text-sm text-gray-500"
-          >Gestión centralizada del sistema</span
-        >
+    <nav class="text-white top-0 z-40 shadow-md">
+      <div
+        class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center"
+      >
+        <div class="flex items-center gap-3">
+          <div class="bg-white/10 p-2 rounded-lg text-blue-400">
+            <i class="ri-admin-line text-xl"></i>
+          </div>
+          <div>
+            <h1 class="text-lg font-bold leading-none">Administración</h1>
+            <span class="text-xs text-gray-400 font-medium"
+              >Sistema Central</span
+            >
+          </div>
+        </div>
 
         <button
           id="logout-btn"
-          class="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition"
+          class="text-sm font-medium text-red-400 hover:text-red-300 flex items-center gap-2 transition px-3 py-1 rounded hover:bg-white/5"
         >
-          Cerrar Sesión
+          <i class="ri-logout-box-line"></i> Cerrar Sesión
         </button>
       </div>
-    </header>
+    </nav>
 
-    <!-- 🔹 Contenido principal -->
-    <div
-      class="max-w-7xl mx-auto px-6 py-12 space-y-16 bg-white rounded-xl shadow-sm"
-    >
-      <!-- Analítica -->
-      <section class="space-y-6 border-b border-gray-200 pb-10">
-        <header>
-          <h2 class="text-xl font-bold text-primary">📊 Analítica</h2>
-          <p class="text-sm text-secondary">Resumen de métricas clave</p>
-        </header>
-        <Analitica />
-      </section>
+    <main class="max-w-7xl mx-auto px-6 py-8">
+      <div
+        class="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden min-h-[85vh]"
+      >
+        <div
+          class="bg-gray-50 border-b border-gray-200 px-6 pt-4 flex flex-wrap gap-2 overflow-x-auto"
+        >
+          <button
+            class="main-tab-btn px-5 py-3 text-sm font-bold text-primary border-b-2 border-primary transition hover:bg-gray-100 rounded-t-lg flex items-center gap-2 whitespace-nowrap"
+            data-target="tab-reportes"
+          >
+            <i class="ri-bar-chart-2-line text-lg"></i> Reportes & Ventas
+          </button>
 
-      <!-- Boletas -->
-      <section class="space-y-6 border-b border-gray-200 pb-10">
-        <header>
-          <h2 class="text-xl font-bold text-primary">🧾 Boletas</h2>
-          <p class="text-sm text-secondary">
-            Control y seguimiento de boletas emitidas
-          </p>
-        </header>
-        <BoletasAdmin />
-      </section>
+          <button
+            class="main-tab-btn px-5 py-3 text-sm font-medium text-gray-500 border-b-2 border-transparent transition hover:text-gray-700 hover:bg-gray-100 rounded-t-lg flex items-center gap-2 whitespace-nowrap"
+            data-target="tab-catalogo"
+          >
+            <i class="ri-store-2-line text-lg"></i> Catálogo
+          </button>
 
-      <!-- Catálogo -->
-      <section class="space-y-6 border-b border-gray-200 pb-10">
-        <header>
-          <h2 class="text-xl font-bold text-primary">📦 Catálogo</h2>
-          <p class="text-sm text-secondary">
-            Productos, categorías, variantes y vitrinas
-          </p>
-        </header>
-        <CatalogoAdmin />
-      </section>
+          <button
+            class="main-tab-btn px-5 py-3 text-sm font-medium text-gray-500 border-b-2 border-transparent transition hover:text-gray-700 hover:bg-gray-100 rounded-t-lg flex items-center gap-2 whitespace-nowrap"
+            data-target="tab-marketing"
+          >
+            <i class="ri-coupon-3-line text-lg"></i> Marketing
+          </button>
 
-      <!-- Reglas del Carrito -->
-      <section class="space-y-6 border-b border-gray-200 pb-10">
-        <header>
-          <h2 class="text-xl font-bold text-primary">🛒 Reglas del Carrito</h2>
-          <p class="text-sm text-secondary">Gestión de reglas y descuentos</p>
-        </header>
-        <ReglasCarrito />
-      </section>
+          <button
+            class="main-tab-btn px-5 py-3 text-sm font-medium text-gray-500 border-b-2 border-transparent transition hover:text-gray-700 hover:bg-gray-100 rounded-t-lg flex items-center gap-2 whitespace-nowrap"
+            data-target="tab-sistema"
+          >
+            <i class="ri-settings-4-line text-lg"></i> Sistema & Usuarios
+          </button>
+        </div>
 
-      <!-- Usuarios -->
-      <section class="space-y-6 border-b border-gray-200 pb-10">
-        <header>
-          <h2 class="text-xl font-bold text-primary">👥 Usuarios</h2>
-          <p class="text-sm text-secondary">
-            Administración de cuentas y roles
-          </p>
-        </header>
-        <Users />
-      </section>
+        <div class="p-6 bg-white overflow-y-auto h-full">
+          <div
+            id="tab-reportes"
+            class="main-tab-content animate-fade-in space-y-12"
+          >
+            <Analitica />
+            <hr class="border-gray-100" />
+            <BoletasAdmin />
+          </div>
 
-      <!-- Seguridad -->
-      <section class="space-y-6">
-        <header>
-          <h2 class="text-xl font-bold text-primary">🔒 Seguridad</h2>
-          <p class="text-sm text-secondary">
-            Configuraciones de seguridad y accesos
-          </p>
-        </header>
-        <Seguridad />
-      </section>
-    </div>
+          <div
+            id="tab-catalogo"
+            class="main-tab-content hidden animate-fade-in"
+          >
+            <CatalogoAdmin />
+          </div>
+
+          <div
+            id="tab-marketing"
+            class="main-tab-content hidden animate-fade-in"
+          >
+            <ReglasCarrito />
+          </div>
+
+          <div
+            id="tab-sistema"
+            class="main-tab-content hidden animate-fade-in space-y-12"
+          >
+            <Users />
+            <hr class="border-gray-100" />
+            <Seguridad />
+          </div>
+        </div>
+      </div>
+    </main>
   </section>
 
   <script>
+    // @ts-nocheck
     document.addEventListener("DOMContentLoaded", () => {
-      const logoutBtn = document.getElementById("logout-btn");
-      if (logoutBtn) {
-        logoutBtn.addEventListener("click", () => {
-          sessionStorage.clear();
-          window.location.href = "/";
+      const tabs = document.querySelectorAll(".main-tab-btn");
+      const contents = document.querySelectorAll(".main-tab-content");
+
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          tabs.forEach((t) => {
+            t.classList.remove("border-primary", "text-primary", "font-bold");
+            t.classList.add(
+              "border-transparent",
+              "text-gray-500",
+              "font-medium"
+            );
+          });
+
+          contents.forEach((c) => c.classList.add("hidden"));
+
+          tab.classList.remove(
+            "border-transparent",
+            "text-gray-500",
+            "font-medium"
+          );
+          tab.classList.add("border-primary", "text-primary", "font-bold");
+
+          const targetId = tab.dataset.target;
+          document.getElementById(targetId)?.classList.remove("hidden");
         });
-      }
+      });
+
+      // --- LOGOUT ---
+      document.getElementById("logout-btn")?.addEventListener("click", () => {
+        if (confirm("¿Cerrar sesión de administrador?")) {
+          sessionStorage.clear();
+          window.location.href = "/Auth";
+        }
+      });
     });
   </script>
+
+  <style>
+    .animate-fade-in {
+      animation: fadeIn 0.3s ease-out;
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(5px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
 </Layout>

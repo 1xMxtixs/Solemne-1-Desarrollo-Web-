@@ -50,9 +50,12 @@ import Header from "../components/Home/Header.astro";
       <div
         class="bg-white rounded-xl shadow-lg p-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4"
       >
-        <p class="text-lg font-bold text-primary">
-          Total: <span id="carrito-total">$0</span>
-        </p>
+        <div id="contenedor-totales">
+          <p class="text-lg font-bold text-primary">
+            Total: <span id="carrito-total">$0</span>
+          </p>
+        </div>
+
         <button
           id="go-to-checkout"
           class="px-6 py-3 bg-accent text-white rounded-lg hover:bg-accent-secondary transition shadow"
@@ -65,89 +68,208 @@ import Header from "../components/Home/Header.astro";
 
   <script>
     // @ts-nocheck
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", async () => {
       const carritoContainer = document.getElementById("carrito-container");
-      const carritoTotal = document.getElementById("carrito-total");
+      const contenedorTotales = document.getElementById("contenedor-totales");
+      const goToCheckoutBtn = document.getElementById("go-to-checkout");
 
-      // Recuperar carrito desde localStorage
-      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const inputCupon = document.getElementById("cupon");
+      const btnAplicar = document.getElementById("btn-aplicar-cupon");
+
+      let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      let descuentoAplicado = 0;
+      let codigoAplicado = "";
+      let reglas = { cantidadMinimaGlobal: 1 };
+
+      try {
+        const res = await fetch(
+          "http://localhost:8000/api/admin/carrito/reglas"
+        );
+        if (res.ok) reglas = await res.json();
+      } catch (e) {
+        console.error("Error reglas", e);
+      }
 
       function renderCarrito() {
         carritoContainer.innerHTML = "";
 
         if (cart.length === 0) {
-          carritoContainer.innerHTML = `
-          <p class="text-gray-500 text-center">Tu carrito está vacío</p>
-        `;
-          carritoTotal.textContent = "$0";
+          carritoContainer.innerHTML = `<p class="text-gray-500 text-center py-10">Tu carrito está vacío 🍝</p>`;
+          actualizarTotales();
+          if (goToCheckoutBtn) {
+            goToCheckoutBtn.style.opacity = "0.5";
+            goToCheckoutBtn.style.cursor = "not-allowed";
+          }
           return;
         }
 
+        if (goToCheckoutBtn) {
+          goToCheckoutBtn.style.opacity = "1";
+          goToCheckoutBtn.style.cursor = "pointer";
+        }
+
         cart.forEach((item, index) => {
+          const totalItem = item.price * item.qty;
           carritoContainer.innerHTML += `
-          <div class="bg-white rounded-lg shadow p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div class="bg-white rounded-lg shadow p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border border-gray-100">
             <div class="flex items-center gap-4">
-              <img src="${item.img}" class="w-20 h-20 object-cover rounded" />
+              <div class="w-20 h-20 rounded overflow-hidden bg-gray-100 shrink-0">
+                  <img src="${item.img}" class="w-full h-full object-cover" onerror="this.src='/images/logo.svg'" />
+              </div>
               <div>
-                <h3 class="text-lg font-bold text-primary">${item.name}</h3>
-                <p class="text-sm text-gray-500">$${item.price.toLocaleString()}</p>
+                <h3 class="text-lg font-bold text-primary line-clamp-1">${item.name}</h3>
+                <p class="text-sm text-gray-500">$${item.price.toLocaleString("es-CL")} c/u</p>
               </div>
             </div>
-
-            <div class="flex items-center gap-4">
-              <button onclick="updateQty(${index}, -1)" class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300">-</button>
-              <span>${item.qty}</span>
-              <button onclick="updateQty(${index}, 1)" class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300">+</button>
+            <div class="flex items-center gap-3">
+              <button onclick="updateQty(${index}, -1)" class="w-8 h-8 flex items-center justify-center bg-gray-200 rounded hover:bg-gray-300 font-bold">-</button>
+              <span class="w-8 text-center font-medium">${item.qty}</span>
+              <button onclick="updateQty(${index}, 1)" class="w-8 h-8 flex items-center justify-center bg-gray-200 rounded hover:bg-gray-300 font-bold">+</button>
             </div>
-
-            <p class="font-semibold text-accent">$${(item.price * item.qty).toLocaleString()}</p>
-
-            <button onclick="removeFromCarrito(${index})" class="text-red-500 hover:text-red-700">
+            <p class="font-bold text-accent min-w-[80px] text-right">$${totalItem.toLocaleString("es-CL")}</p>
+            <button onclick="removeFromCarrito(${index})" class="text-red-400 hover:text-red-600 p-2 transition">
               <i class="ri-delete-bin-line text-xl"></i>
             </button>
           </div>
         `;
         });
 
-        carritoTotal.textContent =
-          "$" +
-          cart
-            .reduce((acc, item) => acc + item.price * item.qty, 0)
-            .toLocaleString();
+        actualizarTotales();
       }
 
-      // Actualizar cantidad
+      function actualizarTotales() {
+        const subtotal = cart.reduce(
+          (acc, item) => acc + item.price * item.qty,
+          0
+        );
+        const totalFinal = Math.max(0, subtotal - descuentoAplicado);
+
+        let htmlResumen = "";
+
+        if (descuentoAplicado > 0) {
+          htmlResumen += `<div class="flex justify-between text-sm text-gray-500 mb-1"><span>Subtotal:</span> <span>$${subtotal.toLocaleString("es-CL")}</span></div>`;
+          htmlResumen += `<div class="flex justify-between text-sm text-green-600 mb-1 font-medium"><span>Descuento (${codigoAplicado}):</span> <span>-$${descuentoAplicado.toLocaleString("es-CL")}</span></div>`;
+          htmlResumen += `<div class="border-t pt-2 mt-2 flex justify-between text-xl font-bold text-primary"><span>Total:</span> <span>$${totalFinal.toLocaleString("es-CL")}</span></div>`;
+        } else {
+          htmlResumen = `<p class="text-lg font-bold text-primary">Total: <span>$${totalFinal.toLocaleString("es-CL")}</span></p>`;
+        }
+
+        if (contenedorTotales) {
+          contenedorTotales.innerHTML = htmlResumen;
+        }
+
+        localStorage.setItem("checkoutTotal", totalFinal);
+
+        if (codigoAplicado) {
+          localStorage.setItem("cuponAplicado", codigoAplicado);
+          localStorage.setItem("montoDescuento", descuentoAplicado);
+        } else {
+          localStorage.removeItem("cuponAplicado");
+          localStorage.removeItem("montoDescuento");
+        }
+      }
+
+      btnAplicar?.addEventListener("click", async () => {
+        const codigo = inputCupon.value.trim().toUpperCase();
+        if (!codigo) return;
+
+        btnAplicar.disabled = true;
+        btnAplicar.innerText = "Verificando...";
+
+        try {
+          const res = await fetch(
+            `http://localhost:8000/api/admin/cupones/validar/${codigo}`
+          );
+
+          if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.detail || "Cupón inválido");
+          }
+
+          const data = await res.json();
+          const subtotal = cart.reduce(
+            (acc, item) => acc + item.price * item.qty,
+            0
+          );
+
+          if (data.pedidoMinimo && subtotal < data.pedidoMinimo) {
+            alert(
+              `⚠️ Compra mínima de $${data.pedidoMinimo.toLocaleString("es-CL")} requerida.`
+            );
+            descuentoAplicado = 0;
+            codigoAplicado = "";
+          } else {
+            if (data.tipo === "Porcentaje") {
+              descuentoAplicado = Math.round(subtotal * (data.valor / 100));
+            } else {
+              descuentoAplicado = data.valor;
+            }
+            codigoAplicado = data.codigo;
+            alert(
+              `✅ Cupón aplicado: -$${descuentoAplicado.toLocaleString("es-CL")}`
+            );
+          }
+        } catch (error) {
+          console.error(error);
+          alert("❌ " + error.message);
+          descuentoAplicado = 0;
+          codigoAplicado = "";
+          inputCupon.value = "";
+        } finally {
+          actualizarTotales();
+          btnAplicar.disabled = false;
+          btnAplicar.innerText = "Aplicar Cupón";
+        }
+      });
+
       window.updateQty = (index, change) => {
         cart[index].qty += change;
         if (cart[index].qty <= 0) cart.splice(index, 1);
         saveCarrito();
       };
 
-      // Eliminar producto
       window.removeFromCarrito = (index) => {
-        cart.splice(index, 1);
-        saveCarrito();
+        if (confirm("¿Eliminar producto?")) {
+          cart.splice(index, 1);
+          saveCarrito();
+        }
       };
 
       function saveCarrito() {
         localStorage.setItem("cart", JSON.stringify(cart));
+        if (descuentoAplicado > 0) {
+          descuentoAplicado = 0;
+          codigoAplicado = "";
+          inputCupon.value = "";
+          alert("Carrito modificado. Por favor aplica el cupón nuevamente.");
+        }
         renderCarrito();
+        window.dispatchEvent(new Event("cart-updated"));
       }
 
       renderCarrito();
-    });
 
-    document.addEventListener("DOMContentLoaded", () => {
-      const goToCheckoutBtn = document.getElementById("go-to-checkout");
       if (goToCheckoutBtn) {
-        goToCheckoutBtn.addEventListener("click", () => {
-          const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-          if (cart.length === 0) {
+        const newBtn = goToCheckoutBtn.cloneNode(true);
+        goToCheckoutBtn.parentNode.replaceChild(newBtn, goToCheckoutBtn);
+
+        newBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          const currentCart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+          if (currentCart.length === 0) {
+            alert("Carrito vacío");
+            return;
+          }
+
+          const totalQty = currentCart.reduce((acc, item) => acc + item.qty, 0);
+          if (totalQty < reglas.cantidadMinimaGlobal) {
             alert(
-              "Tu carrito está vacío. Agrega productos antes de proceder al pago."
+              `⚠️ Mínimo ${reglas.cantidadMinimaGlobal} productos requeridos.`
             );
             return;
           }
+
           window.location.href = "/Checkout";
         });
       }

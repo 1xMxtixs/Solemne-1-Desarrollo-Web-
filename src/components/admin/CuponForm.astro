@@ -1,0 +1,169 @@
+<div class="space-y-6">
+  <h2 class="text-2xl font-bold text-primary" id="modal-title">Nuevo Cupón</h2>
+
+  <form id="form-cupon" class="space-y-5">
+    <input type="hidden" name="id" id="cupon-id" value="" />
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <label class="block text-sm text-primary mb-1">Código</label>
+        <input
+          type="text"
+          name="codigo"
+          id="cupon-codigo"
+          class="input w-full border p-2 rounded uppercase tracking-wide font-bold"
+          placeholder="EJ: VERANO2025"
+          required
+        />
+      </div>
+      <div>
+        <label class="block text-sm text-primary mb-1">Estado</label>
+        <select
+          name="estado"
+          id="cupon-estado"
+          class="input w-full border p-2 rounded bg-white"
+        >
+          <option value="Activo">Activo</option>
+          <option value="Inactivo">Inactivo</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <label class="block text-sm text-primary mb-1">Tipo Descuento</label>
+        <select
+          name="tipo"
+          id="cupon-tipo"
+          class="input w-full border p-2 rounded bg-white"
+        >
+          <option value="Porcentaje">Porcentaje (%)</option>
+          <option value="Monto Fijo">Monto Fijo ($)</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm text-primary mb-1">Valor</label>
+        <input
+          type="number"
+          name="valor"
+          id="cupon-valor"
+          class="input w-full border p-2 rounded"
+          placeholder="Ej: 10 o 5000"
+          required
+        />
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-sm text-primary mb-1"
+        >Pedido Mínimo (Opcional)</label
+      >
+      <input
+        type="number"
+        name="pedidoMinimo"
+        id="cupon-minimo"
+        class="input w-full border p-2 rounded"
+        placeholder="Ej: 20000"
+      />
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <label class="block text-sm text-primary mb-1">Vigencia Desde</label>
+        <input
+          type="date"
+          name="vigenciaDesde"
+          id="cupon-desde"
+          class="input w-full border p-2 rounded"
+        />
+      </div>
+      <div>
+        <label class="block text-sm text-primary mb-1">Vigencia Hasta</label>
+        <input
+          type="date"
+          name="vigenciaHasta"
+          id="cupon-hasta"
+          class="input w-full border p-2 rounded"
+        />
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-4 pt-4 border-t">
+      <button
+        type="button"
+        id="btn-cancelar-cupon"
+        class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition"
+        >Cancelar</button
+      >
+      <button
+        type="submit"
+        id="btn-submit-cupon"
+        class="px-6 py-2 bg-accent text-white rounded-lg hover:bg-accent-secondary shadow-sm"
+      >
+        Guardar Cupón
+      </button>
+    </div>
+  </form>
+</div>
+
+<script>
+  // @ts-nocheck
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("form-cupon");
+    const btnCancelar = document.getElementById("btn-cancelar-cupon");
+    const btnSubmit = document.getElementById("btn-submit-cupon");
+
+    // Cerrar modal
+    btnCancelar?.addEventListener("click", () => {
+      document.getElementById("close-cupon-modal")?.click();
+    });
+
+    // Enviar formulario
+    form?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      btnSubmit.disabled = true;
+      btnSubmit.innerText = "Guardando...";
+
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      data.valor = Number(data.valor);
+      data.pedidoMinimo = data.pedidoMinimo ? Number(data.pedidoMinimo) : null;
+      if (!data.vigenciaDesde) delete data.vigenciaDesde;
+      if (!data.vigenciaHasta) delete data.vigenciaHasta;
+
+      const id = data.id;
+      delete data.id;
+
+      let url = "http://localhost:8000/api/admin/cupones";
+      let method = "POST";
+
+      if (id) {
+        url = `http://localhost:8000/api/admin/cupones/${id}`;
+        method = "PUT";
+      }
+
+      try {
+        const response = await fetch(url, {
+          method: method,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+        if (response.ok) {
+          alert("✅ Cupón guardado correctamente");
+          window.location.reload();
+        } else {
+          const err = await response.json();
+          alert("❌ Error: " + (err.detail || "No se pudo guardar"));
+        }
+      } catch (error) {
+        console.error(error);
+        alert("Error de conexión");
+      } finally {
+        btnSubmit.disabled = false;
+        btnSubmit.innerText = "Guardar Cupón";
+      }
+    });
+  });
+</script>

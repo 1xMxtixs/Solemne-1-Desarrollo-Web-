@@ -1,118 +1,244 @@
 ---
-import Layout from "../../layouts/Layout.astro";
+// Componente de Gestión de Boletas
 ---
 
-<Layout>
-  <section class="bg-gray-50 py-8">
-    <div class="max-w-7xl mx-auto px-4 space-y-8">
-      <!-- Header -->
-      <header
-        class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
-      >
-        <h1 class="text-2xl font-bold text-primary">Gestión de Boletas</h1>
-        <div class="flex gap-3">
-          <button
-            class="px-4 py-2 rounded-lg bg-accent text-white hover:bg-accent-secondary transition shadow-sm duration-300"
-          >
-            Exportar CSV
-          </button>
-          <button
-            class="px-4 py-2 rounded-lg bg-primary text-white/90 hover:opacity-90 transition shadow-sm duration-300"
-          >
-            Exportar PDF</button
-          >
-        </div>
-      </header>
-
-      <!-- Card Boletas -->
-      <div
-        class="bg-white rounded-xl shadow-lg border border-gray-100 p-6 space-y-6"
-      >
-        <!-- Filtros -->
-        <form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div>
-            <label class="block text-sm text-secondary mb-1">Fecha Inicio</label
-            >
-            <input type="date" class="input" />
-          </div>
-          <div>
-            <label class="block text-sm text-secondary mb-1">Fecha Fin</label>
-            <input type="date" class="input" />
-          </div>
-          <div>
-            <label class="block text-sm text-secondary mb-1">Estado</label>
-            <select class="input">
-              <option>Todos</option>
-              <option>Pagada</option>
-              <option>Pendiente</option>
-              <option>Anulada</option>
-            </select>
-          </div>
-          <div class="flex items-end">
-            <button
-              class="w-full px-4 py-2 rounded-lg bg-accent text-white hover:bg-accent-secondary transition shadow-sm"
-            >
-              Aplicar Filtros
-            </button>
-          </div>
-        </form>
-
-        <!-- Tabla -->
-        <div class="-mx-4 md:mx-0 overflow-x-auto">
-          <table
-            class="min-w-full text-sm rounded-lg overflow-hidden shadow border border-gray-100"
-          >
-            <thead class="bg-primary text-white">
-              <tr>
-                <th class="px-4 py-3 text-left">N° Boleta</th>
-                <th class="px-4 py-3 text-left">Fecha</th>
-                <th class="px-4 py-3 text-left">Cliente</th>
-                <th class="px-4 py-3 text-left">Total</th>
-                <th class="px-4 py-3 text-left">Estado</th>
-                <th class="px-4 py-3 text-center">Acciones</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100">
-              <tr class="hover:bg-gray-50">
-                <td class="px-4 py-3">#0001</td>
-                <td class="px-4 py-3">2025-09-28</td>
-                <td class="px-4 py-3">Juan Pérez</td>
-                <td class="px-4 py-3">$15.990</td>
-                <td class="px-4 py-3 text-green-600 font-semibold">Pagada</td>
-                <td class="px-4 py-3 text-center space-x-2">
-                  <button
-                    class="px-3 py-1 bg-accent text-white rounded hover:bg-accent-secondary transition"
-                    >Ver</button
-                  >
-                  <button
-                    class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition"
-                    >Anular</button
-                  >
-                </td>
-              </tr>
-              <tr class="hover:bg-gray-50">
-                <td class="px-4 py-3">#0002</td>
-                <td class="px-4 py-3">2025-09-27</td>
-                <td class="px-4 py-3">María López</td>
-                <td class="px-4 py-3">$8.500</td>
-                <td class="px-4 py-3 text-yellow-600 font-semibold"
-                  >Pendiente</td
-                >
-                <td class="px-4 py-3 text-center space-x-2">
-                  <button
-                    class="px-3 py-1 bg-accent text-white rounded hover:bg-accent-secondary transition"
-                    >Ver</button
-                  >
-                  <button
-                    class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition"
-                    >Anular</button
-                  >
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+<section class="bg-white py-10 rounded-xl shadow-sm border border-gray-100">
+  <div class="max-w-7xl mx-auto px-6 space-y-8">
+    <header
+      class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-100 pb-6"
+    >
+      <div>
+        <h2 class="text-2xl font-bold text-primary flex items-center gap-2">
+          <i class="ri-bill-line text-accent"></i> Historial de Boletas
+        </h2>
+        <p class="text-gray-500 text-sm mt-1">Registro legal de ventas.</p>
       </div>
+
+      <div class="flex gap-3">
+        <button
+          id="btn-exportar-boletas"
+          class="px-4 py-2 rounded-lg bg-white border border-gray-200 text-green-700 hover:bg-green-50 transition shadow-sm text-sm font-medium flex items-center gap-2"
+        >
+          <i class="ri-file-excel-2-line"></i> Exportar Excel
+        </button>
+      </div>
+    </header>
+
+    <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 no-print">
+      <form
+        id="form-filtro-boletas"
+        class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end"
+      >
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase mb-1"
+            >Desde</label
+          >
+          <input
+            type="date"
+            id="bol-inicio"
+            class="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-accent/20 outline-none transition"
+            required
+          />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase mb-1"
+            >Hasta</label
+          >
+          <input
+            type="date"
+            id="bol-fin"
+            class="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-accent/20 outline-none transition"
+            required
+          />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase mb-1"
+            >Buscar Cliente</label
+          >
+          <div class="relative">
+            <i class="ri-search-line absolute left-3 top-2.5 text-gray-400"></i>
+            <input
+              type="text"
+              id="bol-cliente"
+              placeholder="Nombre o Email..."
+              class="w-full bg-white border border-gray-200 rounded-lg pl-9 pr-3 py-2 text-sm focus:ring-2 focus:ring-accent/20 outline-none transition"
+            />
+          </div>
+        </div>
+        <button
+          type="submit"
+          id="btn-buscar"
+          class="w-full bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition shadow-sm font-medium flex justify-center items-center gap-2"
+        >
+          <i class="ri-filter-3-line"></i> Buscar
+        </button>
+      </form>
     </div>
-  </section>
-</Layout>
+
+    <div
+      class="border border-gray-100 rounded-xl overflow-hidden"
+      id="area-impresion"
+    >
+      <table class="min-w-full text-sm text-left">
+        <thead
+          class="text-xs text-gray-500 uppercase bg-gray-50/50 border-b border-gray-100"
+        >
+          <tr>
+            <th class="px-6 py-4 font-medium">N° Boleta</th>
+            <th class="px-6 py-4 font-medium">Fecha</th>
+            <th class="px-6 py-4 font-medium">Cliente</th>
+            <th class="px-6 py-4 font-medium text-right">Monto</th>
+            <th class="px-6 py-4 font-medium text-center no-print">Acción</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-boletas-body" class="divide-y divide-gray-50">
+          <tr
+            ><td colspan="5" class="text-center py-12 text-gray-400"
+              >Cargando datos...</td
+            ></tr
+          >
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<style>
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+    #area-impresion,
+    #area-impresion * {
+      visibility: visible;
+    }
+    #area-impresion {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      border: none;
+    }
+    .no-print {
+      display: none !important;
+    }
+  }
+</style>
+
+<script>
+  // @ts-nocheck
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("form-filtro-boletas");
+    const tablaBody = document.getElementById("tabla-boletas-body");
+    const btnBuscar = document.getElementById("btn-buscar");
+    const btnCSV = document.getElementById("btn-exportar-boletas");
+
+    let boletasActuales = [];
+
+    const hoy = new Date();
+    const primerDia = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+    document.getElementById("bol-fin").value = hoy.toISOString().split("T")[0];
+    document.getElementById("bol-inicio").value = primerDia
+      .toISOString()
+      .split("T")[0];
+
+    const buscarBoletas = async () => {
+      const inicio = document.getElementById("bol-inicio").value;
+      const fin = document.getElementById("bol-fin").value;
+      const cliente = document.getElementById("bol-cliente").value;
+      const token = sessionStorage.getItem("access_token");
+
+      btnBuscar.innerHTML = `<i class="ri-loader-4-line animate-spin"></i> Buscando...`;
+      btnBuscar.disabled = true;
+
+      let url = `http://localhost:8000/api/admin/reporte-boletas?fechaInicio=${inicio}&fechaFin=${fin}`;
+      if (cliente) url += `&clienteEmail=${cliente}`;
+
+      try {
+        const res = await fetch(url, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (res.ok) {
+          const boletas = await res.json();
+          boletasActuales = boletas; 
+          if (boletas.length === 0) {
+            tablaBody.innerHTML = `<tr><td colspan="5" class="text-center py-12 text-gray-400 flex flex-col items-center gap-2"><span>No se encontraron boletas.</span></td></tr>`;
+          } else {
+            tablaBody.innerHTML = "";
+            boletas.forEach((b) => {
+              const clienteNombre =
+                b.orden?.propietario?.nombre || "Cliente General";
+              const clienteEmail = b.orden?.propietario?.email || "Sin email";
+
+              tablaBody.innerHTML += `
+                                <tr class="hover:bg-gray-50 transition group">
+                                    <td class="px-6 py-4 font-mono font-bold text-gray-700 text-xs">
+                                        ${b.boletaId}
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-600">
+                                        ${new Date(b.fechaEmision).toLocaleDateString("es-CL")}
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <p class="font-medium text-gray-800 text-sm">${clienteNombre}</p>
+                                        <p class="text-xs text-gray-400">${clienteEmail}</p>
+                                    </td>
+                                    <td class="px-6 py-4 text-right font-bold text-gray-800">$${b.monto.toLocaleString("es-CL")}</td>
+                                    <td class="px-6 py-4 text-center no-print">
+                                        <button class="text-blue-600 hover:text-blue-800 p-2" title="Ver (Simulado)">
+                                            <i class="ri-eye-line text-lg"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            `;
+            });
+          }
+        }
+      } catch (error) {
+        console.error(error);
+        tablaBody.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-red-500">Error de conexión</td></tr>`;
+      } finally {
+        btnBuscar.innerHTML = `<i class="ri-filter-3-line"></i> Buscar`;
+        btnBuscar.disabled = false;
+      }
+    };
+
+    // Lógica Exportar CSV
+    btnCSV?.addEventListener("click", () => {
+      if (!boletasActuales || boletasActuales.length === 0) {
+        alert("⚠️ No hay datos para exportar. Realiza una búsqueda primero.");
+        return;
+      }
+
+      let csv = "ID BOLETA,FECHA,CLIENTE,EMAIL,MONTO\n";
+
+      boletasActuales.forEach((b) => {
+        const fecha = new Date(b.fechaEmision).toLocaleDateString("es-CL");
+        const nombre = (
+          b.orden?.propietario?.nombre || "Cliente General"
+        ).replace(/,/g, " ");
+        const email = b.orden?.propietario?.email || "";
+        csv += `${b.boletaId},${fecha},${nombre},${email},${b.monto}\n`;
+      });
+
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute(
+        "download",
+        `reporte_boletas_${new Date().toISOString().split("T")[0]}.csv`
+      );
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      buscarBoletas();
+    });
+
+    buscarBoletas();
+  });
+</script>

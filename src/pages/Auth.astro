@@ -76,7 +76,7 @@ import Layout from "../layouts/Layout.astro";
           <p class="text-gray-500 text-sm mb-6">
             Ingresa tu correo para enviarte un enlace de recuperación
           </p>
-          <form class="space-y-4">
+          <form class="space-y-4" id="reset-form">
             <input
               type="email"
               class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-[#6E0F2C]/40"
@@ -101,25 +101,45 @@ import Layout from "../layouts/Layout.astro";
         <div id="twofa-block" class="hidden transition-all duration-300">
           <h2 class="text-2xl font-bold text-[#6E0F2C]">Configurar 2FA</h2>
           <p class="text-gray-500 text-sm mb-6">
-            Activa la autenticación en dos pasos
+            Ingresa tu teléfono para recibir un código SMS.
           </p>
-          <form class="space-y-4">
-            <input
-              type="tel"
-              class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-[#6E0F2C]/40"
-              placeholder="+56 9 1234 5678"
-            />
-            <input
-              type="text"
-              class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-[#6E0F2C]/40"
-              placeholder="Código de verificación"
-            />
-            <button
-              class="w-full bg-[#6E0F2C] hover:bg-[#8B1E3F] text-white rounded-lg p-3 transition"
-            >
-              Activar 2FA
-            </button>
+
+          <form class="space-y-4" id="form-2fa">
+            <div class="flex gap-2">
+              <input
+                type="tel"
+                id="2fa-phone"
+                class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-[#6E0F2C]/40"
+                placeholder="+56 9 1234 5678"
+                required
+              />
+              <button
+                type="button"
+                id="btn-send-code"
+                class="bg-gray-800 text-white px-4 rounded-lg text-sm hover:bg-gray-900 whitespace-nowrap"
+              >
+                Enviar Código
+              </button>
+            </div>
+
+            <div id="code-container" class="hidden space-y-4">
+              <input
+                type="text"
+                id="2fa-code"
+                class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-[#6E0F2C]/40 text-center tracking-widest font-bold text-xl"
+                placeholder="0 0 0 0"
+                maxlength="4"
+              />
+
+              <button
+                type="submit"
+                class="w-full bg-[#6E0F2C] hover:bg-[#8B1E3F] text-white rounded-lg p-3 transition"
+              >
+                Confirmar y Activar
+              </button>
+            </div>
           </form>
+
           <a
             href="#"
             id="back-login-2fa"
@@ -191,31 +211,56 @@ import Layout from "../layouts/Layout.astro";
   <script>
     // @ts-nocheck
     document.addEventListener("DOMContentLoaded", () => {
+      // --- Selectores de PANELES ---
       const loginBlock = document.getElementById("login-block");
       const resetBlock = document.getElementById("reset-block");
       const twofaBlock = document.getElementById("twofa-block");
       const registroBlock = document.getElementById("registro-block");
 
-      // ===== Reset =====
+      // --- Selectores de FORMULARIOS ---
+      const loginForm = document.getElementById("login-form");
+      const registroForm = document.getElementById("registro-form");
+      const resetForm = document.getElementById("reset-form");
+
+      // --- Selectores 2FA ---
+      const form2FA = document.getElementById("form-2fa");
+      const btnSendCode = document.getElementById("btn-send-code");
+      const codeContainer = document.getElementById("code-container");
+      const phoneInput = document.getElementById("2fa-phone");
+      const codeInput = document.getElementById("2fa-code");
+
+      // --- Funciones de Navegación ---
+      function irAlLogin() {
+        registroBlock.classList.add("opacity-0", "translate-y-4");
+        registroBlock.classList.remove("pointer-events-auto");
+        setTimeout(() => {
+          registroBlock.classList.add("hidden", "pointer-events-none");
+          loginBlock.classList.remove("hidden");
+        }, 500);
+      }
+
+      // Mostrar Reset
       document.getElementById("show-reset")?.addEventListener("click", (e) => {
         e.preventDefault();
         loginBlock.classList.add("hidden");
         resetBlock.classList.remove("hidden");
       });
 
+      // Volver de Reset
       document.getElementById("back-login")?.addEventListener("click", (e) => {
         e.preventDefault();
         resetBlock.classList.add("hidden");
         loginBlock.classList.remove("hidden");
       });
 
-      // ===== 2FA =====
+      // Mostrar 2FA
       document.getElementById("show-2fa")?.addEventListener("click", (e) => {
         e.preventDefault();
         loginBlock.classList.add("hidden");
         twofaBlock.classList.remove("hidden");
       });
 
+      // Volver de 2FA
       document
         .getElementById("back-login-2fa")
         ?.addEventListener("click", (e) => {
@@ -224,64 +269,190 @@ import Layout from "../layouts/Layout.astro";
           loginBlock.classList.remove("hidden");
         });
 
-      // ===== Registro =====
-      const showRegistro = document.getElementById("show-registro");
-      const backLoginReg = document.getElementById("back-login-reg");
+      // Mostrar Registro
+      document
+        .getElementById("show-registro")
+        ?.addEventListener("click", (e) => {
+          e.preventDefault();
+          loginBlock.classList.add("hidden");
+          registroBlock.classList.remove("hidden", "pointer-events-none");
+          registroBlock.classList.add("pointer-events-auto");
+          registroBlock.classList.add("opacity-0", "translate-y-4");
+          void registroBlock.offsetWidth;
+          registroBlock.classList.remove("opacity-0", "translate-y-4");
+        });
 
-      showRegistro?.addEventListener("click", (e) => {
-        e.preventDefault();
+      // Volver de Registro
+      document
+        .getElementById("back-login-reg")
+        ?.addEventListener("click", (e) => {
+          e.preventDefault();
+          irAlLogin();
+        });
 
-        // Ocultar login
-        loginBlock.classList.add("hidden");
-
-        registroBlock.classList.remove("hidden", "pointer-events-none");
-        registroBlock.classList.add("pointer-events-auto");
-
-        registroBlock.classList.add("opacity-0", "translate-y-4");
-
-        void registroBlock.offsetWidth;
-
-        registroBlock.classList.remove("opacity-0", "translate-y-4");
-      });
-
-      backLoginReg?.addEventListener("click", (e) => {
-        e.preventDefault();
-
-        // Animación de salida
-        registroBlock.classList.add("opacity-0", "translate-y-4");
-        registroBlock.classList.remove("pointer-events-auto");
-
-        setTimeout(() => {
-          registroBlock.classList.add("hidden", "pointer-events-none");
-          loginBlock.classList.remove("hidden");
-        }, 500);
-      });
-
-      // ===== Login con roles (igual que antes) =====
-      document.getElementById("login-form")?.addEventListener("submit", (e) => {
+      // ==========================================
+      // 1. LÓGICA DE LOGIN
+      // ==========================================
+      loginForm?.addEventListener("submit", async (e) => {
         e.preventDefault();
         const email = document.getElementById("email").value.trim();
         const password = document.getElementById("password").value.trim();
+        const formData = new URLSearchParams();
+        formData.append("username", email);
+        formData.append("password", password);
 
-        if (email === "admin@demo.com" && password === "1234") {
-          sessionStorage.setItem("rol", "admin");
-          window.location.href = "/PanelAdmin";
-        } else if (email === "cliente@demo.com" && password === "1234") {
-          sessionStorage.setItem("rol", "cliente");
-          window.location.href = "/";
-        } else if (email === "despacho@demo.com" && password === "1234") {
-          sessionStorage.setItem("rol", "despacho");
-          window.location.href = "/PanelDespacho";
-        } else if (email === "dueno@demo.com" && password === "1234") {
-          sessionStorage.setItem("rol", "dueno");
-          window.location.href = "/PanelBoss";
-        } else if (email === "bodega@demo.com" && password === "1234") {
-          sessionStorage.setItem("rol", "bodega");
-          window.location.href = "/bodega/Picking";
-        } else {
-          alert(
-            "⚠️ Credenciales inválidas. Usa admin@demo.com o cliente@demo.com o despacho@demo.com o dueno@demo.com o bodega@demo.com (1234)"
+        try {
+          const response = await fetch("http://localhost:8000/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: formData,
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            sessionStorage.setItem("access_token", data.access_token);
+            sessionStorage.setItem("usuario", JSON.stringify(data.usuario));
+
+            const rol = data.usuario.rol;
+            if (rol === "administrador") window.location.href = "/PanelAdmin";
+            else if (rol === "cliente") window.location.href = "/";
+            else if (rol === "logistica")
+              window.location.href = "/PanelDespacho";
+            else if (rol === "dueño") window.location.href = "/PanelBoss";
+            else window.location.href = "/";
+          } else {
+            alert("⚠️ Credenciales incorrectas.");
+          }
+        } catch (error) {
+          console.error(error);
+          alert("Error de conexión con el servidor.");
+        }
+      });
+
+      // ==========================================
+      // 2. LÓGICA DE REGISTRO
+      // ==========================================
+      registroForm?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const inputs = registroForm.querySelectorAll("input");
+        const nombre = inputs[0].value;
+        const email = inputs[1].value;
+        const contrasena = inputs[2].value;
+
+        try {
+          const response = await fetch(
+            "http://localhost:8000/api/auth/registro",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ nombre, email, contrasena }),
+            }
           );
+
+          if (response.status === 201) {
+            alert("¡Cuenta creada! Inicia sesión.");
+            registroForm.reset();
+            irAlLogin();
+          } else {
+            const errorData = await response.json();
+            alert("⚠️ " + (errorData.detail || "Error al registrarse"));
+          }
+        } catch (error) {
+          console.error(error);
+          alert("Error de conexión.");
+        }
+      });
+
+      // ==========================================
+      // 3. LÓGICA DE RESET PASSWORD
+      // ==========================================
+      resetForm?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const emailInput = resetForm.querySelector("input[type='email']");
+        const email = emailInput.value.trim();
+        const btn = document.getElementById("btn-reset-submit");
+
+        if (btn) {
+          btn.disabled = true;
+          btn.innerText = "Enviando...";
+        }
+
+        try {
+          await fetch("http://localhost:8000/api/auth/password-recovery", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+          });
+          alert("✅ Si el correo existe, se ha enviado un enlace.");
+          document.getElementById("back-login").click();
+        } catch (error) {
+          console.error(error);
+          alert("Error de conexión.");
+        } finally {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerText = "Enviar enlace";
+          }
+        }
+      });
+
+      // ==========================================
+      // 4. LÓGICA DE 2FA 
+      // ==========================================
+
+      btnSendCode?.addEventListener("click", async () => {
+        const telefono = phoneInput.value.trim();
+        if (!telefono) {
+          alert("Ingresa un número de teléfono");
+          return;
+        }
+
+        btnSendCode.disabled = true;
+        btnSendCode.innerText = "Enviando...";
+
+        try {
+          await fetch("http://localhost:8000/api/auth/2fa/request", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ telefono }),
+          });
+
+          alert("📨 Código enviado (Revisa la consola del Backend)");
+
+          codeContainer.classList.remove("hidden");
+          phoneInput.readOnly = true;
+        } catch (e) {
+          console.error(e);
+          alert("Error de conexión al enviar código");
+        } finally {
+          btnSendCode.disabled = false;
+          btnSendCode.innerText = "Reenviar";
+        }
+      });
+
+      form2FA?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const telefono = phoneInput.value.trim();
+        const codigo = codeInput.value.trim();
+
+        try {
+          const res = await fetch("http://localhost:8000/api/auth/2fa/verify", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ telefono, codigo }),
+          });
+
+          if (res.ok) {
+            alert("✅ ¡Seguridad activada! 2FA configurado correctamente.");
+            twofaBlock.classList.add("hidden");
+            loginBlock.classList.remove("hidden");
+          } else {
+            const err = await res.json();
+            alert("❌ " + (err.detail || "Código incorrecto"));
+          }
+        } catch (e) {
+          console.error(e);
+          alert("Error al verificar");
         }
       });
     });

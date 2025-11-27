@@ -1,0 +1,133 @@
+---
+// Componente exclusivo para REPARTIDORES
+---
+
+<div id="modulo-despacho">
+  <h2 class="text-xl font-bold text-primary mb-4 flex items-center gap-2">
+    <i class="ri-roadster-line"></i> Gestión de Rutas (Repartidor)
+  </h2>
+
+  <div
+    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+    id="grid-rutas"
+  >
+  </div>
+</div>
+
+<script>
+  // @ts-nocheck
+  document.addEventListener("DOMContentLoaded", () => {
+    const grid = document.getElementById("grid-rutas");
+
+    const cargarRutas = async () => {
+      // 1. OBTENER TOKEN
+      const token = sessionStorage.getItem("access_token");
+
+      try {
+        // 2. ENVIAR TOKEN
+        const res = await fetch(
+          "http://localhost:8000/api/logistica/pedidos-despacho",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        const pedidos = await res.json();
+
+        if (pedidos.length === 0) {
+          grid.innerHTML = `<p class="text-gray-400 col-span-3 text-center py-10">No hay pedidos listos para despacho.</p>`;
+          return;
+        }
+
+        grid.innerHTML = "";
+        pedidos.forEach((p) => {
+          const enRuta = p.estado === "En Ruta";
+          const cardColor = enRuta
+            ? "border-blue-500 ring-1 ring-blue-500"
+            : "border-gray-200";
+          const badge = enRuta
+            ? `<span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-bold">🚚 En Camino</span>`
+            : `<span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold">📦 Listo en Bodega</span>`;
+
+          let botones = "";
+          if (!enRuta) {
+            botones = `<button onclick="window.actualizarRuta('${p.id}', 'En Ruta')" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition font-medium text-sm">Iniciar Ruta</button>`;
+          } else {
+            botones = `
+                            <div class="flex gap-2">
+                                <button onclick="window.actualizarRuta('${p.id}', 'Entregado')" class="flex-1 bg-green-600 text-white py-2 rounded hover:bg-green-700 transition font-medium text-sm">Entregado</button>
+                                <button onclick="window.actualizarRuta('${p.id}', 'No Entregado')" class="flex-1 bg-red-100 text-red-600 py-2 rounded hover:bg-red-200 transition font-medium text-sm">Fallido</button>
+                            </div>
+                        `;
+          }
+
+          let direccionReal = "Dirección no especificada";
+          let nombreCliente = "Cliente General";
+          let esRetiro = false;
+
+          if (p.datos_entrega) {
+            nombreCliente = p.datos_entrega.nombre || "Cliente";
+
+            if (p.datos_entrega.metodo === "retiro") {
+              direccionReal = "📍 RETIRO EN LOCAL";
+              esRetiro = true;
+            } else {
+              direccionReal = p.datos_entrega.direccion || "Sin dirección";
+            }
+          }
+
+          const linkMaps = esRetiro
+            ? `<span class="text-xs text-gray-400 ml-6">(El cliente viene a buscarlo)</span>`
+            : `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(direccionReal)}" target="_blank" class="text-blue-500 hover:underline text-xs ml-6">Ver en Mapa</a>`;
+
+          grid.innerHTML += `
+                        <div class="bg-white p-5 rounded-xl shadow-sm border ${cardColor} flex flex-col gap-3 transition hover:shadow-md">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="font-mono text-xs text-gray-500">#${p.numeroOrden}</p>
+                                    <h3 class="font-bold text-gray-800">${nombreCliente}</h3>
+                                </div>
+                                ${badge}
+                            </div>
+                            
+                            <div class="text-sm text-gray-600 space-y-1 bg-gray-50 p-3 rounded-lg">
+                                <p class="flex items-start gap-2">
+                                    <i class="ri-map-pin-line mt-0.5 text-accent"></i> 
+                                    <span class="font-medium text-gray-800">${direccionReal}</span>
+                                </p>
+                                ${linkMaps}
+                            </div>
+
+                            <div class="mt-auto pt-2">
+                                ${botones}
+                            </div>
+                        </div>
+                    `;
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    window.actualizarRuta = async (id, estado) => {
+      const token = sessionStorage.getItem("access_token");
+      if (!confirm(`¿Cambiar estado a '${estado}'?`)) return;
+      try {
+        const res = await fetch(
+          `http://localhost:8000/api/logistica/pedidos/${id}/estado?nuevo_estado=${estado}`,
+          {
+            method: "PUT",
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        if (res.ok) {
+          window.dispatchEvent(new Event("logistica-updated"));
+          cargarRutas();
+        }
+      } catch (e) {}
+    };
+
+    cargarRutas();
+    window.addEventListener("logistica-updated", cargarRutas);
+  });
+</script>

@@ -7,103 +7,35 @@ import Layout from "../layouts/Layout.astro";
     class="min-h-screen bg-gray-50 flex items-center justify-center py-16 px-4"
   >
     <div class="w-full max-w-lg bg-white rounded-2xl shadow-2xl p-8 space-y-8">
-      <!-- Header -->
       <header class="text-center">
         <h1 class="text-3xl font-bold text-[#6E0F2C] mb-2">Pago Online</h1>
-        <p id="order-info" class="text-gray-600 text-sm"></p>
+        <p id="order-info" class="text-gray-600 text-sm">Cargando total...</p>
       </header>
 
-      <!-- Método de Pago -->
-      <div class="space-y-4">
-        <label class="block text-sm font-medium text-gray-700"
-          >Método de Pago</label
-        >
-        <select
-          id="metodo-pago"
-          class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-[#6E0F2C]/50"
-        >
-          <option value="tarjeta">Tarjeta Crédito/Débito</option>
-          <option value="transferencia">Transferencia Bancaria</option>
-        </select>
-      </div>
-
-      <!-- Datos Tarjeta -->
-      <div id="datos-tarjeta" class="space-y-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700"
-            >Número de Tarjeta</label
-          >
-          <input
-            type="text"
-            id="num-tarjeta"
-            class="w-full border rounded-lg p-3 tracking-widest"
-            placeholder="1234 5678 9012 3456"
-            maxlength="19"
-          />
-        </div>
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Expira</label
-            >
-            <input
-              type="text"
-              id="expira"
-              class="w-full border rounded-lg p-3"
-              placeholder="MM/AA"
-              maxlength="5"
-            />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700">CVV</label>
-            <input
-              type="text"
-              id="cvv"
-              class="w-full border rounded-lg p-3"
-              placeholder="123"
-              maxlength="3"
-            />
-          </div>
-        </div>
-      </div>
-
-      <!-- Transferencia -->
       <div
-        id="datos-transferencia"
-        class="hidden text-sm text-gray-700 bg-gray-50 rounded-lg p-4 border"
+        class="bg-blue-50 p-4 rounded-lg border border-blue-100 text-sm text-blue-800"
       >
-        Realiza una transferencia a <strong>Banco Demo</strong><br />
-        Cuenta Corriente: <strong>12345678</strong><br />
-        Titular: <strong>La Nonna Restaurante</strong><br />
-        <span class="text-xs text-gray-500"
-          >Tu orden se confirmará automáticamente al recibir el pago.</span
-        >
+        <p class="font-semibold">
+          <i class="ri-secure-payment-line"></i> Pago Seguro
+        </p>
+        <p>
+          Serás redirigido al sitio seguro de <strong>Webpay Plus</strong> para completar
+          tu transacción.
+        </p>
       </div>
 
-      <!-- Botón -->
       <button
         id="btn-pagar"
-        class="w-full bg-[#6E0F2C] hover:bg-[#8b153a] text-white py-3 rounded-lg font-semibold transition"
+        class="w-full bg-[#6E0F2C] hover:bg-[#8b153a] text-white py-4 rounded-lg font-bold text-lg transition flex items-center justify-center gap-2 shadow-lg"
       >
-        Pagar Ahora
+        <span>Ir a Pagar con Webpay</span>
+        <i class="ri-arrow-right-line"></i>
       </button>
 
-      <!-- Resultado -->
-      <div id="resultado-pago" class="hidden text-center space-y-3">
-        <h3 id="titulo-resultado" class="text-2xl font-bold"></h3>
-        <p id="detalle-resultado" class="text-gray-600"></p>
-        <div class="flex justify-center gap-4 mt-4">
-          <a
-            href="/"
-            class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition"
-            >Volver al Inicio</a
-          >
-          <a
-            id="link-boleta"
-            href="#"
-            class="hidden bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
-            >Ver Boleta</a
-          >
-        </div>
+      <div class="text-center">
+        <a href="/Checkout" class="text-sm text-gray-500 hover:underline"
+          >Volver a datos de entrega</a
+        >
       </div>
     </div>
   </section>
@@ -111,132 +43,81 @@ import Layout from "../layouts/Layout.astro";
   <script>
     // @ts-nocheck
     document.addEventListener("DOMContentLoaded", () => {
-      const metodoPago = document.getElementById("metodo-pago");
-      const datosTarjeta = document.getElementById("datos-tarjeta");
-      const datosTransferencia = document.getElementById("datos-transferencia");
       const btnPagar = document.getElementById("btn-pagar");
-      const resultadoPago = document.getElementById("resultado-pago");
-      const tituloResultado = document.getElementById("titulo-resultado");
-      const detalleResultado = document.getElementById("detalle-resultado");
-      const linkBoleta = document.getElementById("link-boleta");
-      const orderInfo = document.getElementById("order-info");
-      const numTarjeta = document.getElementById("num-tarjeta");
-      const expiraInput = document.getElementById("expira");
 
-      // === Obtener total y generar número de orden ===
+      // 1. Mostrar info inicial
       const total = localStorage.getItem("checkoutTotal") || "0";
-      const ordenID =
-        "LN-" +
-        new Date().getFullYear() +
-        "-" +
-        (new Date().getMonth() + 1).toString().padStart(2, "0") +
-        "-" +
-        Math.floor(Math.random() * 9999)
-          .toString()
-          .padStart(4, "0");
+      document.getElementById("order-info").textContent =
+        `Total a pagar: $${parseInt(total).toLocaleString("es-CL")}`;
 
-      orderInfo.textContent = `Orden #${ordenID} – Total $${parseInt(
-        total
-      ).toLocaleString("es-CL")}`;
+      btnPagar?.addEventListener("click", async () => {
+        const token = sessionStorage.getItem("access_token");
 
-      // === Autoformato del número de tarjeta ===
-      numTarjeta.addEventListener("input", (e) => {
-        let value = e.target.value.replace(/\D/g, ""); // elimina todo excepto números
-        value = value.substring(0, 16); // máximo 16 dígitos
-        const formattedValue = value.replace(/(.{4})/g, "$1 ").trim(); // añade espacio cada 4 dígitos
-        e.target.value = formattedValue;
-      });
-
-      // === Autoformato del campo Expira (MM/AA) ===
-      expiraInput.addEventListener("input", (e) => {
-        let value = e.target.value.replace(/\D/g, ""); // elimina caracteres no numéricos
-        if (value.length > 4) value = value.substring(0, 4); // máximo 4 números (MMYY)
-
-        // Agrega "/" automáticamente después de los dos primeros dígitos
-        if (value.length >= 3) {
-          value = value.substring(0, 2) + "/" + value.substring(2);
-        }
-
-        e.target.value = value;
-      });
-
-      // === Cambiar método de pago ===
-      metodoPago.addEventListener("change", () => {
-        if (metodoPago.value === "tarjeta") {
-          datosTarjeta.classList.remove("hidden");
-          datosTransferencia.classList.add("hidden");
-        } else {
-          datosTarjeta.classList.add("hidden");
-          datosTransferencia.classList.remove("hidden");
-        }
-      });
-
-      // === Validar campos antes de pagar ===
-      btnPagar.addEventListener("click", () => {
-        if (metodoPago.value === "tarjeta") {
-          const num = numTarjeta.value.trim();
-          const expira = expiraInput.value.trim();
-          const cvv = document.getElementById("cvv").value.trim();
-
-          if (!num || !expira || !cvv) {
-            alert(
-              "⚠️ Debes completar todos los campos de la tarjeta antes de continuar."
-            );
-            return;
-          }
-
-          if (!/^\d{4}\s\d{4}\s\d{4}\s\d{4}$/.test(num)) {
-            alert("⚠️ El número de tarjeta debe tener 16 dígitos válidos.");
-            return;
-          }
-
-          if (!/^\d{2}\/\d{2}$/.test(expira)) {
-            alert("⚠️ La fecha de expiración debe tener el formato MM/AA.");
-            return;
-          }
-
-          if (!/^\d{3}$/.test(cvv)) {
-            alert("⚠️ El CVV debe ser un número de 3 dígitos.");
-            return;
-          }
-        }
-
-        // === Recuperar los productos del carrito actual ===
-        const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-
-        if (cart.length === 0) {
-          alert("⚠️ Tu carrito está vacío. No se puede procesar el pago.");
+        if (!token) {
+          alert("Tu sesión ha expirado. Por favor inicia sesión.");
+          window.location.href = "/Auth";
           return;
         }
 
-        // === Simular pago ===
-        const aprobado = Math.random() < 0.8;
-
-        if (aprobado) {
-          tituloResultado.textContent = "✅ Pago Exitoso";
-          detalleResultado.textContent = `Tu orden ${ordenID} fue confirmada correctamente.`;
-
-          // ✅ Guardar los productos confirmados para la boleta
-          localStorage.setItem("ordenConfirmada", JSON.stringify(cart));
-
-          // ✅ Guardar datos del pago (total, número de orden, etc.)
-          localStorage.setItem("ordenID", ordenID);
-          localStorage.setItem("ordenTotal", total);
-
-          // ✅ Limpiar carrito original
-          localStorage.removeItem("cart");
-
-          // ✅ Mostrar link hacia Boleta
-          linkBoleta.classList.remove("hidden");
-          linkBoleta.href = `/Boleta?orden=${ordenID}`;
-        } else {
-          tituloResultado.textContent = "❌ Pago Rechazado";
-          detalleResultado.textContent =
-            "Tu pago no fue procesado. Intenta nuevamente o usa otro método.";
-          linkBoleta.classList.add("hidden");
+        const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+        if (cart.length === 0) {
+          alert("El carrito está vacío");
+          window.location.href = "/Menu";
+          return;
         }
 
-        resultadoPago.classList.remove("hidden");
+        const itemsPayload = cart.map((i) => ({
+          nombre: i.name,
+          precio: i.price,
+          cantidad: i.qty,
+          img: i.img || "",
+        }));
+
+        btnPagar.disabled = true;
+        btnPagar.innerHTML = `<i class="ri-loader-4-line animate-spin"></i> Conectando con el Banco...`;
+
+        try {
+          const response = await fetch(
+            "http://localhost:8000/api/checkout/iniciar-pago",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                items: itemsPayload,
+                total: parseFloat(total),
+              }),
+            }
+          );
+
+          if (!response.ok) {
+            const err = await response.json();
+            throw new Error(err.detail || "Error al iniciar pago");
+          }
+
+          const data = await response.json(); 
+
+          const form = document.createElement("form");
+          form.action = data.url;
+          form.method = "POST";
+
+          const inputToken = document.createElement("input");
+          inputToken.type = "hidden";
+          inputToken.name = "token_ws";
+          inputToken.value = data.token;
+
+          form.appendChild(inputToken);
+          document.body.appendChild(form);
+
+          form.submit();
+        } catch (error) {
+          console.error(error);
+          alert("❌ " + error.message);
+          btnPagar.disabled = false;
+          btnPagar.innerHTML = `<span>Ir a Pagar con Webpay</span> <i class="ri-arrow-right-line"></i>`;
+        }
       });
     });
   </script>

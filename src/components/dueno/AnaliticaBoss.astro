@@ -1,49 +1,242 @@
----
-import Layout from "../../layouts/Layout.astro";
----
-
-<section class="bg-gray-50 py-10 rounded-xl shadow-md">
-  <div class="max-w-7xl mx-auto p-6 space-y-12">
+<section class="bg-white py-10 rounded-xl shadow-sm border border-gray-100">
+  <div class="max-w-7xl mx-auto px-6 space-y-10">
     <header
       class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
     >
-      <h2 class="text-2xl font-bold text-primary">Analítica General</h2>
-      <p class="text-gray-500 text-sm">Resumen de métricas del negocio</p>
+      <div>
+        <h2 class="text-2xl font-bold text-primary">Resumen Ejecutivo</h2>
+        <p class="text-gray-500 text-sm">
+          Visión financiera del negocio en tiempo real.
+        </p>
+      </div>
+
+      <div
+        class="flex items-center gap-2 bg-gray-50 p-1 rounded-lg border border-gray-200"
+      >
+        <select
+          id="boss-periodo"
+          class="bg-transparent text-sm font-medium text-gray-700 py-1 px-2 focus:outline-none cursor-pointer"
+        >
+          <option value="hoy">Hoy</option>
+          <option value="semana">Esta Semana</option>
+          <option value="mes" selected>Este Mes</option>
+        </select>
+        <button
+          id="btn-update-boss"
+          class="p-1.5 bg-white rounded-md shadow-sm text-gray-500 hover:text-accent transition"
+        >
+          <i class="ri-refresh-line"></i>
+        </button>
+      </div>
     </header>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       <div
-        class="bg-white shadow rounded-xl p-6 text-center hover:shadow-md transition"
+        class="bg-blue-50/50 border border-blue-100 rounded-xl p-6 hover:shadow-md transition group"
       >
-        <h3 class="text-sm text-gray-500">Ventas Totales</h3>
-        <p class="text-2xl font-bold text-primary mt-2">$12.450.000</p>
+        <div class="flex justify-between items-start">
+          <div>
+            <h3 class="text-xs font-bold text-blue-600 uppercase tracking-wide">
+              Ventas Netas
+            </h3>
+            <p class="text-2xl font-bold text-gray-800 mt-2" id="boss-ventas">
+              ...
+            </p>
+          </div>
+          <div
+            class="p-2 bg-blue-100 text-blue-600 rounded-lg group-hover:scale-110 transition"
+          >
+            <i class="ri-money-dollar-circle-line text-xl"></i>
+          </div>
+        </div>
+        <p class="text-xs text-gray-400 mt-2">
+          Ingresos por comida (sin envío)
+        </p>
       </div>
+
       <div
-        class="bg-white shadow rounded-xl p-6 text-center hover:shadow-md transition"
+        class="bg-green-50/50 border border-green-100 rounded-xl p-6 hover:shadow-md transition group"
       >
-        <h3 class="text-sm text-gray-500">Pedidos</h3>
-        <p class="text-2xl font-bold text-primary mt-2">1.230</p>
+        <div class="flex justify-between items-start">
+          <div>
+            <h3
+              class="text-xs font-bold text-green-600 uppercase tracking-wide"
+            >
+              Margen Estimado (40%)
+            </h3>
+            <p class="text-2xl font-bold text-gray-800 mt-2" id="boss-margen">
+              ...
+            </p>
+          </div>
+          <div
+            class="p-2 bg-green-100 text-green-600 rounded-lg group-hover:scale-110 transition"
+          >
+            <i class="ri-hand-coin-line text-xl"></i>
+          </div>
+        </div>
+        <p class="text-xs text-gray-400 mt-2">Utilidad bruta aproximada</p>
       </div>
+
       <div
-        class="bg-white shadow rounded-xl p-6 text-center hover:shadow-md transition"
+        class="bg-purple-50/50 border border-purple-100 rounded-xl p-6 hover:shadow-md transition group"
       >
-        <h3 class="text-sm text-gray-500">Clientes Activos</h3>
-        <p class="text-2xl font-bold text-primary mt-2">870</p>
+        <div class="flex justify-between items-start">
+          <div>
+            <h3
+              class="text-xs font-bold text-purple-600 uppercase tracking-wide"
+            >
+              Pedidos Totales
+            </h3>
+            <p class="text-2xl font-bold text-gray-800 mt-2" id="boss-pedidos">
+              ...
+            </p>
+          </div>
+          <div
+            class="p-2 bg-purple-100 text-purple-600 rounded-lg group-hover:scale-110 transition"
+          >
+            <i class="ri-shopping-bag-3-line text-xl"></i>
+          </div>
+        </div>
+        <p class="text-xs text-gray-400 mt-2">Órdenes procesadas</p>
       </div>
+
       <div
-        class="bg-white shadow rounded-xl p-6 text-center hover:shadow-md transition"
+        class="bg-orange-50/50 border border-orange-100 rounded-xl p-6 hover:shadow-md transition group"
       >
-        <h3 class="text-sm text-gray-500">Promedio Ticket</h3>
-        <p class="text-2xl font-bold text-primary mt-2">$10.120</p>
+        <div class="flex justify-between items-start">
+          <div>
+            <h3
+              class="text-xs font-bold text-orange-600 uppercase tracking-wide"
+            >
+              Ticket Promedio
+            </h3>
+            <p class="text-2xl font-bold text-gray-800 mt-2" id="boss-ticket">
+              ...
+            </p>
+          </div>
+          <div
+            class="p-2 bg-orange-100 text-orange-600 rounded-lg group-hover:scale-110 transition"
+          >
+            <i class="ri-coupon-2-line text-xl"></i>
+          </div>
+        </div>
+        <p class="text-xs text-gray-400 mt-2">Gasto promedio por cliente</p>
       </div>
     </div>
 
-    <!-- Gráfico -->
-    <div class="bg-white shadow rounded-xl p-6">
-      <h3 class="text-lg font-semibold text-primary mb-4">
-        Ventas Últimos 6 Meses
+    <div class="bg-white border border-gray-100 rounded-xl p-6 shadow-sm">
+      <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <i class="ri-trophy-line text-yellow-500"></i> Platos Estrella
       </h3>
-      <img src="/images/dashboard_tendencia.png" alt="Gráfico de ventas" class="w-full rounded-lg" />
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left">
+          <thead class="text-xs text-gray-500 uppercase bg-gray-50 border-b">
+            <tr>
+              <th class="px-4 py-3">Plato</th>
+              <th class="px-4 py-3 text-right">Venta Total</th>
+              <th class="px-4 py-3 text-right">Margen Aprox.</th>
+              <th class="px-4 py-3 w-32">Rendimiento</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100" id="boss-top-list">
+            <tr
+              ><td colspan="4" class="py-4 text-center text-gray-400"
+                >Cargando datos...</td
+              ></tr
+            >
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </section>
+
+<script>
+  // @ts-nocheck
+  document.addEventListener("DOMContentLoaded", () => {
+    const selectPeriodo = document.getElementById("boss-periodo");
+    const btnUpdate = document.getElementById("btn-update-boss");
+
+    const elVentas = document.getElementById("boss-ventas");
+    const elMargen = document.getElementById("boss-margen");
+    const elPedidos = document.getElementById("boss-pedidos");
+    const elTicket = document.getElementById("boss-ticket");
+    const elLista = document.getElementById("boss-top-list");
+
+    const obtenerFechas = (tipo) => {
+      const hoy = new Date();
+      let inicio = new Date();
+      let fin = new Date();
+      if (tipo === "semana") {
+        const dia = hoy.getDay() || 7;
+        if (dia !== 1) inicio.setHours(-24 * (dia - 1));
+      } else if (tipo === "mes") {
+        inicio.setDate(1);
+      }
+      return {
+        inicio: inicio.toISOString().split("T")[0],
+        fin: fin.toISOString().split("T")[0],
+      };
+    };
+
+    const cargarDatosBoss = async () => {
+      const { inicio, fin } = obtenerFechas(selectPeriodo.value);
+      const token = sessionStorage.getItem("access_token");
+
+      // Efecto de carga
+      btnUpdate.classList.add("animate-spin");
+
+      try {
+        const url = `http://localhost:8000/api/dueño/resumen-ejecutivo?fechaInicio=${inicio}&fechaFin=${fin}`;
+        const res = await fetch(url, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+
+          // KPIs
+          elVentas.innerText =
+            "$" + data.ventasTotales.valor.toLocaleString("es-CL");
+          elMargen.innerText =
+            "$" + data.margenEstimado.valor.toLocaleString("es-CL");
+          elPedidos.innerText = data.numeroPedidos.valor;
+          elTicket.innerText =
+            "$" + Math.round(data.ticketPromedio.valor).toLocaleString("es-CL");
+
+          // Tabla Top
+          elLista.innerHTML = "";
+          if (data.topPlatos.length > 0) {
+            const maxVenta = Math.max(...data.topPlatos.map((p) => p.monto));
+
+            data.topPlatos.forEach((p) => {
+              const percent = (p.monto / maxVenta) * 100;
+              elLista.innerHTML += `
+                                <tr class="hover:bg-gray-50 transition">
+                                    <td class="px-4 py-3 font-medium text-gray-800">${p.nombre}</td>
+                                    <td class="px-4 py-3 text-right text-gray-600">$${p.monto.toLocaleString("es-CL")}</td>
+                                    <td class="px-4 py-3 text-right font-bold text-green-600">+$${p.margenEstimado.toLocaleString("es-CL")}</td>
+                                    <td class="px-4 py-3">
+                                        <div class="w-full bg-gray-100 rounded-full h-1.5">
+                                            <div class="bg-green-500 h-1.5 rounded-full" style="width: ${percent}%"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `;
+            });
+          } else {
+            elLista.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-gray-400">Sin ventas en este periodo.</td></tr>`;
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setTimeout(() => btnUpdate.classList.remove("animate-spin"), 500);
+      }
+    };
+
+    selectPeriodo.addEventListener("change", cargarDatosBoss);
+    btnUpdate.addEventListener("click", cargarDatosBoss);
+    cargarDatosBoss();
+  });
+</script>

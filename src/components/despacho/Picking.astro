@@ -1,0 +1,117 @@
+---
+// Componente exclusivo para REPARTIDORES
+---
+
+<div id="modulo-bodega">
+  <h2 class="text-xl font-bold text-gray-700 mb-4 flex items-center gap-2">
+    <i class="ri-archive-line"></i> Cola de Preparación (Bodega)
+  </h2>
+
+  <div
+    class="overflow-x-auto bg-white rounded-xl shadow-sm border border-gray-200"
+  >
+    <table class="min-w-full text-sm">
+      <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
+        <tr>
+          <th class="px-4 py-3 text-left">Orden</th>
+          <th class="px-4 py-3 text-left">Items</th>
+          <th class="px-4 py-3 text-left">Estado</th>
+          <th class="px-4 py-3 text-center">Acción</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100" id="tabla-picking"> </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  // @ts-nocheck
+  document.addEventListener("DOMContentLoaded", () => {
+    const tabla = document.getElementById("tabla-picking");
+
+    const cargarBodega = async () => {
+      // 1. OBTENER TOKEN
+      const token = sessionStorage.getItem("access_token");
+      if (!token) {
+        console.error("No hay token, redirigiendo...");
+        window.location.href = "/Auth";
+        return;
+      }
+
+      try {
+        // 2. ENVIAR TOKEN EN EL HEADER
+        const res = await fetch(
+          "http://localhost:8000/api/logistica/pedidos-picking",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (res.status === 401) {
+          alert("Sesión expirada");
+          window.location.href = "/Auth";
+          return;
+        }
+
+        const pedidos = await res.json();
+
+        if (pedidos.length === 0) {
+          tabla.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-gray-400">Nada pendiente en bodega ✅</td></tr>`;
+          return;
+        }
+
+        tabla.innerHTML = "";
+        pedidos.forEach((p) => {
+          let btnAccion = `
+                        <div class="flex justify-center gap-2">
+                            <button onclick="window.procesarOrden('${p.id}', 'Listo para Despacho')" class="bg-green-100 text-green-700 hover:bg-green-200 px-3 py-1 rounded-md text-xs font-bold transition">
+                                ✅ Terminar
+                            </button>
+                            <button onclick="window.procesarOrden('${p.id}', 'Rechazado')" class="bg-red-100 text-red-700 hover:bg-red-200 px-3 py-1 rounded-md text-xs font-bold transition">
+                                ❌ Rechazar
+                            </button>
+                        </div>
+                    `;
+
+          tabla.innerHTML += `
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-3 font-mono font-bold">#${p.numeroOrden}</td>
+                            <td class="px-4 py-3 text-gray-600">${p.items.length} productos</td>
+                            <td class="px-4 py-3"><span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs">En Proceso</span></td>
+                            <td class="px-4 py-3">${btnAccion}</td>
+                        </tr>
+                    `;
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    // Función global para acciones rápidas
+    window.procesarOrden = async (id, nuevoEstado) => {
+      const token = sessionStorage.getItem("access_token"); 
+      if (!confirm(`¿Marcar orden como '${nuevoEstado}'?`)) return;
+
+      try {
+        const res = await fetch(
+          `http://localhost:8000/api/logistica/pedidos/${id}/estado?nuevo_estado=${nuevoEstado}`,
+          {
+            method: "PUT",
+            headers: { Authorization: `Bearer ${token}` }, 
+          }
+        );
+        if (res.ok) {
+          window.dispatchEvent(new Event("logistica-updated"));
+          cargarBodega();
+        }
+      } catch (e) {
+        alert("Error conexión");
+      }
+    };
+
+    cargarBodega();
+    window.addEventListener("logistica-updated", cargarBodega);
+  });
+</script>

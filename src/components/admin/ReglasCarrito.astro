@@ -1,66 +1,285 @@
 ---
-import Layout from "../../layouts/Layout.astro";
+import CuponForm from "./CuponForm.astro";
+
+let reglas: any = {};
+let cupones = [];
+
+try {
+  const [reglasRes, cuponesRes] = await Promise.all([
+    fetch("http://localhost:8000/api/admin/carrito/reglas"),
+    fetch("http://localhost:8000/api/admin/cupones"),
+  ]);
+
+  if (reglasRes.ok) reglas = await reglasRes.json();
+  if (cuponesRes.ok) cupones = await cuponesRes.json();
+} catch (e) {
+  console.error("Error cargando admin carrito:", e);
+}
 ---
 
-<Layout>
-  <section class="bg-gray-50 py-8">
-    <div class="max-w-7xl mx-auto px-4 space-y-8">
+<section class="bg-white py-10 rounded-xl shadow-sm border border-gray-100">
+  <div class="max-w-7xl mx-auto px-4 space-y-12">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <h2 class="text-xl font-bold text-primary mb-4 flex items-center gap-2">
+        <i class="ri-settings-3-line"></i> Configuración General
+      </h2>
 
-      <!-- Header -->
-      <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h1 class="text-2xl font-bold text-primary">Reglas del Carrito</h1>
-        <button class="px-4 py-2 rounded-lg bg-accent text-white hover:bg-accent-secondary transition shadow-sm">
-          + Agregar Regla
+      <form id="form-reglas" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div>
+          <label class="block text-sm text-gray-600 mb-1"
+            >Mínimo Global de items</label
+          >
+          <input
+            type="number"
+            name="cantidadMinimaGlobal"
+            value={reglas.cantidadMinimaGlobal || 1}
+            class="input w-full border p-2 rounded"
+            min="1"
+          />
+        </div>
+        <div>
+          <label class="block text-sm text-gray-600 mb-1"
+            >Máximo por Plato</label
+          >
+          <input
+            type="number"
+            name="cantidadMaximaPorSKU"
+            value={reglas.cantidadMaximaPorSKU || 10}
+            class="input w-full border p-2 rounded"
+            min="1"
+          />
+        </div>
+        <div class="flex items-end">
+          <button
+            type="submit"
+            class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 transition w-full"
+          >
+            Actualizar Reglas
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div
+      class="bg-white rounded-xl shadow-lg border border-gray-100 p-6 space-y-6"
+    >
+      <header
+        class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+      >
+        <h2 class="text-xl font-bold text-primary flex items-center gap-2">
+          <i class="ri-ticket-line"></i> Cupones de Descuento
+        </h2>
+        <button
+          id="open-cupon-modal"
+          class="px-4 py-2 rounded-lg bg-accent text-white hover:bg-accent-secondary transition shadow-sm"
+        >
+          + Agregar Cupón
         </button>
       </header>
 
-      <!-- Card -->
-      <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-6 space-y-6">
-
-        <!-- Tabla -->
-        <div class="overflow-x-auto">
-          <table class="min-w-full text-sm rounded-lg overflow-hidden shadow border border-gray-100">
-            <thead class="bg-primary text-white">
-              <tr>
-                <th class="px-4 py-3 text-left">Nombre</th>
-                <th class="px-4 py-3 text-left">Condición</th>
-                <th class="px-4 py-3 text-left">Descuento</th>
-                <th class="px-4 py-3 text-left">Estado</th>
-                <th class="px-4 py-3 text-center">Acciones</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100">
-              <tr class="hover:bg-gray-50">
-                <td class="px-4 py-3">Descuento por monto</td>
-                <td class="px-4 py-3">Compra mínima $50.000</td>
-                <td class="px-4 py-3">10%</td>
-                <td class="px-4 py-3">
-                  <span class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full">Activo</span>
-                </td>
-                <td class="px-4 py-3 text-center space-x-2">
-                  <button class="px-3 py-1 bg-accent text-white rounded hover:bg-accent-secondary transition">Editar</button>
-                  <button class="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition">Desactivar</button>
-                  <button class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition">Eliminar</button>
-                </td>
-              </tr>
-              <tr class="hover:bg-gray-50">
-                <td class="px-4 py-3">Envío gratis</td>
-                <td class="px-4 py-3">Compra mínima $30.000</td>
-                <td class="px-4 py-3">100% envío</td>
-                <td class="px-4 py-3">
-                  <span class="px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded-full">Inactivo</span>
-                </td>
-                <td class="px-4 py-3 text-center space-x-2">
-                  <button class="px-3 py-1 bg-accent text-white rounded hover:bg-accent-secondary transition">Editar</button>
-                  <button class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition">Activar</button>
-                  <button class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition">Eliminar</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
+      <div class="overflow-x-auto">
+        <table
+          class="min-w-full text-sm rounded-lg overflow-hidden shadow border border-gray-100"
+        >
+          <thead class="bg-primary text-white">
+            <tr>
+              <th class="px-4 py-3 text-left">Código</th>
+              <th class="px-4 py-3 text-left">Tipo</th>
+              <th class="px-4 py-3 text-left">Valor</th>
+              <th class="px-4 py-3 text-left">Mínimo</th>
+              <th class="px-4 py-3 text-left">Estado</th>
+              <th class="px-4 py-3 text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            {
+              cupones.length === 0 ? (
+                <tr>
+                  <td colspan="6" class="text-center py-6 text-gray-500">
+                    No hay cupones creados.
+                  </td>
+                </tr>
+              ) : (
+                cupones.map((cup: any) => (
+                  <tr class="hover:bg-gray-50">
+                    <td class="px-4 py-3 font-mono font-bold text-gray-800">
+                      {cup.codigo}
+                    </td>
+                    <td class="px-4 py-3">{cup.tipo}</td>
+                    <td class="px-4 py-3 font-bold text-accent">
+                      {cup.tipo === "Porcentaje"
+                        ? `${cup.valor}%`
+                        : `$${cup.valor}`}
+                    </td>
+                    <td class="px-4 py-3 text-gray-500">
+                      {cup.pedidoMinimo ? `$${cup.pedidoMinimo}` : "-"}
+                    </td>
+                    <td class="px-4 py-3">
+                      {cup.estado === "Activo" ? (
+                        <span class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full">
+                          Activo
+                        </span>
+                      ) : (
+                        <span class="px-2 py-1 text-xs bg-red-100 text-red-700 rounded-full">
+                          Inactivo
+                        </span>
+                      )}
+                    </td>
+                    <td class="px-4 py-3 text-center space-x-2">
+                      <button
+                        class="text-blue-600 hover:text-blue-800 btn-editar-cupon"
+                        data-json={JSON.stringify(cup)}
+                        title="Editar"
+                      >
+                        <i class="ri-pencil-line text-lg" />
+                      </button>
+                      <button
+                        class="text-red-500 hover:text-red-700 btn-eliminar-cupon"
+                        data-id={cup.id || cup._id}
+                        title="Eliminar"
+                      >
+                        <i class="ri-delete-bin-line text-lg" />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )
+            }
+          </tbody>
+        </table>
       </div>
     </div>
-  </section>
-</Layout>
+
+    <div
+      id="cupon-modal"
+      class="fixed inset-0 items-center justify-center z-50 bg-black/40 backdrop-blur-sm hidden"
+    >
+      <div class="bg-white rounded-xl shadow-lg w-full max-w-2xl p-6 relative">
+        <button
+          id="close-cupon-modal"
+          class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-2xl"
+        >
+          &times;
+        </button>
+        <CuponForm />
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // @ts-nocheck
+  document.addEventListener("DOMContentLoaded", () => {
+    // === 1. LÓGICA DE REGLAS GLOBALES ===
+    const formReglas = document.getElementById("form-reglas");
+    formReglas?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(formReglas);
+      const data = Object.fromEntries(formData.entries());
+
+      data.cantidadMinimaGlobal = Number(data.cantidadMinimaGlobal);
+      data.cantidadMaximaPorSKU = Number(data.cantidadMaximaPorSKU);
+
+      try {
+        const res = await fetch(
+          "http://localhost:8000/api/admin/carrito/reglas",
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          }
+        );
+        if (res.ok) alert("✅ Reglas actualizadas");
+        else alert("Error actualizando reglas");
+      } catch (err) {
+        console.error(err);
+      }
+    });
+
+    // === 2. LÓGICA DE CUPONES ===
+    const modal = document.getElementById("cupon-modal");
+    const openBtn = document.getElementById("open-cupon-modal");
+    const closeBtn = document.getElementById("close-cupon-modal");
+
+    // Referencias al formulario (hijo)
+    const modalTitle = document.getElementById("modal-title");
+    const inpId = document.getElementById("cupon-id");
+    const inpCodigo = document.getElementById("cupon-codigo");
+    const inpTipo = document.getElementById("cupon-tipo");
+    const inpValor = document.getElementById("cupon-valor");
+    const inpMinimo = document.getElementById("cupon-minimo");
+    const inpDesde = document.getElementById("cupon-desde");
+    const inpHasta = document.getElementById("cupon-hasta");
+    const inpEstado = document.getElementById("cupon-estado");
+
+    const toggleModal = (show) => {
+      if (show) {
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+      } else {
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+      }
+    };
+
+    openBtn?.addEventListener("click", () => {
+      modalTitle.innerText = "Nuevo Cupón";
+      inpId.value = "";
+      inpCodigo.value = "";
+      inpValor.value = "";
+      inpMinimo.value = "";
+      inpDesde.value = "";
+      inpHasta.value = "";
+      inpCodigo.readOnly = false;
+      toggleModal(true);
+    });
+
+    closeBtn?.addEventListener("click", () => toggleModal(false));
+
+    // Editar
+    document.querySelectorAll(".btn-editar-cupon").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const data = JSON.parse(btn.dataset.json);
+        modalTitle.innerText = "Editar Cupón";
+        inpId.value = data.id || data._id; 
+        inpCodigo.value = data.codigo;
+        inpCodigo.readOnly = true;
+        inpTipo.value = data.tipo;
+        inpValor.value = data.valor;
+        inpMinimo.value = data.pedidoMinimo || "";
+        inpEstado.value = data.estado;
+
+        if (data.vigenciaDesde)
+          inpDesde.value = data.vigenciaDesde.split("T")[0];
+        if (data.vigenciaHasta)
+          inpHasta.value = data.vigenciaHasta.split("T")[0];
+
+        toggleModal(true);
+      });
+    });
+
+    // Eliminar 
+    document.querySelectorAll(".btn-eliminar-cupon").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const id = btn.dataset.id;
+        if (!id || id === "undefined") {
+          alert("Error: ID de cupón no encontrado en el botón");
+          return;
+        }
+
+        if (!confirm("¿Eliminar este cupón?")) return;
+        try {
+          const res = await fetch(
+            `http://localhost:8000/api/admin/cupones/${id}`,
+            { method: "DELETE" }
+          );
+          if (res.ok || res.status === 204) window.location.reload();
+          else alert("Error al eliminar");
+        } catch (e) {
+          console.error(e);
+          alert("Error conexión");
+        }
+      });
+    });
+  });
+</script>

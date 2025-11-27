@@ -1,267 +1,289 @@
----
-import Layout from "../../layouts/Layout.astro";
----
+<section class="bg-white py-10 rounded-xl shadow-sm border border-gray-100">
+  <div class="max-w-7xl mx-auto px-6 space-y-10">
+    <header
+      class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+    >
+      <div>
+        <h2 class="text-2xl font-bold text-primary">Analítica de Ventas</h2>
+        <p class="text-gray-500 text-sm">
+          Monitor de rendimiento y métricas operativas.
+        </p>
+      </div>
 
-<Layout>
-  <section id="analitica" class="min-h-screen bg-gray-50 py-8">
-    <div class="max-w-7xl mx-auto px-4 space-y-8">
-      <!-- Header -->
-      <header
-        class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
-      >
-        <h1 class="text-2xl font-bold text-primary">Analítica</h1>
-        <div class="flex gap-3">
-          <button
-            class="px-4 py-2 rounded-lg bg-accent text-white hover:bg-accent-secondary transition shadow-sm duration-300"
-            >Exportar CSV</button
+      <div class="flex gap-3 items-center">
+        <div
+          class="flex items-center gap-2 bg-gray-50 p-1 rounded-lg border border-gray-200"
+        >
+          <select
+            id="periodo-kpi"
+            class="bg-transparent text-sm font-medium text-gray-700 py-1 px-2 focus:outline-none cursor-pointer"
           >
+            <option value="hoy">Hoy</option>
+            <option value="semana">Esta Semana</option>
+            <option value="mes" selected>Este Mes</option>
+          </select>
           <button
-            class="px-4 py-2 rounded-lg bg-primary text-white/90 hover:opacity-90 transition shadow-sm duration-300"
-            >Exportar PDF</button
+            id="btn-cargar-kpi"
+            class="p-1.5 bg-white rounded-md shadow-sm text-gray-500 hover:text-accent transition"
           >
+            <i class="ri-refresh-line"></i>
+          </button>
         </div>
-      </header>
 
-      <!-- ====== B37: Dashboard KPIs ====== -->
+        <button
+          id="btn-exportar-csv"
+          class="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition"
+          title="Exportar Datos a Excel"
+        >
+          <i class="ri-download-cloud-2-line"></i>
+        </button>
+      </div>
+    </header>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       <div
-        class="bg-white rounded-xl shadow-lg border border-gray-100 p-6 space-y-6"
+        class="bg-blue-50/50 border border-blue-100 rounded-xl p-6 hover:shadow-md transition group"
       >
-        <!-- Filtros de periodo -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div class="md:col-span-2">
-            <label class="block text-sm text-secondary mb-1">Periodo</label>
-            <select id="periodo" class="input">
-              <option>Hoy</option>
-              <option>Semana Actual</option>
-              <option>Mes Actual</option>
-              <option>Rango Personalizado</option>
-            </select>
-          </div>
+        <div class="flex justify-between items-start">
           <div>
-            <label class="block text-sm text-secondary mb-1">Desde</label>
-            <input id="fecha-inicio" type="date" class="input hidden" />
-          </div>
-          <div>
-            <label class="block text-sm text-secondary mb-1">Hasta</label>
-            <input id="fecha-fin" type="date" class="input hidden" />
-          </div>
-        </div>
-
-        <!-- KPIs -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div
-            class="rounded-xl border border-gray-100 p-5 bg-gradient-to-br form-primary/5 to-transparent"
-          >
-            <div class="flex items-start justify-between">
-              <p class="text-sm text-secondary">Ventas Totales</p>
-              <span
-                class="w-8 h-8 rounded-full bg-accent/10 grid place-content-center text-accent font-bold"
-                >$</span
-              >
-            </div>
-            <p id="ventas-totales" class="mt-2 text-3xl font-bold text-primary">
-              $0
+            <h3 class="text-xs font-bold text-blue-600 uppercase tracking-wide">
+              Ventas (Comida)
+            </h3>
+            <p class="text-2xl font-bold text-gray-800 mt-2" id="kpi-ventas">
+              ...
             </p>
           </div>
-
           <div
-            class="rounded-xl border border-gray-100 p-5 bg-gradient-to-br form-primary/5 to-transparent"
+            class="p-2 bg-blue-100 text-blue-600 rounded-lg group-hover:scale-110 transition"
           >
-            <div class="flex items-start justify-between">
-              <p class="text-sm text-secondary">Pedidos</p>
-              <span
-                class="w-8 h-8 rounded-full bg-primary/10 grid place-content-center text-primary font-bold"
-                >#</span
-              >
-            </div>
-            <p id="num-pedidos" class="mt-2 text-3xl font-bold text-primary">
-              0
-            </p>
+            <i class="ri-restaurant-2-line text-xl"></i>
           </div>
-
-          <div
-            class="rounded-xl border border-gray-100 p-5 bg-gradient-to-br form-primary/5 to-transparent"
-          >
-            <div class="flex items-start justify-between">
-              <p class="text-sm text-secondary">Ticket Promedio</p>
-              <span
-                class="w-8 h-8 rounded-full bg-primary/10 grid place-content-center text-primary font-bold"
-                >∑</span
-              >
-            </div>
-            <p
-              id="ticket-promedio"
-              class="mt-2 text-3xl font-bold text-primary"
-            >
-              $0
-            </p>
-          </div>
-
-          <div
-            class="rounded-xl border border-gray-100 p-5 bg-gradient-to-br from-accent/5 to-transparent"
-          >
-            <div class="flex items-start justify-between">
-              <p class="text-sm text-secondary">Clientes Únicos</p>
-              <span
-                class="w-8 h-8 rounded-full bg-primary/10 grid place-content-center text-primary font-bold"
-                >👤</span
-              >
-            </div>
-            <p class="mt-2 text-3xl font-bold text-primary">0</p>
-          </div>
-        </div>
-
-        <!-- Top productos -->
-        <div>
-          <h3 class="text-lg font-semibold text-primary mb-3">
-            Top 5 Productos
-          </h3>
-          <ul class="space-y-3">
-            <li class="flex items-center gap-3">
-              <span class="w-40 shrink-0 text-sm text-primary truncate"
-                >Rigatoni 500g</span
-              >
-              <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                <div class="h-full bg-accent" style="width: 72%"></div>
-              </div>
-              <span class="w-10 text-right text-sm font-semibold text-primary"
-                >72</span
-              >
-            </li>
-            <li class="flex items-center gap-3">
-              <span class="w-40 shrink-0 text-sm text-primary truncate"
-                >Lasagna</span
-              >
-              <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                <div class="h-full bg-accent" style="width: 54%"></div>
-              </div>
-              <span class="w-10 text-right text-sm font-semibold text-primary"
-                >54</span
-              >
-            </li>
-            <li class="flex items-center gap-3">
-              <span class="w-40 shrink-0 text-sm text-primary truncate"
-                >Gnocchi</span
-              >
-              <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                <div class="h-full bg-accent" style="width: 31%"></div>
-              </div>
-              <span class="w-10 text-right text-sm font-semibold text-primary"
-                >31</span
-              >
-            </li>
-          </ul>
         </div>
       </div>
 
-      <!-- Reportes ====== -->
       <div
-        class="bg-white rounded-xl shadow-lg border border-gray-100 p-6 space-y-6"
+        class="bg-orange-50/50 border border-orange-100 rounded-xl p-6 hover:shadow-md transition group"
       >
-        <div class="flex items-center justify-between">
-          <h2 class="text-2xl font-semibold mb-4">Reportes Filtrados</h2>
-        </div>
-
-        <!-- Filtros -->
-        <form
-          id="form-filtros"
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
-        >
+        <div class="flex justify-between items-start">
           <div>
-            <label class="block mb-1 text-sm text-secondary">Fecha Inicio</label
+            <h3
+              class="text-xs font-bold text-orange-600 uppercase tracking-wide"
             >
-            <input type="date" class="input" />
+              Delivery
+            </h3>
+            <p class="text-2xl font-bold text-gray-800 mt-2" id="kpi-delivery">
+              ...
+            </p>
           </div>
-          <div>
-            <label class="block mb-1 text-sm text-secondary">Fecha Fin</label>
-            <input type="date" class="input" />
-          </div>
-          <div>
-            <label class="block mb-1 text-sm text-secondary">Categoría</label>
-            <select class="input">
-              <option>Pastas</option>
-              <option>Bebidas</option>
-              <option>Postres</option>
-            </select>
-          </div>
-          <div>
-            <label class="block mb-1 text-sm text-secondary">Estado</label>
-            <select class="input">
-              <option>Todos</option>
-              <option>Entregado</option>
-              <option>Pendiente</option>
-            </select>
-          </div>
-          <div class="md:col-span-2 lg:col-span-4 flex justify-end">
-            <button
-              class="px-4 py-2 rounded-lg bg-accent text-white hover:bg-accent-secondary transition shadow-sm duration-300"
-              >Aplicar Filtros</button
-            >
-          </div>
-        </form>
-
-        <!-- Tabla resultados -->
-        <div class="-mx-4 md:mx-0 overflow-x-auto">
-          <table
-            class="min-w-full text-sm rounded-lg overflow-hidden shadow border border-gray-100"
+          <div
+            class="p-2 bg-orange-100 text-orange-600 rounded-lg group-hover:scale-110 transition"
           >
-            <thead class="bg-primary text-white">
-              <tr>
-                <th class="px-4 py-3 text-left">Fecha</th>
-                <th class="px-4 py-3 text-left">Orden</th>
-                <th class="px-4 py-3 text-left">Cliente</th>
-                <th class="px-4 py-3 text-left">Ítem</th>
-                <th class="px-4 py-3 text-left">Cantidad</th>
-                <th class="px-4 py-3 text-left">Precio</th>
-                <th class="px-4 py-3 text-left">Total</th>
-                <th class="px-4 py-3 text-left">Estado</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100">
-              <tr class="hover:bg-gray-50">
-                <td class="px-4 py-3">2025-09-26</td>
-                <td class="px-4 py-3">#00123</td>
-                <td class="px-4 py-3">Juan Pérez</td>
-                <td class="px-4 py-3">Rigatoni</td>
-                <td class="px-4 py-3">2</td>
-                <td class="px-4 py-3">$2.990</td>
-                <td class="px-4 py-3">$5.980</td>
-                <td class="px-4 py-3 text-green-600">Entregado</td>
-              </tr>
-            </tbody>
-          </table>
+            <i class="ri-motorbike-line text-xl"></i>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="bg-purple-50/50 border border-purple-100 rounded-xl p-6 hover:shadow-md transition group"
+      >
+        <div class="flex justify-between items-start">
+          <div>
+            <h3
+              class="text-xs font-bold text-purple-600 uppercase tracking-wide"
+            >
+              Pedidos
+            </h3>
+            <p class="text-2xl font-bold text-gray-800 mt-2" id="kpi-pedidos">
+              ...
+            </p>
+          </div>
+          <div
+            class="p-2 bg-purple-100 text-purple-600 rounded-lg group-hover:scale-110 transition"
+          >
+            <i class="ri-shopping-bag-3-line text-xl"></i>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="bg-green-50/50 border border-green-100 rounded-xl p-6 hover:shadow-md transition group"
+      >
+        <div class="flex justify-between items-start">
+          <div>
+            <h3
+              class="text-xs font-bold text-green-600 uppercase tracking-wide"
+            >
+              Ticket Promedio
+            </h3>
+            <p class="text-2xl font-bold text-gray-800 mt-2" id="kpi-ticket">
+              ...
+            </p>
+          </div>
+          <div
+            class="p-2 bg-green-100 text-green-600 rounded-lg group-hover:scale-110 transition"
+          >
+            <i class="ri-coupon-2-line text-xl"></i>
+          </div>
         </div>
       </div>
     </div>
-  </section>
 
-  <script>
-    //@ts-nocheck
-    document.addEventListener("DOMContentLoaded", () => {
-      /** @type {HTMLInputElement | HTMLSelectElement | null} */
-      const periodo = document.getElementById("periodo");
-      const ini = document.getElementById("fecha-inicio");
-      const fin = document.getElementById("fecha-fin");
+    <div class="bg-white border border-gray-100 rounded-xl p-6 shadow-sm">
+      <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <i class="ri-trophy-line text-yellow-500"></i> Productos Más Vendidos
+      </h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left" id="tabla-top-exportar">
+          <thead class="text-xs text-gray-500 uppercase bg-gray-50 border-b">
+            <tr>
+              <th class="px-4 py-3">Producto</th>
+              <th class="px-4 py-3 text-center">Cantidad</th>
+              <th class="px-4 py-3 text-right">Venta Total</th>
+              <th class="px-4 py-3 w-32">Participación</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100" id="lista-top-productos">
+            <tr
+              ><td colspan="4" class="py-4 text-center text-gray-400"
+                >Cargando datos...</td
+              ></tr
+            >
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
 
+<script>
+  // @ts-nocheck
+  document.addEventListener("DOMContentLoaded", () => {
+    const selectPeriodo = document.getElementById("periodo-kpi");
+    const btnCargar = document.getElementById("btn-cargar-kpi");
+    const btnExportar = document.getElementById("btn-exportar-csv"); // Nuevo
 
-      const elementosRango = [ini, fin];
+    // Elementos KPI
+    const elVentas = document.getElementById("kpi-ventas");
+    const elDelivery = document.getElementById("kpi-delivery");
+    const elPedidos = document.getElementById("kpi-pedidos");
+    const elTicket = document.getElementById("kpi-ticket");
+    const elListaTop = document.getElementById("lista-top-productos");
 
-      function toggleRango() {
-        const valorPeriodo = periodo?.value || "";
-        const esRango = valorPeriodo.toLowerCase().includes("rango");
+    // Variable global para guardar los datos actuales y exportarlos después
+    let datosActuales = null;
 
-        const debeOcultarse = !esRango;
+    const obtenerFechas = (tipo) => {
+      const hoy = new Date();
+      let inicio = new Date();
+      let fin = new Date();
+      if (tipo === "hoy") {
+      } else if (tipo === "semana") {
+        const dia = hoy.getDay() || 7;
+        if (dia !== 1) inicio.setHours(-24 * (dia - 1));
+      } else if (tipo === "mes") {
+        inicio.setDate(1);
+      }
+      return {
+        inicio: inicio.toISOString().split("T")[0],
+        fin: fin.toISOString().split("T")[0],
+      };
+    };
 
-        elementosRango.forEach((el) => {
-          if (el) {
-            el.classList.toggle("hidden", debeOcultarse);
-          }
+    const cargarKPIs = async () => {
+      const periodo = selectPeriodo.value;
+      const { inicio, fin } = obtenerFechas(periodo);
+      const token = sessionStorage.getItem("access_token");
+
+      btnCargar.classList.add("animate-spin");
+
+      try {
+        const url = `http://localhost:8000/api/admin/dashboard-kpi?fechaInicio=${inicio}&fechaFin=${fin}`;
+        const res = await fetch(url, {
+          headers: { Authorization: `Bearer ${token}` },
         });
+
+        if (res.ok) {
+          const data = await res.json();
+          datosActuales = data; 
+
+          elVentas.innerText = "$" + data.ventasTotales.toLocaleString("es-CL");
+          elDelivery.innerText =
+            "$" + data.ingresosDelivery.toLocaleString("es-CL");
+          elPedidos.innerText = data.numeroPedidos;
+          elTicket.innerText =
+            "$" + Math.round(data.ticketPromedio).toLocaleString("es-CL");
+
+          elListaTop.innerHTML = "";
+          if (data.topProductos && data.topProductos.length > 0) {
+            const maxMonto = Math.max(...data.topProductos.map((p) => p.monto));
+
+            data.topProductos.forEach((prod) => {
+              const porcentaje = (prod.monto / maxMonto) * 100;
+              elListaTop.innerHTML += `
+                                <tr class="hover:bg-gray-50 transition">
+                                    <td class="px-4 py-3 font-medium text-gray-800">${prod.nombre}</td>
+                                    <td class="px-4 py-3 text-center text-gray-600 font-mono bg-gray-50/50 rounded">${prod.cantidad}</td>
+                                    <td class="px-4 py-3 text-right font-bold text-gray-700">$${prod.monto.toLocaleString("es-CL")}</td>
+                                    <td class="px-4 py-3">
+                                        <div class="w-full bg-gray-100 rounded-full h-1.5">
+                                            <div class="bg-accent h-1.5 rounded-full" style="width: ${porcentaje}%"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `;
+            });
+          } else {
+            elListaTop.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-gray-400 italic">Sin ventas en este periodo.</td></tr>`;
+          }
+        } else {
+          elVentas.innerText = "Error";
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setTimeout(() => btnCargar.classList.remove("animate-spin"), 500);
+      }
+    };
+
+    // --- LÓGICA DE EXPORTACIÓN CSV ---
+    btnExportar.addEventListener("click", () => {
+      if (!datosActuales) {
+        alert("No hay datos para exportar.");
+        return;
       }
 
-      periodo?.addEventListener("change", toggleRango);
+      let csv = "REPORTE DE VENTAS\n";
+      csv += `Periodo,${selectPeriodo.value.toUpperCase()}\n\n`;
 
-      toggleRango();
+      csv += "RESUMEN KPI\n";
+      csv += `Ventas Comida,${datosActuales.ventasTotales}\n`;
+      csv += `Ingresos Delivery,${datosActuales.ingresosDelivery}\n`;
+      csv += `Total Pedidos,${datosActuales.numeroPedidos}\n`;
+      csv += `Ticket Promedio,${datosActuales.ticketPromedio}\n\n`;
+
+      csv += "TOP PRODUCTOS\n";
+      csv += "Nombre,Cantidad,Venta Total\n";
+
+      datosActuales.topProductos.forEach((p) => {
+        csv += `${p.nombre},${p.cantidad},${p.monto}\n`;
+      });
+
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute(
+        "download",
+        `reporte_ventas_${new Date().toISOString().split("T")[0]}.csv`
+      );
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     });
-  </script>
-</Layout>
+
+    selectPeriodo.addEventListener("change", cargarKPIs);
+    btnCargar.addEventListener("click", cargarKPIs);
+    cargarKPIs();
+  });
+</script>

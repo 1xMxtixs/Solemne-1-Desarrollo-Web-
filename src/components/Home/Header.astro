@@ -3,7 +3,6 @@
 >
   <div class="max-w-7xl mx-auto px-6">
     <div class="flex h-16 items-center justify-between gap-6">
-      <!-- Logo Desktop -->
       <a
         href="/"
         class="hidden md:flex items-center gap-3 shrink-0 relative z-30"
@@ -12,7 +11,6 @@
         <span class="sr-only">Inicio</span>
       </a>
 
-      <!-- Logo Mobile -->
       <a
         href="/"
         class="md:hidden flex items-center gap-3 shrink-0 relative z-30"
@@ -21,7 +19,6 @@
         <span class="sr-only">Inicio</span>
       </a>
 
-      <!-- Nav Desktop -->
       <nav aria-label="Principal" class="hidden md:block">
         <ul class="flex items-center gap-8 text-sm font-medium">
           <li>
@@ -55,9 +52,7 @@
         </ul>
       </nav>
 
-      <!-- Botones -->
       <div class="flex items-center gap-5 relative z-30">
-        <!-- Carrito -->
         <button id="cart-btn" class="relative">
           <i class="ri-shopping-cart-2-line text-2xl text-primary"></i>
           <span
@@ -68,7 +63,6 @@
           </span>
         </button>
 
-        <!-- Cuenta -->
         <button
           id="cuenta-btn"
           class="hidden md:inline-flex rounded-full border border-accent px-5 py-2 text-sm font-medium text-secondary hover:bg-accent/10 transition"
@@ -76,7 +70,6 @@
           Cuenta
         </button>
 
-        <!-- Cerrar sesión -->
         <button
           id="logout-btn"
           class="hidden bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-600 transition"
@@ -84,7 +77,6 @@
           Cerrar sesión
         </button>
 
-        <!-- Botón menú móvil -->
         <button
           id="menu-open-btn"
           type="button"
@@ -96,7 +88,6 @@
     </div>
   </div>
 
-  <!-- Sidebar Móvil -->
   <nav
     class="mnav bg-white fixed w-[300px] top-0 h-screen -left-[300px] shadow-2xl md:hidden transition-all ease-out duration-300 z-40"
   >
@@ -142,13 +133,14 @@
       </ul>
 
       <div class="mt-auto pb-8">
-        <a href="/cuenta" class="btn btn-accent w-full">Cuenta</a>
+        <a href="/Auth" class="btn btn-accent w-full" id="mobile-cuenta-btn"
+          >Cuenta</a
+        >
       </div>
     </div>
   </nav>
 </header>
 
-<!-- Sidebar Carrito -->
 <div
   id="cart-sidebar"
   class="fixed top-0 right-0 w-80 h-full bg-white shadow-lg transform translate-x-full transition-transform duration-300 z-50 flex flex-col"
@@ -177,8 +169,9 @@
 </div>
 
 <script>
- // @ts-nocheck 
-  // === Declaraciones de variables ===
+  // @ts-nocheck
+
+  // === 1. VARIABLES GLOBALES Y NAVEGACIÓN MÓVIL ===
   const mobileNav = document.querySelector(".mnav");
   const openBtn = document.getElementById("menu-open-btn");
   const closeBtn = document.getElementById("menu-close-btn");
@@ -189,7 +182,6 @@
   const OPEN_CLASS = "left-0";
   const CLOSED_CLASS = "-left-[300px]";
 
-  // === Navegación móvil ===
   const openMobileNav = () => {
     if (!mobileNav) return;
     mobileNav.classList.remove(CLOSED_CLASS);
@@ -213,97 +205,164 @@
     ?.querySelectorAll("a")
     .forEach((link) => link.addEventListener("click", closeMobileNav));
 
+  // === 2. LÓGICA PRINCIPAL (AL CARGAR LA PÁGINA) ===
   document.addEventListener("DOMContentLoaded", () => {
+    // --- A. MANEJO DE SESIÓN Y USUARIO ---
     const cuentaBtn = document.getElementById("cuenta-btn");
     const logoutBtn = document.getElementById("logout-btn");
+    const mobileCuentaBtn = document.getElementById("mobile-cuenta-btn");
+    const loginUrl = "/Auth";
 
-    const rol = sessionStorage.getItem("rol");
-    if (rol) logoutBtn?.classList.remove("hidden");
+    let usuario = null;
+    const usuarioString = sessionStorage.getItem("usuario");
 
-    cuentaBtn?.addEventListener("click", () => {
-      const rol = sessionStorage.getItem("rol");
-      if (rol === "admin") window.location.href = "/admin/Panel";
-      else if (rol === "cliente") window.location.href = "/Cliente/Perfil";
-      else if (rol === "despacho") window.location.href = "/despacho/Panel";
-      else if (rol === "dueno") window.location.href = "/dueno/SeguridadBoss";
-      else window.location.href = "Auth";
-    });
+    if (usuarioString) {
+      try {
+        usuario = JSON.parse(usuarioString);
+      } catch (e) {
+        console.error("Error sesión:", e);
+        sessionStorage.removeItem("usuario");
+      }
+    }
 
+    // Configurar botones según estado de sesión
+    if (usuario && usuario.rol && usuario.nombre) {
+      const primerNombre = usuario.nombre.split(" ")[0];
+
+      if (cuentaBtn) cuentaBtn.textContent = `Hola, ${primerNombre}`;
+      if (mobileCuentaBtn)
+        mobileCuentaBtn.textContent = `Mi Perfil (${primerNombre})`;
+      if (logoutBtn) logoutBtn.classList.remove("hidden");
+
+      // Redirección inteligente según rol
+      const getPanelUrl = (rol) => {
+        if (rol === "administrador") return "/PanelAdmin";
+        if (rol === "cliente") return "/Cliente/Perfil";
+        if (rol === "logistica") return "/PanelDespacho";
+        if (rol === "dueño") return "/PanelBoss";
+        return "/";
+      };
+      const panelUrl = getPanelUrl(usuario.rol);
+
+      if (cuentaBtn)
+        cuentaBtn.addEventListener(
+          "click",
+          () => (window.location.href = panelUrl)
+        );
+      if (mobileCuentaBtn) mobileCuentaBtn.setAttribute("href", panelUrl);
+    } else {
+      // Usuario NO logueado
+      if (cuentaBtn) {
+        cuentaBtn.textContent = "Cuenta";
+        cuentaBtn.addEventListener(
+          "click",
+          () => (window.location.href = loginUrl)
+        );
+      }
+      if (mobileCuentaBtn) {
+        mobileCuentaBtn.textContent = "Cuenta";
+        mobileCuentaBtn.setAttribute("href", loginUrl);
+      }
+      if (logoutBtn) logoutBtn.classList.add("hidden");
+    }
+
+    // Botón Cerrar Sesión
     logoutBtn?.addEventListener("click", () => {
-      sessionStorage.removeItem("rol");
-      logoutBtn.classList.add("hidden");
-      window.location.href = "Auth";
+      sessionStorage.clear(); // Borra todo (usuario, token, carrito si quisieras)
+      window.location.href = loginUrl;
     });
 
-    // === Carrito ===
+    // --- B. LÓGICA DEL CARRITO (SIDEBAR) ---
     const cartBtn = document.getElementById("cart-btn");
     const cartSidebar = document.getElementById("cart-sidebar");
     const closeCart = document.getElementById("close-cart");
     const cartItems = document.getElementById("cart-items");
     const cartCount = document.getElementById("cart-count");
     const cartTotal = document.getElementById("cart-total");
+    const goToCartBtn = document.getElementById("go-to-cart");
 
-    const getCart = () => JSON.parse(localStorage.getItem("cart") || "[]");
-
+    // Abrir/Cerrar Sidebar
     cartBtn?.addEventListener("click", () =>
       cartSidebar?.classList.remove("translate-x-full")
     );
     closeCart?.addEventListener("click", () =>
       cartSidebar?.classList.add("translate-x-full")
     );
+    goToCartBtn?.addEventListener(
+      "click",
+      () => (window.location.href = "/Carrito")
+    );
 
-    document.getElementById("go-to-cart")?.addEventListener("click", () => {
-      window.location.href = "/Carrito";
-    });
+    // Función de Renderizado
+    const renderCart = () => {
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
-    function renderCart() {
-      const cart = getCart();
       if (!cartItems || !cartCount || !cartTotal) return;
 
-      cartItems.innerHTML = "";
+      // 1. Contador Burbuja
+      const totalQty = cart.reduce((acc, item) => acc + item.qty, 0);
+      cartCount.textContent = totalQty.toString();
 
+      if (totalQty > 0) {
+        cartCount.classList.remove("hidden");
+        cartCount.classList.add("flex");
+      } else {
+        cartCount.classList.add("hidden");
+      }
+
+      // 2. Lista de Items
+      cartItems.innerHTML = "";
       if (cart.length === 0) {
-        cartItems.innerHTML = `<p class="text-gray-500 text-sm">Tu carrito está vacío</p>`;
+        cartItems.innerHTML = `<p class="text-gray-500 text-sm text-center mt-10">Tu carrito está vacío 🍝</p>`;
       } else {
         cart.forEach((item, index) => {
           cartItems.innerHTML += `
-            <div class="flex items-center justify-between bg-gray-50 p-2 rounded-lg">
-              <div>
-                <p class="font-semibold text-sm">${item.name}</p>
-                <p class="text-xs text-gray-500">x${item.qty} | $${(
-                  item.price * item.qty
-                ).toLocaleString()}</p>
+            <div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg mb-2 shadow-sm">
+              <div class="flex items-center gap-3">
+                 <div class="w-10 h-10 rounded bg-white overflow-hidden shrink-0 border border-gray-200">
+                    <img src="${item.img}" class="w-full h-full object-cover" onerror="this.src='/images/logo.svg'">
+                 </div>
+                 <div>
+                    <p class="font-bold text-xs text-gray-800 line-clamp-1">${item.name}</p>
+                    <p class="text-xs text-gray-500">${item.qty} x $${item.price.toLocaleString("es-CL")}</p>
+                 </div>
               </div>
-              <button onclick="removeFromSidebar(${index})" class="text-red-500 hover:text-red-700">
+              <button onclick="window.removeItemFromHeader(${index})" class="text-red-400 hover:text-red-600 p-1">
                 <i class="ri-delete-bin-line"></i>
               </button>
             </div>`;
         });
       }
 
-      const totalQty = cart.reduce((acc, item) => acc + item.qty, 0);
+      // 3. Total
       const totalPrice = cart.reduce(
         (acc, item) => acc + item.price * item.qty,
         0
       );
-
-      cartCount.textContent = totalQty.toString();
       cartTotal.textContent = "$" + totalPrice.toLocaleString("es-CL");
-    }
-
-    // ✅ Declaración segura en window
-    window.updateCartDisplay = () => renderCart();
-    window.removeFromSidebar = (index) => {
-      const cart = getCart();
-      cart.splice(index, 1);
-      localStorage.setItem("cart", JSON.stringify(cart));
-      renderCart();
     };
 
+    // Escuchar el evento personalizado 'cart-updated'
+    // Esto permite que Menu.astro (u otros) avisen al header que actualice
+    window.addEventListener("cart-updated", renderCart);
+
+    // Render inicial
     renderCart();
   });
 
-  // === Scroll suave ===
+  // === 3. FUNCIONES GLOBALES (Para usar en onclick) ===
+
+  // Eliminar item desde el sidebar
+  window.removeItemFromHeader = (index) => {
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    cart.splice(index, 1); // Eliminar
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    // Avisar a todo el mundo que el carrito cambió
+    window.dispatchEvent(new Event("cart-updated"));
+  };
+
+  // === 4. SCROLL SUAVE (Links ancla) ===
   function scrollToTarget(hash) {
     const el = document.querySelector(hash);
     if (!el) return;
