@@ -3,195 +3,147 @@ import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout title="Boleta Electrónica">
+  
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
   <style>
     @media print {
-      /* Ocultar todo lo que no sea la boleta */
-      body * {
-        visibility: hidden;
-      }
-
-      /* Hacer visible solo el contenido de la boleta */
-      #boleta-content,
-      #boleta-content * {
-        visibility: visible;
-      }
-
-      /* Posicionar la boleta arriba a la izquierda */
-      #boleta-content {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        margin: 0;
-        padding: 0;
-        border: none !important; /* Quitar bordes */
-        box-shadow: none !important; /* Quitar sombras pesadas */
-      }
-
-      /* Ocultar botones de acción dentro de la boleta si los hubiera */
-      .no-print {
-        display: none !important;
-      }
+      body * { visibility: hidden; }
+      #boleta-content, #boleta-content * { visibility: visible; }
+      #boleta-content { position: absolute; left: 0; top: 0; width: 100%; border: none !important; box-shadow: none !important; }
+      .no-print { display: none !important; }
     }
   </style>
 
   <section class="min-h-screen bg-gray-50 py-20 px-4">
-    <div
-      class="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl p-8 space-y-8 border border-gray-200"
-      id="boleta-content"
-    >
+    <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl p-8 space-y-8 border border-gray-200" id="boleta-content">
+      
       <div class="text-center border-b pb-6">
-        <img src="/images/logo.svg" alt="La Nonna" class="h-16 mx-auto mb-4" />
+        <img src="/images/logo.svg" alt="La Nonna" class="h-16 mx-auto mb-4" onerror="this.style.display='none'" />
         <h2 class="text-3xl font-bold text-[#6E0F2C]">Boleta Electrónica</h2>
-        <p class="text-gray-500 mt-2 font-mono text-sm" id="orden-id">
-          Cargando...
-        </p>
+        <p class="text-gray-500 mt-2 font-mono text-sm" id="orden-id">Cargando...</p>
       </div>
 
-      <div
-        class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm bg-gray-50 p-6 rounded-xl border border-gray-100 print:bg-white print:border-gray-300"
-      >
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm bg-gray-50 p-6 rounded-xl border border-gray-100">
         <div>
-          <p class="text-gray-500 mb-1">Cliente</p>
-          <p class="font-bold text-gray-800 text-lg" id="cliente-nombre">...</p>
+            <p class="text-gray-500 mb-1">Cliente</p>
+            <p class="font-bold text-gray-800 text-lg" id="cliente-nombre">...</p>
         </div>
         <div>
-          <p class="text-gray-500 mb-1">Email</p>
-          <p class="font-bold text-gray-800" id="cliente-email">...</p>
+            <p class="text-gray-500 mb-1">Email</p>
+            <p class="font-bold text-gray-800" id="cliente-email">...</p>
         </div>
         <div>
-          <p class="text-gray-500 mb-1">Fecha de Emisión</p>
-          <p class="font-bold text-gray-800" id="fecha-emision">...</p>
+            <p class="text-gray-500 mb-1">Fecha de Emisión</p>
+            <p class="font-bold text-gray-800" id="fecha-emision">...</p>
         </div>
         <div>
-          <p class="text-gray-500 mb-1">Método de Entrega</p>
-          <p class="font-bold text-gray-800 uppercase" id="metodo-entrega">
-            ...
-          </p>
+            <p class="text-gray-500 mb-1">Método de Entrega</p>
+            <p class="font-bold text-gray-800 uppercase" id="metodo-entrega">...</p>
         </div>
       </div>
 
       <div class="overflow-hidden rounded-lg border border-gray-200">
         <table class="min-w-full text-sm">
-          <thead
-            class="bg-[#6E0F2C] text-white print:text-black print:bg-gray-200"
-          >
+          <thead class="bg-[#6E0F2C] text-white">
             <tr>
               <th class="px-6 py-3 text-left font-semibold">Producto</th>
               <th class="px-4 py-3 text-center font-semibold">Cant.</th>
               <th class="px-6 py-3 text-right font-semibold">Total</th>
             </tr>
           </thead>
-          <tbody id="detalle-boleta" class="divide-y divide-gray-100"> </tbody>
+          <tbody id="detalle-boleta" class="divide-y divide-gray-100"></tbody>
         </table>
       </div>
 
       <div class="flex justify-end">
-        <div
-          class="w-full md:w-1/2 space-y-2 text-right p-4 bg-gray-50 rounded-lg print:bg-white"
-        >
-          <div class="flex justify-between text-gray-600">
-            <span>Suma Productos</span>
-            <span id="suma-productos">$0</span>
-          </div>
-          <div
-            id="row-descuento"
-            class="justify-between text-green-600 font-medium hidden"
-          >
-            <span
-              >Descuento <span id="nombre-cupon" class="text-xs"></span></span
-            >
-            <span id="monto-descuento">-$0</span>
-          </div>
-          <div id="row-envio" class="justify-between text-gray-600 hidden">
-            <span>Costo de Envío</span>
-            <span id="monto-envio">$0</span>
-          </div>
+        <div class="w-full md:w-1/2 space-y-2 text-right p-4 bg-gray-50 rounded-lg">
+            <div class="flex justify-between text-gray-600">
+                <span>Suma Productos</span>
+                <span id="suma-productos">$0</span>
+            </div>
 
-          <div class="border-t border-gray-200 my-2"></div>
+            <div id="row-envio" class="justify-between text-gray-600 hidden">
+                <span>Costo de Envío</span>
+                <span id="monto-envio">$0</span>
+            </div>
 
-          <div class="flex justify-between text-gray-500 text-xs">
-            <span>Monto Neto</span>
-            <span id="neto">$0</span>
-          </div>
-          <div class="flex justify-between text-gray-500 text-xs">
-            <span>IVA (19%)</span>
-            <span id="iva">$0</span>
-          </div>
+            <div id="row-descuento" class="justify-between text-green-600 font-medium hidden">
+                <span>Descuento <span id="nombre-cupon" class="text-xs"></span></span>
+                <span id="monto-descuento">-$0</span>
+            </div>
 
-          <div
-            class="flex justify-between text-xl font-bold text-[#6E0F2C] pt-2 mt-1"
-          >
-            <span>Total Pagado</span>
-            <span id="total-final">$0</span>
-          </div>
+            <div class="border-t border-gray-200 my-2"></div>
+
+            <div class="flex justify-between text-gray-500 text-xs">
+                <span>Monto Neto</span>
+                <span id="neto">$0</span>
+            </div>
+            <div class="flex justify-between text-gray-500 text-xs">
+                <span>IVA (19%)</span>
+                <span id="iva">$0</span>
+            </div>
+
+            <div class="flex justify-between text-xl font-bold text-[#6E0F2C] pt-2 mt-1">
+                <span>Total Pagado</span>
+                <span id="total-final">$0</span>
+            </div>
         </div>
       </div>
 
-      <div
-        class="flex flex-col sm:flex-row justify-end gap-4 pt-8 border-t mt-8 no-print"
-      >
-        <button
-          id="descargar-btn"
-          class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition flex items-center justify-center gap-2 shadow-lg"
-        >
-          <i class="ri-file-download-line"></i> Descargar PDF / Imprimir
+      <div class="flex flex-col sm:flex-row justify-end gap-4 pt-8 border-t mt-8 no-print" data-html2canvas-ignore="true">
+        <button id="descargar-btn" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition flex items-center justify-center gap-2 shadow-lg">
+            <i class="ri-printer-line"></i> Descargar PDF / Imprimir
         </button>
-        <a
-          href="/"
-          class="bg-[#6E0F2C] hover:bg-[#8B1E3F] text-white px-6 py-3 rounded-lg transition text-center flex items-center justify-center gap-2 shadow-lg"
-        >
-          Volver al Inicio <i class="ri-arrow-right-line"></i>
+        <a href="/" class="bg-[#6E0F2C] hover:bg-[#8B1E3F] text-white px-6 py-3 rounded-lg transition text-center flex items-center justify-center gap-2 shadow-lg">
+            Volver al Inicio <i class="ri-arrow-right-line"></i>
         </a>
       </div>
+
     </div>
   </section>
 
   <script>
     // @ts-nocheck
     document.addEventListener("DOMContentLoaded", () => {
+      // 1. Recuperar datos
       const nombre = localStorage.getItem("clienteNombre") || "Cliente General";
-      const email = localStorage.getItem("clienteEmail") || "No registrado";
+      const email = localStorage.getItem("clienteEmail") || "";
       const metodo = localStorage.getItem("metodoEntrega") || "Retiro";
       const ordenID = localStorage.getItem("ordenID") || "PENDIENTE";
-
-      const deliveryCosto = parseInt(
-        localStorage.getItem("deliveryCosto") || "0"
-      );
-      const descuento = parseInt(localStorage.getItem("montoDescuento") || "0");
+      
+      const deliveryCosto = Number(localStorage.getItem("deliveryCosto")) || 0;
+      const descuento = Number(localStorage.getItem("montoDescuento")) || 0;
       const cuponNombre = localStorage.getItem("cuponAplicado") || "";
 
       let items = [];
       try {
         items = JSON.parse(localStorage.getItem("ordenConfirmada") || "[]");
-      } catch (e) {
-        console.error("Error parsing items", e);
-      }
+      } catch (e) { console.error(e); }
 
+      // 2. Llenar info
       document.getElementById("cliente-nombre").textContent = nombre;
       document.getElementById("cliente-email").textContent = email;
-      document.getElementById("metodo-entrega").textContent =
-        metodo === "delivery" ? "DELIVERY A DOMICILIO" : "RETIRO EN LOCAL";
+      document.getElementById("metodo-entrega").textContent = metodo === "delivery" ? "DELIVERY A DOMICILIO" : "RETIRO EN LOCAL";
       document.getElementById("orden-id").textContent = `Orden N° ${ordenID}`;
-      document.getElementById("fecha-emision").textContent =
-        new Date().toLocaleString("es-CL");
+      document.getElementById("fecha-emision").textContent = new Date().toLocaleString("es-CL");
 
+      // 3. Tabla
       const tbody = document.getElementById("detalle-boleta");
       let sumaProductos = 0;
 
       if (items.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="3" class="text-center py-6 text-gray-500">No se encontró detalle de productos.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="3" class="text-center py-6 text-gray-500">Sin detalle.</td></tr>`;
       } else {
-        items.forEach((item) => {
-          const precio = item.precio || item.price || 0;
-          const cantidad = item.cantidad || item.qty || 0;
-          const nombre = item.nombre || item.name || "Producto";
-          const totalItem = precio * cantidad;
-          sumaProductos += totalItem;
-
-          tbody.innerHTML += `
+        items.forEach(item => {
+            const precio = Number(item.precio || item.price) || 0;
+            const cantidad = Number(item.cantidad || item.qty) || 0;
+            const totalItem = precio * cantidad;
+            sumaProductos += totalItem;
+            
+            tbody.innerHTML += `
                 <tr class="hover:bg-gray-50">
-                    <td class="px-6 py-4 text-gray-800">${nombre}</td>
+                    <td class="px-6 py-4 text-gray-800">${item.nombre || item.name}</td>
                     <td class="px-4 py-4 text-center text-gray-600">${cantidad}</td>
                     <td class="px-6 py-4 text-right font-medium text-gray-800">$${totalItem.toLocaleString("es-CL")}</td>
                 </tr>
@@ -199,42 +151,33 @@ import Layout from "../layouts/Layout.astro";
         });
       }
 
-      document.getElementById("suma-productos").textContent =
-        "$" + sumaProductos.toLocaleString("es-CL");
-
-      if (descuento > 0) {
-        document.getElementById("row-descuento").classList.remove("hidden");
-        rowDesc.classList.add("flex");
-        document.getElementById("monto-descuento").textContent =
-          "-$" + descuento.toLocaleString("es-CL");
-        if (cuponNombre)
-          document.getElementById("nombre-cupon").textContent =
-            `(${cuponNombre})`;
-      }
+      // 4. Cálculos y Visualización Dinámica
+      document.getElementById("suma-productos").textContent = "$" + sumaProductos.toLocaleString("es-CL");
 
       if (deliveryCosto > 0) {
-        document.getElementById("row-envio").classList.remove("hidden");
-        rowDesc.classList.add("flex");
-        document.getElementById("monto-envio").textContent =
-          "$" + deliveryCosto.toLocaleString("es-CL");
+          const row = document.getElementById("row-envio");
+          row.classList.remove("hidden");
+          row.classList.add("flex"); // Agregamos flex aquí dinámicamente
+          document.getElementById("monto-envio").textContent = "$" + deliveryCosto.toLocaleString("es-CL");
       }
 
-      const totalFinal = Math.max(0, sumaProductos - descuento + deliveryCosto);
+      if (descuento > 0) {
+          const row = document.getElementById("row-descuento");
+          row.classList.remove("hidden");
+          row.classList.add("flex"); // Agregamos flex aquí dinámicamente
+          document.getElementById("monto-descuento").textContent = "-$" + descuento.toLocaleString("es-CL");
+          if(cuponNombre) document.getElementById("nombre-cupon").textContent = `(${cuponNombre})`;
+      }
+
+      const totalFinal = Math.max(0, sumaProductos + deliveryCosto - descuento);
       const neto = Math.round(totalFinal / 1.19);
       const iva = totalFinal - neto;
 
-      document.getElementById("neto").textContent =
-        "$" + neto.toLocaleString("es-CL");
-      document.getElementById("iva").textContent =
-        "$" + iva.toLocaleString("es-CL");
-      document.getElementById("total-final").textContent =
-        "$" + totalFinal.toLocaleString("es-CL");
+      document.getElementById("neto").textContent = "$" + neto.toLocaleString("es-CL");
+      document.getElementById("iva").textContent = "$" + iva.toLocaleString("es-CL");
+      document.getElementById("total-final").textContent = "$" + totalFinal.toLocaleString("es-CL");
 
-      const btnDescargar = document.getElementById("descargar-btn");
-
-      btnDescargar.addEventListener("click", () => {
-        window.print();
-      });
+      document.getElementById("descargar-btn").addEventListener("click", () => window.print());
     });
   </script>
 </Layout>
